@@ -43,16 +43,26 @@ section{padding:72px 32px}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{border:1px solid var(--line);padding:5px 12px;font-size:12px;transition:.2s}.chip.on{background:var(--fg);color:#fff;border-color:var(--fg)}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px 16px;padding:32px}
-.card .im{aspect-ratio:3/4;background:var(--tone);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;color:var(--mute);font-size:12px}
-.card .im img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .6s}
-.card .im img+img{opacity:0}.card:hover .im img+img{opacity:1}
+.card .im{aspect-ratio:3/4;background:radial-gradient(120% 80% at 50% 30%,#f7f4ef 0%,var(--tone) 70%);position:relative;overflow:hidden;max-width:100%}
+.vs{position:absolute;inset:0;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none}
+.vs::-webkit-scrollbar{display:none}
+.sl{height:100%;scroll-snap-align:start;scroll-snap-stop:always;display:flex;align-items:center;justify-content:center;padding:9% 12% 14%;position:relative;perspective:1100px}
+.sl:after{content:"";position:absolute;left:20%;right:20%;bottom:7%;height:6%;background:radial-gradient(closest-side,rgba(70,52,34,.34),transparent);filter:blur(4px)}
+.d3{position:relative;width:100%;height:100%;transform:rotateY(var(--ry,-7deg)) rotateX(var(--rx,3deg));transition:transform .6s cubic-bezier(.2,.7,.2,1);background:#e2d5c4;overflow:hidden;
+box-shadow:1px 0 0 rgba(255,255,255,.6) inset,0 2px 3px rgba(60,44,28,.10),0 14px 24px -6px rgba(60,44,28,.22),18px 34px 50px -18px rgba(60,44,28,.35)}
+.d3:after{content:"";position:absolute;inset:0;background:linear-gradient(112deg,rgba(255,255,255,.34) 0%,rgba(255,255,255,0) 30%,rgba(255,255,255,0) 64%,rgba(30,20,10,.16) 100%);pointer-events:none}
+.d3 img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.dots{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:5px;z-index:4;pointer-events:none}
+.dots i{display:block;width:4px;height:4px;border-radius:2px;background:rgba(17,17,17,.22);transition:height .3s,background .3s}
+.dots i.on{height:14px;background:#111}
+@media(prefers-reduced-motion:reduce){.d3{transition:none}}
 .card .tag{position:absolute;top:12px;left:12px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;background:#fff;padding:3px 8px;z-index:2}
 .card .q{position:absolute;left:0;right:0;bottom:0;background:rgba(255,255,255,.92);padding:10px;text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;transform:translateY(100%);transition:transform .35s;z-index:2}
 .card:hover .q{transform:none}
 .card h3{font-size:13px;font-weight:400;margin-top:12px}.card .pr{color:var(--mute)}
 .pp{display:grid;grid-template-columns:1.3fr 1fr;gap:0}
-.gal{display:grid;gap:4px}.gal .im{aspect-ratio:3/4;background:var(--tone);display:flex;align-items:center;justify-content:center;color:var(--mute);position:relative;overflow:hidden}
-.gal img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.gal{display:grid;gap:4px}.gal .im{aspect-ratio:3/4;background:radial-gradient(120% 80% at 50% 30%,#f7f4ef 0%,var(--tone) 70%);position:relative;overflow:hidden}
+.gal .sl{position:absolute;inset:0;height:auto}
 .info{padding:48px 56px;position:sticky;top:64px;align-self:start}
 .info h1{font-size:34px;line-height:1.15}.info .pr{font-size:18px;margin:12px 0 28px}
 .sizes{display:flex;gap:8px;margin:10px 0 24px;flex-wrap:wrap}
@@ -115,22 +125,35 @@ section{padding:48px 16px}.hero{padding:32px 16px}
 <div class="srch" id="srch"><div style="display:flex;gap:16px"><input id="si" placeholder="Поиск по названию, категории, цвету" autocomplete="off"><button class="lk" id="sx">Закрыть</button></div><div class="sres" id="sr"></div></div>
 <div class="toast" id="toast"></div>
 <script>
-// ВАЖНО: фото товаров на natalyagluhova.ru подгружаются скриптом, поэтому в данных поле imgs пустое.
-// Вставьте ссылки на фото: imgs:["https://.../1.jpg","https://.../2.jpg"] — галерея, hover и корзина подхватят их сами.
 const CATS=[["novinki","Новинки"],["platya","Платья"],["yubki","Юбки"],["kostyumy","Костюмы / комплекты"],["kardigany","Кардиганы"],["svitery","Свитеры и джемперы"]];
 const CN=Object.fromEntries(CATS);
 const P=[
-["dzhemper-sherst","Джемпер из вискозы в голубом цвете",7500,["svitery"],true,["M","XS/S"],"Джемпер из вискозы голубого цвета."],
-["kardigan","Кардиган",8500,["kardigany"],false,["M","XS/S"],"Кардиган лаконичного кроя."],
-["kardigan-1","Кардиган",8500,["kardigany"],false,["M","XS/S"],"Кардиган лаконичного кроя."],
-["kardigan-v-rozovom-cvete-1","Кардиган в красном цвете",8500,["kardigany"],true,["единый размер"],"Кардиган красного цвета."],
-["kardigan-v-rozovom-cvete","Кардиган в розовом цвете",8500,["kardigany"],true,["единый размер"],"Кардиган розового цвета."],
-["komlekt-kardigan-s-yubkoj-iz-viskozy","Комплект: кардиган с юбкой из вискозы",17500,["kostyumy","yubki","kardigany"],false,["единый размер"],"Комплект из кардигана и юбки макси из вискозы."],
-["yubka-molochnogo-cveta","Комплект из вискозы",12500,["kostyumy","yubki"],false,["единый размер"],"Комплект из вискозы молочного цвета."],
-["kostyum-azhur-belyj","Костюм Ажур (белый)",15000,["kostyumy"],false,["M","XS/S"],"Ажурный костюм белого цвета."],
-["kostyum-v-bordovom-cvete-s-yubkoj-midi","Костюм в бордовом цвете с юбкой миди",9000,["kostyumy","yubki"],false,["M","XS/S"],"Костюм бордового цвета с юбкой миди."],
-["kostyum-1","Костюм в голубом цвете",15000,["kostyumy"],false,["единый размер"],"Костюм голубого цвета."]
-].map(a=>({id:a[0],name:a[1],price:a[2],cats:a[3],isNew:a[4],sizes:a[5],desc:a[6],imgs:[]}));
+["dzhemper-sherst","Джемпер из вискозы в голубом цвете",7500,["svitery"],true,["M","XS/S"],"Джемпер из вискозы голубого цвета.",["img/dzhemper-sherst-1.jpg","img/dzhemper-sherst-2.jpg","img/dzhemper-sherst-3.jpg","img/dzhemper-sherst-4.jpg"]],
+["kardigan","Кардиган",8500,["kardigany"],false,["M","XS/S"],"Кардиган лаконичного кроя.",["img/kardigan-1.jpg","img/kardigan-2.jpg"]],
+["kardigan-1","Кардиган",8500,["kardigany"],false,["M","XS/S"],"Кардиган лаконичного кроя.",["img/kardigan-1-1.jpg","img/kardigan-1-2.jpg","img/kardigan-1-3.jpg"]],
+["kardigan-v-rozovom-cvete-1","Кардиган в красном цвете",8500,["kardigany"],true,["единый размер"],"Кардиган красного цвета.",["img/kardigan-v-rozovom-cvete-1-1.jpg","img/kardigan-v-rozovom-cvete-1-2.jpg","img/kardigan-v-rozovom-cvete-1-3.jpg","img/kardigan-v-rozovom-cvete-1-4.jpg"]],
+["kardigan-v-rozovom-cvete","Кардиган в розовом цвете",8500,["kardigany"],true,["единый размер"],"Кардиган розового цвета.",["img/kardigan-v-rozovom-cvete-1.jpg","img/kardigan-v-rozovom-cvete-2.jpg","img/kardigan-v-rozovom-cvete-3.jpg"]],
+["komlekt-kardigan-s-yubkoj-iz-viskozy","Комплект: кардиган с юбкой из вискозы",17500,["kostyumy","yubki","kardigany"],false,["единый размер"],"Комплект из кардигана и юбки макси из вискозы.",["img/komlekt-kardigan-s-yubkoj-iz-viskozy-1.jpg"]],
+["yubka-molochnogo-cveta","Комплект из вискозы",12500,["kostyumy","yubki"],false,["единый размер"],"Комплект из вискозы молочного цвета.",["img/yubka-molochnogo-cveta-1.jpg","img/yubka-molochnogo-cveta-2.jpg"]],
+["kostyum-azhur-belyj","Костюм Ажур (белый)",15000,["kostyumy"],false,["M","XS/S"],"Ажурный костюм белого цвета.",["img/kostyum-azhur-belyj-1.jpg","img/kostyum-azhur-belyj-2.jpg","img/kostyum-azhur-belyj-3.jpg"]],
+["kostyum-v-bordovom-cvete-s-yubkoj-midi","Костюм в бордовом цвете с юбкой миди",9000,["kostyumy","yubki"],false,["M","XS/S"],"Костюм бордового цвета с юбкой миди.",["img/kostyum-v-bordovom-cvete-s-yubkoj-midi-1.jpg","img/kostyum-v-bordovom-cvete-s-yubkoj-midi-2.jpg","img/kostyum-v-bordovom-cvete-s-yubkoj-midi-3.jpg","img/kostyum-v-bordovom-cvete-s-yubkoj-midi-4.jpg"]],
+["kostyum-1","Костюм в голубом цвете",15000,["kostyumy"],false,["единый размер"],"Костюм голубого цвета.",["img/kostyum-1-1.jpg","img/kostyum-1-2.jpg"]],
+["elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov","Элегантное силуэтное платье из нежного тонкого хлопка для весенних образов",7000,["platya"],false,["S","M"],"Элегантное силуэтное платье из нежного тонкого хлопка для весенних образов.",["img/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-1.jpg","img/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-2.jpg","img/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-3.jpg","img/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-4.jpg","img/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-5.jpg"]],
+["kofta","Кофта",5000,["svitery"],true,["единый размер"],"Кофта.",["img/kofta-1.jpg"]],
+["kostyum-2","Костюм в черном цвете",11000,["kostyumy"],false,["единый размер"],"Костюм в черном цвете.",["img/kostyum-2-1.jpg","img/kostyum-2-2.jpg","img/kostyum-2-3.jpg","img/kostyum-2-4.jpg"]],
+["kostyum-3","Костюм в красном цвете",16000,["kostyumy"],true,["M","XS/S"],"Костюм в красном цвете.",["img/kostyum-3-1.jpg","img/kostyum-3-2.jpg"]],
+["kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty","Костюм из шерсти с вышивкой ручной работы",15500,["kostyumy"],false,["единый размер"],"Костюм из шерсти с вышивкой ручной работы.",["img/kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-1.jpg","img/kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-2.jpg","img/kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-3.jpg"]],
+["kostyum-iz-shersti-s-yubkoj-midi","Костюм из шерсти с юбкой миди",9000,["kostyumy"],false,["M","XS/S"],"Костюм из шерсти с юбкой миди.",["img/kostyum-iz-shersti-s-yubkoj-midi-1.jpg","img/kostyum-iz-shersti-s-yubkoj-midi-2.jpg","img/kostyum-iz-shersti-s-yubkoj-midi-3.jpg"]],
+["kostyum-v-krasnom-cvete","Костюм в розовом цвете",16000,["kostyumy"],true,["M","XS/S"],"Костюм в розовом цвете.",["img/kostyum-v-krasnom-cvete-1.jpg","img/kostyum-v-krasnom-cvete-2.jpg"]],
+["kostyum","Костюм в розовом цвете",15000,["kostyumy"],false,["M","XS/S"],"Костюм в розовом цвете.",["img/kostyum-1.jpg"]],
+["plate-bordovoe","Платье бордовое",7000,["platya"],false,["S","M"],"Платье бордовое.",["img/plate-bordovoe-1.jpg","img/plate-bordovoe-2.jpg","img/plate-bordovoe-3.jpg"]],
+["plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota","Платье из хлопка с вышивкой (ручная работа)",13000,["platya"],false,["единый размер"],"Платье из хлопка с вышивкой (ручная работа).",["img/plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-1.jpg","img/plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-2.jpg","img/plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-3.jpg"]],
+["plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov","Платье-кардиган из хлопка для весенних выходов",9000,["platya"],false,["S","M"],"Платье-кардиган из хлопка для весенних выходов.",["img/plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-1.jpg","img/plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-2.jpg","img/plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-3.jpg"]],
+["plate-midi-nebesnogo-golubogo-cveta-iz-nezhnogo-hlopka","Платье миди небесного голубого цвета из нежного хлопка",7000,["platya"],false,["единый размер"],"Платье миди небесного голубого цвета из нежного хлопка.",["img/plate-midi-nebesnogo-golubogo-cveta-iz-nezhnogo-hlopka-1.jpg","img/plate-midi-nebesnogo-golubogo-cveta-iz-nezhnogo-hlopka-2.jpg","img/plate-midi-nebesnogo-golubogo-cveta-iz-nezhnogo-hlopka-3.jpg"]],
+["plate-rozovoe","Платье розовое",7000,["platya"],false,["единый размер"],"Платье розовое.",["img/plate-rozovoe-1.jpg","img/plate-rozovoe-2.jpg","img/plate-rozovoe-3.jpg"]],
+["yubka-molochnogo-cveta-1","Юбка из вискозы",8500,["yubki"],true,["M","XS/S"],"Юбка из вискозы.",["img/yubka-molochnogo-cveta-1-1.jpg","img/yubka-molochnogo-cveta-1-2.jpg","img/yubka-molochnogo-cveta-1-3.jpg"]],
+["yubka","Юбка",9000,["yubki"],true,["единый размер"],"Юбка.",["img/yubka-1.jpg","img/yubka-2.jpg"]]
+].map(a=>({id:a[0],name:a[1],price:a[2],cats:a[3],isNew:a[4],sizes:a[5],desc:a[6],imgs:a[7]||[]}));
 P.forEach(p=>{if(p.isNew)p.cats=["novinki",...p.cats]});
 const $=s=>document.querySelector(s),app=$("#app");
 const money=n=>n.toLocaleString("ru-RU")+" ₽";
@@ -139,8 +162,10 @@ let favs=[];try{favs=JSON.parse(localStorage.getItem("gn_favs")||"[]")}catch(e){
 const save=()=>{try{localStorage.setItem("gn_cart",JSON.stringify(cart))}catch(e){}renderCart()};
 const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),1800)};
 const imgTag=(p,i)=>p.imgs[i]?`<img src="${p.imgs[i]}" alt="${p.name}" loading="lazy" onerror="this.remove()">`:"";
-const ph=p=>p.imgs.length?"":`<span>${p.name}</span>`;
-function card(p){return `<a class="card" href="#/p/${p.id}"><div class="im"><button class="fav" data-f="${p.id}" aria-label="В избранное">${favs.includes(p.id)?"♥":"♡"}</button>${p.isNew?'<span class="tag">Новинка</span>':""}${ph(p)}${imgTag(p,0)}${imgTag(p,1)}<div class="q">Подробнее</div></div><h3>${p.name}</h3><div class="pr">${money(p.price)}</div></a>`}
+const frame=(p,u,lazy)=>`<div class="sl"><div class="d3">${u?`<img src="${u}" alt="${p.name}"${lazy?' loading="lazy"':""} onerror="this.remove()">`:""}</div></div>`;
+const shots=p=>p.imgs.length?p.imgs:[null];
+const dots=p=>p.imgs.length>1?`<div class="dots">${p.imgs.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div>`:"";
+function card(p){return `<a class="card" href="#/p/${p.id}"><div class="im"><button class="fav" data-f="${p.id}" aria-label="В избранное">${favs.includes(p.id)?"♥":"♡"}</button>${p.isNew?'<span class="tag">Новинка</span>':""}<div class="vs">${shots(p).map(u=>frame(p,u,true)).join("")}</div>${dots(p)}<div class="q">Подробнее</div></div><h3>${p.name}</h3><div class="pr">${money(p.price)}</div></a>`}
 function nav(){const l=CATS.map(c=>`<a href="#/c/${c[0]}">${c[1]}</a>`).join("");$("#drop").innerHTML=l;$("#fc").innerHTML=l;
 $("#mob").innerHTML=l+'<a href="#/about">О бренде</a><a href="#/delivery">Доставка и оплата</a><a href="#/care">Уход</a><a href="#/contacts">Контакты</a><a href="#/fav">Избранное</a><a href="#/account">Аккаунт</a>'}
 function home(){const n=P.filter(p=>p.isNew).slice(0,4);
@@ -161,7 +186,7 @@ return `<div class="crumb">Главная / ${t}</div><div style="padding:8px 32
 <div class="grid">${l.map(card).join("")||'<p style="grid-column:1/-1">Ничего не найдено.</p>'}</div>`}
 let sel="";
 function product(id){const p=P.find(x=>x.id===id);if(!p)return'<div class="txt"><h1 class="serif">Товар не найден</h1></div>';
-sel="";const g=(p.imgs.length?p.imgs:[null,null]).map(u=>`<div class="im">${u?`<img src="${u}" alt="${p.name}" onerror="this.remove()">`:p.name}</div>`).join("");
+sel="";const g=shots(p).map(u=>`<div class="im">${frame(p,u,false)}</div>`).join("");
 return `<div class="crumb"><a href="#/c/all">Каталог</a> / ${p.name}</div><div class="pp"><div class="gal">${g}</div><div class="info"><h1 class="serif">${p.name}</h1><div class="pr">${money(p.price)}</div>
 <p>${p.desc}</p><p style="margin-top:20px;font-size:11px;letter-spacing:.14em;text-transform:uppercase">Размер</p><div class="sizes">${p.sizes.map(s=>`<button class="sz" data-z="${s}">${s}</button>`).join("")}</div>
 <button class="btn fill w" id="add" data-id="${p.id}">Добавить в корзину</button>
@@ -237,5 +262,11 @@ const r=q?P.filter(p=>(p.name+" "+p.desc+" "+p.cats.map(c=>CN[c]).join(" ")).toL
 $("#sr").innerHTML=r.map(card).join("")||(q?"<p>Ничего не найдено</p>":"")};
 $("#sr").onclick=closeAll;
 addEventListener("scroll",()=>$("#hd").classList.toggle("sc",scrollY>10));
+document.addEventListener("scroll",e=>{const v=e.target;if(!v.classList||!v.classList.contains("vs"))return;
+const i=Math.round(v.scrollTop/v.clientHeight);v.parentNode.querySelectorAll(".dots i").forEach((d,k)=>d.classList.toggle("on",k===i))},true);
+const still=matchMedia("(prefers-reduced-motion:reduce)").matches;
+document.addEventListener("mousemove",e=>{if(still)return;const m=e.target.closest(".card .im,.gal .im");if(!m)return;const r=m.getBoundingClientRect();
+const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;m.style.setProperty("--ry",(x*16-4).toFixed(1)+"deg");m.style.setProperty("--rx",(-y*10+2).toFixed(1)+"deg")});
+document.addEventListener("mouseout",e=>{const m=e.target.closest(".card .im,.gal .im");if(m&&!m.contains(e.relatedTarget)){m.style.removeProperty("--ry");m.style.removeProperty("--rx")}});
 addEventListener("hashchange",route);nav();renderCart();$("#fn").textContent=favs.length;route();
 </script></body></html>
