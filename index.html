@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23111'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='28' fill='white' text-anchor='middle'%3EGN%3C/text%3E%3C/svg%3E">
 <title>Gluhova Natalya — трикотажная одежда</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fff;--fg:#111;--mute:#8a8a85;--line:#e6e4df;--tone:#efece6}
+:root{--bg:#fff;--fg:#111;--mute:#5c5c57;--line:#e6e4df;--tone:#efece6}
 @media(prefers-color-scheme:dark){:root{--bg:#fff;--fg:#111}}
 *{box-sizing:border-box;margin:0}
 html{scroll-behavior:smooth}
@@ -91,11 +92,14 @@ section{padding:48px 16px}.hero{padding:32px 16px}
 .pp{grid-template-columns:1fr}.gal{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:0}.gal .im{flex:0 0 100%;scroll-snap-align:start}
 .info{position:static;padding:24px 16px}.fg{grid-template-columns:1fr 1fr}.sres{grid-template-columns:1fr 1fr}.srch{padding:16px}
 .card .q{display:none}}
+.logo .gn{display:none}.fav{position:absolute;top:10px;right:10px;z-index:3;font-size:20px;width:32px;height:32px;line-height:32px;background:rgba(255,255,255,.85)}
+.f select{font:inherit;padding:12px;border:1px solid var(--line);background:#fff}.f input[type=checkbox]{width:auto;margin-right:8px}.f label{font-size:13px}.cl button{display:block;width:100%;text-align:left;padding:8px 12px;border:1px solid var(--line);border-top:0}
+@media(max-width:760px){.logo .full{display:none}.logo .gn{display:inline;font-size:22px;letter-spacing:.12em}}
 </style></head><body>
 <header id="hd">
 <nav><button class="lk" id="catBtn">Каталог</button><a class="lk hide-m" href="#/about">О бренде</a></nav>
-<a class="logo serif" href="#/">Gluhova Natalya</a>
-<div class="act"><button class="burger lk" id="bg">Меню</button><button class="lk" id="sb">Поиск</button><a class="lk hide" href="#/account">Аккаунт</a><button class="lk" id="cb">Корзина (<span id="cn">0</span>)</button></div>
+<a class="logo serif" href="#/"><span class="full">Gluhova Natalya</span><span class="gn">GN</span></a>
+<div class="act"><button class="burger lk" id="bg">Меню</button><button class="lk" id="sb">Поиск</button><a class="lk hide" href="#/fav">Избранное (<span id="fn">0</span>)</a><a class="lk hide" href="#/account">Аккаунт</a><button class="lk" id="cb">Корзина (<span id="cn">0</span>)</button></div>
 <div class="drop" id="drop"></div>
 </header>
 <div class="mob" id="mob"></div>
@@ -103,7 +107,7 @@ section{padding:48px 16px}.hero{padding:32px 16px}
 <footer><div class="fg">
 <div><div class="logo serif" style="text-align:left;font-size:22px">Gluhova Natalya</div><p style="margin-top:12px;max-width:280px;color:#444">Производство женской трикотажной одежды в Екатеринбурге.</p></div>
 <div><h4>Каталог</h4><div id="fc"></div></div>
-<div><h4>Информация</h4><a href="#/delivery">Доставка и оплата</a><a href="#/care">Уход за изделиями</a><a href="#/about">О бренде</a><a href="#/contacts">Контакты</a></div>
+<div><h4>Информация</h4><a href="#/delivery">Доставка и оплата</a><a href="#/care">Уход за изделиями</a><a href="#/refund">Возврат и обмен</a><a href="#/offer">Публичная оферта</a><a href="#/privacy">Политика конфиденциальности</a><a href="#/about">О бренде</a><a href="#/contacts">Контакты</a></div>
 <div><h4>Контакты</h4><a href="tel:+79603047977">+7 (960) 304-79-77</a><a href="mailto:Kerzhaeva@gmail.com">Kerzhaeva@gmail.com</a><a href="https://wa.me/79603047977">WhatsApp</a><a href="https://t.me/+79603047977">Telegram</a><a href="https://www.instagram.com/natalkagluhova">Instagram</a><span style="color:#444">Ежедневно 8:00–21:00</span></div>
 </div><div class="cp">© 2025–2026 ИП Шнайдер Наталья Анатольевна · ИНН 211301663799 · <a style="display:inline" href="#/privacy">Обработка персональных данных</a></div></footer>
 <div class="ov" id="ov"></div>
@@ -131,13 +135,14 @@ P.forEach(p=>{if(p.isNew)p.cats=["novinki",...p.cats]});
 const $=s=>document.querySelector(s),app=$("#app");
 const money=n=>n.toLocaleString("ru-RU")+" ₽";
 let cart=[];try{cart=JSON.parse(localStorage.getItem("gn_cart")||"[]")}catch(e){}
+let favs=[];try{favs=JSON.parse(localStorage.getItem("gn_favs")||"[]")}catch(e){}
 const save=()=>{try{localStorage.setItem("gn_cart",JSON.stringify(cart))}catch(e){}renderCart()};
 const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),1800)};
 const imgTag=(p,i)=>p.imgs[i]?`<img src="${p.imgs[i]}" alt="${p.name}" loading="lazy" onerror="this.remove()">`:"";
 const ph=p=>p.imgs.length?"":`<span>${p.name}</span>`;
-function card(p){return `<a class="card" href="#/p/${p.id}"><div class="im">${p.isNew?'<span class="tag">Новинка</span>':""}${ph(p)}${imgTag(p,0)}${imgTag(p,1)}<div class="q">Подробнее</div></div><h3>${p.name}</h3><div class="pr">${money(p.price)}</div></a>`}
+function card(p){return `<a class="card" href="#/p/${p.id}"><div class="im"><button class="fav" data-f="${p.id}" aria-label="В избранное">${favs.includes(p.id)?"♥":"♡"}</button>${p.isNew?'<span class="tag">Новинка</span>':""}${ph(p)}${imgTag(p,0)}${imgTag(p,1)}<div class="q">Подробнее</div></div><h3>${p.name}</h3><div class="pr">${money(p.price)}</div></a>`}
 function nav(){const l=CATS.map(c=>`<a href="#/c/${c[0]}">${c[1]}</a>`).join("");$("#drop").innerHTML=l;$("#fc").innerHTML=l;
-$("#mob").innerHTML=l+'<a href="#/about">О бренде</a><a href="#/delivery">Доставка и оплата</a><a href="#/care">Уход</a><a href="#/contacts">Контакты</a><a href="#/account">Аккаунт</a>'}
+$("#mob").innerHTML=l+'<a href="#/about">О бренде</a><a href="#/delivery">Доставка и оплата</a><a href="#/care">Уход</a><a href="#/contacts">Контакты</a><a href="#/fav">Избранное</a><a href="#/account">Аккаунт</a>'}
 function home(){const n=P.filter(p=>p.isNew).slice(0,4);
 return `<div class="hero"><div><h1 class="serif">Ваш стиль, ваша уникальность</h1><p>Женский трикотаж · Екатеринбург</p><p><a class="btn fill" href="#/c/all">Смотреть коллекцию</a></p></div></div>
 <section><div class="tl"><h2 class="serif">Новинки</h2><a class="lk" href="#/c/novinki">Все</a></div><div class="grid" style="padding:0">${n.map(card).join("")}</div></section>
@@ -173,17 +178,48 @@ const pages={about:["О бренде","Gluhova Natalya создан, чтобы 
 delivery:["Доставка и оплата","Актуальные условия доставки и оплаты уточняйте на natalyagluhova.ru/dostavka-i-oplata-produkcii или у менеджера: +7 (960) 304-79-77."],
 care:["Уход за изделиями","Подробные рекомендации по уходу — на natalyagluhova.ru/uhod-za-izdeliyami. Трикотаж рекомендуем стирать деликатно и сушить в горизонтальном положении."],
 contacts:["Контакты","Екатеринбург · ежедневно 8:00–21:00","Тел.: +7 (960) 304-79-77 · E-mail: Kerzhaeva@gmail.com","WhatsApp, Telegram, Instagram @natalkagluhova"],
+refund:["Возврат и обмен","Возврат товара надлежащего качества возможен в течение 14 дней с момента получения, если сохранены товарный вид, бирки и потребительские свойства (ст. 25 Закона «О защите прав потребителей»).","Чтобы оформить возврат или обмен, напишите на Kerzhaeva@gmail.com или в WhatsApp +7 (960) 304-79-77, указав номер заказа. Деньги возвращаются тем же способом, которым был оплачен заказ.","[Текст нужно проверить и уточнить у юриста: сроки, расходы на обратную доставку, исключения.]"],
+offer:["Публичная оферта","Продавец: ИП Шнайдер Наталья Анатольевна, ИНН 211301663799. Оформляя заказ на сайте, покупатель принимает условия настоящей оферты.","Предмет договора — продажа товаров, представленных в каталоге. Цена и наличие указаны на сайте. Оплата — онлайн банковской картой или через СБП. Доставка — СДЭК.","[Полный текст оферты подготовьте с юристом.]"],
 privacy:["Персональные данные","Условия обработки персональных данных — natalyagluhova.ru/users/agreement"]};
 function txt(k){const a=pages[k];return `<div class="txt"><h1 class="serif">${a[0]}</h1>${a.slice(1).map(t=>`<p>${t}</p>`).join("")}</div>`}
-function checkout(){const t=cart.reduce((s,c)=>s+c.q*P.find(p=>p.id===c.id).price,0);
-return `<div class="txt"><h1 class="serif">Оформление заказа</h1><p>Итого: ${money(t)}</p><div class="f"><input id="n" placeholder="Имя"><input id="ph" placeholder="Телефон"><input id="ad" placeholder="Адрес доставки"><button class="btn fill" id="send">Отправить заказ</button></div></div>`}
+let CK={city:null,cost:null,t:null};
+const api=(u,o)=>fetch("/api/"+u,o).then(r=>r.json());
+const sub=()=>cart.reduce((s,c)=>s+c.q*P.find(p=>p.id===c.id).price,0);
+function sumUpd(){const e=$("#sum");if(e)e.innerHTML=`Товары: ${money(sub())}<br>Доставка: ${CK.cost==null?"выберите город":money(CK.cost)}<br><b>Итого: ${money(sub()+(CK.cost||0))}</b>`}
+async function calc(){if(!CK.city)return;const d=$("#dt").value==="cdek_door";$("#dc").textContent="Считаем…";
+try{const r=await api(`cdek?action=tariff&to=${CK.city.code}&door=${d?1:0}&n=${cart.reduce((s,c)=>s+c.q,0)}`);CK.cost=r.cost;$("#dc").textContent=r.cost!=null?`СДЭК: ${money(r.cost)}, срок ${r.min}–${r.max} дн.`:"Не удалось рассчитать доставку"}catch(e){CK.cost=null;$("#dc").textContent="Ошибка расчёта"}sumUpd();
+$("#pv").style.display=d?"none":"block";if(!d){const r=await api("cdek?action=pvz&city="+CK.city.code).catch(()=>[]);$("#pv").innerHTML=(Array.isArray(r)?r:[]).map(x=>`<option value="${x.code}">${x.location.address_full||x.location.address}</option>`).join("")||"<option value=''>Пунктов нет</option>"}}
+function checkout(){setTimeout(sumUpd,0);CK={city:null,cost:null};
+return `<div class="txt"><h1 class="serif">Оформление заказа</h1><div class="f" style="max-width:520px">
+<select id="dt"><option value="cdek_pvz">СДЭК — пункт выдачи</option><option value="cdek_door">СДЭК — курьер</option></select>
+<input id="cy" placeholder="Город" autocomplete="off"><div class="cl" id="cl"></div><select id="pv"></select>
+<input id="ad" placeholder="Адрес (для курьера)"><div id="dc" style="color:var(--mute)"></div>
+<input id="n" placeholder="Имя"><input id="ph" placeholder="Телефон" type="tel"><input id="em" placeholder="E-mail" type="email">
+<label><input type="checkbox" id="sub">Хочу получать рассылку</label>
+<label><input type="checkbox" id="ag">Согласен с <a href="#/offer" style="text-decoration:underline">офертой</a> и <a href="#/privacy" style="text-decoration:underline">политикой</a></label>
+<div id="sum"></div><button class="btn fill" id="pay">Перейти к оплате</button></div></div>`}
+let ct;document.addEventListener("input",e=>{if(e.target.id!=="cy")return;clearTimeout(ct);const q=e.target.value.trim();if(q.length<2)return;
+ct=setTimeout(async()=>{const r=await api("cdek?action=cities&q="+encodeURIComponent(q)).catch(()=>[]);$("#cl").innerHTML=(Array.isArray(r)?r:[]).map(c=>`<button data-city="${c.code}" data-cn="${c.city}">${c.city}${c.region?", "+c.region:""}</button>`).join("")},300)});
+document.addEventListener("change",e=>{if(e.target.id==="dt")calc()});
+async function pay(){const g=i=>$("#"+i).value.trim();
+if(!cart.length)return toast("Корзина пуста");if(!CK.city)return toast("Выберите город");if(!g("n")||!g("ph")||!g("em"))return toast("Заполните контакты");if(!$("#ag").checked)return toast("Подтвердите согласие");
+$("#pay").disabled=true;
+try{const r=await api("create-order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items:cart.map(c=>({id:c.id,size:c.size,q:c.q})),contact:{name:g("n"),phone:g("ph"),email:g("em")},delivery:{type:$("#dt").value,city_code:CK.city.code,city:CK.city.name,pvz:$("#pv").value,address:g("ad")},subscribe:$("#sub").checked})});
+if(r.confirmation_url)location.href=r.confirmation_url;else{toast(r.error||"Ошибка оплаты");$("#pay").disabled=false}}catch(e){toast("Сервер недоступен");$("#pay").disabled=false}}
+function toggleFav(id){favs=favs.includes(id)?favs.filter(x=>x!==id):[...favs,id];try{localStorage.setItem("gn_favs",JSON.stringify(favs))}catch(e){}
+document.querySelectorAll(`.fav[data-f="${id}"]`).forEach(b=>b.textContent=favs.includes(id)?"♥":"♡");$("#fn").textContent=favs.length;if(location.hash==="#/fav")route()}
+function favPage(){const l=P.filter(p=>favs.includes(p.id));return `<div style="padding:32px"><h1 class="serif" style="font-size:48px">Избранное</h1></div><div class="grid">${l.map(p=>card(p)+`<button class="btn w" style="grid-column:auto" data-fc="${p.id}">В корзину</button>`).join("")||'<p style="grid-column:1/-1">Пока пусто. Нажмите ♡ на карточке товара.</p>'}</div>`.replace(/<\/a><button/g,"</a><button")}
 function account(){return `<div class="txt"><h1 class="serif">Аккаунт</h1><div class="f"><input placeholder="E-mail"><input type="password" placeholder="Пароль"><button class="btn fill" onclick="toast('Подключите бэкенд авторизации')">Войти</button></div></div>`}
 function route(){const h=location.hash.slice(2).split("/");let v;
-if(!h[0])v=home();else if(h[0]==="c")v=catalog(h[1]||"all");else if(h[0]==="p")v=product(h[1]);else if(h[0]==="checkout")v=checkout();else if(h[0]==="account")v=account();else v=pages[h[0]]?txt(h[0]):home();
+if(!h[0])v=home();else if(h[0]==="c")v=catalog(h[1]||"all");else if(h[0]==="p")v=product(h[1]);else if(h[0]==="checkout")v=checkout();else if(h[0]==="fav")v=favPage();else if(h[0]==="order-ok"){cart=[];save();v='<div class="txt"><h1 class="serif">Спасибо за заказ!</h1><p>Оплата прошла, подтверждение придёт на e-mail.</p></div>'}else if(h[0]==="account")v=account();else v=pages[h[0]]?txt(h[0]):home();
 app.innerHTML=v;app.style.animation="none";app.offsetHeight;app.style.animation="";scrollTo(0,0);$("#mob").classList.remove("open");$("#drop").classList.remove("open");closeAll()}
 function closeAll(){["cart","srch"].forEach(i=>$("#"+i).classList.remove("open"));$("#ov").classList.remove("open")}
 function open(i){closeAll();$("#"+i).classList.add("open");$("#ov").classList.add("open");if(i==="srch")setTimeout(()=>$("#si").focus(),300)}
 document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;
+if(t.dataset.f){e.preventDefault();toggleFav(t.dataset.f);return}
+if(t.dataset.fc){const p=P.find(x=>x.id===t.dataset.fc);if(p.sizes.length===1){addToCart(p.id,p.sizes[0]);open("cart")}else{toast("Выберите размер на странице товара");location.hash="#/p/"+p.id}return}
+if(t.dataset.city){CK.city={code:t.dataset.city,name:t.dataset.cn};$("#cy").value=t.dataset.cn;$("#cl").innerHTML="";calc()}
+if(t.id==="pay")pay();
 if(t.dataset.s!==undefined){F.size=F.size===t.dataset.s?"":t.dataset.s;route()}
 if(t.dataset.z){sel=t.dataset.z;document.querySelectorAll(".sz").forEach(b=>b.classList.toggle("on",b===t))}
 if(t.id==="add"){const p=P.find(x=>x.id===t.dataset.id);if(!sel){if(p.sizes.length===1)sel=p.sizes[0];else{toast("Выберите размер");return}}addToCart(p.id,sel);open("cart")}
@@ -201,5 +237,5 @@ const r=q?P.filter(p=>(p.name+" "+p.desc+" "+p.cats.map(c=>CN[c]).join(" ")).toL
 $("#sr").innerHTML=r.map(card).join("")||(q?"<p>Ничего не найдено</p>":"")};
 $("#sr").onclick=closeAll;
 addEventListener("scroll",()=>$("#hd").classList.toggle("sc",scrollY>10));
-addEventListener("hashchange",route);nav();renderCart();route();
+addEventListener("hashchange",route);nav();renderCart();$("#fn").textContent=favs.length;route();
 </script></body></html>
