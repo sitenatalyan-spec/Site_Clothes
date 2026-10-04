@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gluhova Natalya — трикотажная одежда</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--fg:#111;--mute:#8a8a85;--line:#e6e4df;--tone:#efece6}
+@media(prefers-color-scheme:dark){:root{--bg:#fff;--fg:#111}}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font:300 14px/1.6 Inter,Helvetica,Arial,sans-serif;color:var(--fg);background:var(--bg);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.serif{font-family:"Cormorant Garamond",Georgia,serif;font-weight:400}
+header{position:sticky;top:0;z-index:20;background:var(--bg);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:64px;padding:0 32px;border-bottom:1px solid transparent;transition:border-color .3s}
+header.sc{border-color:var(--line)}
+header nav,header .act{display:flex;gap:28px;align-items:center}header .act{justify-content:flex-end}
+.logo{font-size:26px;letter-spacing:.14em;text-transform:uppercase;text-align:center}
+.lk{font-size:11px;letter-spacing:.14em;text-transform:uppercase;position:relative;padding:4px 0}
+.lk:after{content:"";position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--fg);transition:width .3s}
+.lk:hover:after,.lk.on:after{width:100%}
+.burger{display:none}
+.drop{position:absolute;left:0;right:0;top:64px;background:var(--bg);border-bottom:1px solid var(--line);padding:28px 32px;display:none;gap:40px}
+.drop.open{display:flex}.drop a{font-size:22px}
+main{min-height:70vh;animation:in .5s}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+.hero{height:calc(100vh - 64px);min-height:480px;background:var(--tone);display:flex;align-items:flex-end;padding:48px 32px;position:relative}
+.hero h1{font-size:clamp(40px,7vw,96px);line-height:1;max-width:11em}
+.hero p{margin-top:20px}
+.btn{display:inline-block;border:1px solid var(--fg);padding:14px 34px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;transition:.3s}
+.btn:hover,.btn.fill{background:var(--fg);color:#fff}.btn.fill:hover{background:#fff;color:var(--fg)}
+.btn.w{width:100%;text-align:center}
+section{padding:72px 32px}
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.cat{aspect-ratio:3/4;background:var(--tone);display:flex;align-items:flex-end;padding:20px;font-size:28px;position:relative;overflow:hidden}
+.cat img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1s}.cat:hover img{transform:scale(1.04)}
+.cat span{position:relative}
+.tl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:28px}
+.tl h2{font-size:36px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 32px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.bar .tabs{display:flex;gap:22px;flex-wrap:wrap}
+.bar select{font:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border:0;background:none;cursor:pointer}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);padding:5px 12px;font-size:12px;transition:.2s}.chip.on{background:var(--fg);color:#fff;border-color:var(--fg)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px 16px;padding:32px}
+.card .im{aspect-ratio:3/4;background:var(--tone);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;color:var(--mute);font-size:12px}
+.card .im img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .6s}
+.card .im img+img{opacity:0}.card:hover .im img+img{opacity:1}
+.card .tag{position:absolute;top:12px;left:12px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;background:#fff;padding:3px 8px;z-index:2}
+.card .q{position:absolute;left:0;right:0;bottom:0;background:rgba(255,255,255,.92);padding:10px;text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;transform:translateY(100%);transition:transform .35s;z-index:2}
+.card:hover .q{transform:none}
+.card h3{font-size:13px;font-weight:400;margin-top:12px}.card .pr{color:var(--mute)}
+.pp{display:grid;grid-template-columns:1.3fr 1fr;gap:0}
+.gal{display:grid;gap:4px}.gal .im{aspect-ratio:3/4;background:var(--tone);display:flex;align-items:center;justify-content:center;color:var(--mute);position:relative;overflow:hidden}
+.gal img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.info{padding:48px 56px;position:sticky;top:64px;align-self:start}
+.info h1{font-size:34px;line-height:1.15}.info .pr{font-size:18px;margin:12px 0 28px}
+.sizes{display:flex;gap:8px;margin:10px 0 24px;flex-wrap:wrap}
+.sz{min-width:52px;padding:10px 14px;border:1px solid var(--line);font-size:12px}.sz.on{border-color:var(--fg)}
+.acc details{border-top:1px solid var(--line);padding:14px 0}.acc summary{cursor:pointer;font-size:11px;letter-spacing:.14em;text-transform:uppercase;list-style:none}
+.acc p{margin-top:10px;color:#444}
+.crumb{padding:16px 32px;font-size:12px;color:var(--mute)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:.3s;z-index:40}.ov.open{opacity:1;pointer-events:auto}
+.side{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:#fff;z-index:50;transform:translateX(100%);transition:transform .4s;padding:28px;display:flex;flex-direction:column}
+.side.open{transform:none}
+.side .hd{display:flex;justify-content:space-between;margin-bottom:20px;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.items{flex:1;overflow:auto}
+.it{display:grid;grid-template-columns:80px 1fr;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.it .im{aspect-ratio:3/4;background:var(--tone);position:relative;overflow:hidden}.it img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.qty{display:inline-flex;border:1px solid var(--line);margin-top:6px}.qty button{width:28px;height:28px}.qty span{width:28px;text-align:center;line-height:28px}
+.srch{position:fixed;left:0;right:0;top:0;background:#fff;z-index:50;padding:24px 32px;transform:translateY(-100%);transition:transform .4s;max-height:100vh;overflow:auto}
+.srch.open{transform:none}
+.srch input,.f input{width:100%;font:400 28px "Cormorant Garamond",serif;border:0;border-bottom:1px solid var(--fg);padding:8px 0;outline:0;background:none}
+.sres{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:24px}
+.f{display:grid;gap:16px;max-width:420px}.f input{font:300 14px Inter;border:1px solid var(--line);padding:12px}
+.txt{max-width:720px;margin:0 auto;padding:64px 24px}.txt h1{font-size:44px;margin-bottom:24px}.txt p{margin-bottom:14px}
+footer{background:var(--tone);padding:64px 32px 32px;margin-top:40px}
+.fg{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px}
+footer h4{font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;font-weight:500}
+footer a{display:block;margin-bottom:6px;color:#444}footer a:hover{color:#000}
+.cp{margin-top:48px;color:var(--mute);font-size:12px}
+.mob{position:fixed;inset:0;background:#fff;z-index:45;padding:80px 24px 24px;transform:translateX(-100%);transition:transform .4s;display:flex;flex-direction:column;gap:14px}
+.mob.open{transform:none}.mob a{font-size:30px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);background:var(--fg);color:#fff;padding:12px 22px;font-size:12px;opacity:0;transition:.3s;z-index:60;pointer-events:none}.toast.on{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}.sres{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){
+header{padding:0 16px;height:56px;grid-template-columns:1fr auto 1fr}header nav .lk{display:none}.burger{display:block;z-index:46}
+.logo{font-size:18px}header .act{gap:16px}.act .hide{display:none}
+section{padding:48px 16px}.hero{padding:32px 16px}
+.cats{grid-template-columns:1fr 1fr;gap:8px}.cat{font-size:20px;padding:12px}
+.grid{grid-template-columns:1fr 1fr;gap:24px 8px;padding:16px 8px}.bar{padding:10px 16px}.drop{display:none!important}
+.pp{grid-template-columns:1fr}.gal{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:0}.gal .im{flex:0 0 100%;scroll-snap-align:start}
+.info{position:static;padding:24px 16px}.fg{grid-template-columns:1fr 1fr}.sres{grid-template-columns:1fr 1fr}.srch{padding:16px}
+.card .q{display:none}}
+</style></head><body>
+<header id="hd">
+<nav><button class="lk" id="catBtn">Каталог</button><a class="lk hide-m" href="#/about">О бренде</a></nav>
+<a class="logo serif" href="#/">Gluhova Natalya</a>
+<div class="act"><button class="burger lk" id="bg">Меню</button><button class="lk" id="sb">Поиск</button><a class="lk hide" href="#/account">Аккаунт</a><button class="lk" id="cb">Корзина (<span id="cn">0</span>)</button></div>
+<div class="drop" id="drop"></div>
+</header>
+<div class="mob" id="mob"></div>
+<main id="app"></main>
+<footer><div class="fg">
+<div><div class="logo serif" style="text-align:left;font-size:22px">Gluhova Natalya</div><p style="margin-top:12px;max-width:280px;color:#444">Производство женской трикотажной одежды в Екатеринбурге.</p></div>
+<div><h4>Каталог</h4><div id="fc"></div></div>
+<div><h4>Информация</h4><a href="#/delivery">Доставка и оплата</a><a href="#/care">Уход за изделиями</a><a href="#/about">О бренде</a><a href="#/contacts">Контакты</a></div>
+<div><h4>Контакты</h4><a href="tel:+79603047977">+7 (960) 304-79-77</a><a href="mailto:Kerzhaeva@gmail.com">Kerzhaeva@gmail.com</a><a href="https://wa.me/79603047977">WhatsApp</a><a href="https://t.me/+79603047977">Telegram</a><a href="https://www.instagram.com/natalkagluhova">Instagram</a><span style="color:#444">Ежедневно 8:00–21:00</span></div>
+</div><div class="cp">© 2025–2026 ИП Шнайдер Наталья Анатольевна · ИНН 211301663799 · <a style="display:inline" href="#/privacy">Обработка персональных данных</a></div></footer>
+<div class="ov" id="ov"></div>
+<aside class="side" id="cart"></aside>
+<div class="srch" id="srch"><div style="display:flex;gap:16px"><input id="si" placeholder="Поиск по названию, категории, цвету" autocomplete="off"><button class="lk" id="sx">Закрыть</button></div><div class="sres" id="sr"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+// ВАЖНО: фото товаров на natalyagluhova.ru подгружаются скриптом, поэтому в данных поле imgs пустое.
+// Вставьте ссылки на фото: imgs:["https://.../1.jpg","https://.../2.jpg"] — галерея, hover и корзина подхватят их сами.
+const CATS=[["novinki","Новинки"],["platya","Платья"],["yubki","Юбки"],["kostyumy","Костюмы / комплекты"],["kardigany","Кардиганы"],["svitery","Свитеры и джемперы"]];
+const CN=Object.fromEntries(CATS);
+const P=[
+["dzhemper-sherst","Джемпер из вискозы в голубом цвете",7500,["svitery"],true,["M","XS/S"],"Джемпер из вискозы голубого цвета."],
+["kardigan","Кардиган",8500,["kardigany"],false,["M","XS/S"],"Кардиган лаконичного кроя."],
+["kardigan-1","Кардиган",8500,["kardigany"],false,["M","XS/S"],"Кардиган лаконичного кроя."],
+["kardigan-v-rozovom-cvete-1","Кардиган в красном цвете",8500,["kardigany"],true,["единый размер"],"Кардиган красного цвета."],
+["kardigan-v-rozovom-cvete","Кардиган в розовом цвете",8500,["kardigany"],true,["единый размер"],"Кардиган розового цвета."],
+["komlekt-kardigan-s-yubkoj-iz-viskozy","Комплект: кардиган с юбкой из вискозы",17500,["kostyumy","yubki","kardigany"],false,["единый размер"],"Комплект из кардигана и юбки макси из вискозы."],
+["yubka-molochnogo-cveta","Комплект из вискозы",12500,["kostyumy","yubki"],false,["единый размер"],"Комплект из вискозы молочного цвета."],
+["kostyum-azhur-belyj","Костюм Ажур (белый)",15000,["kostyumy"],false,["M","XS/S"],"Ажурный костюм белого цвета."],
+["kostyum-v-bordovom-cvete-s-yubkoj-midi","Костюм в бордовом цвете с юбкой миди",9000,["kostyumy","yubki"],false,["M","XS/S"],"Костюм бордового цвета с юбкой миди."],
+["kostyum-1","Костюм в голубом цвете",15000,["kostyumy"],false,["единый размер"],"Костюм голубого цвета."]
+].map(a=>({id:a[0],name:a[1],price:a[2],cats:a[3],isNew:a[4],sizes:a[5],desc:a[6],imgs:[]}));
+P.forEach(p=>{if(p.isNew)p.cats=["novinki",...p.cats]});
+const $=s=>document.querySelector(s),app=$("#app");
+const money=n=>n.toLocaleString("ru-RU")+" ₽";
+let cart=[];try{cart=JSON.parse(localStorage.getItem("gn_cart")||"[]")}catch(e){}
+const save=()=>{try{localStorage.setItem("gn_cart",JSON.stringify(cart))}catch(e){}renderCart()};
+const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),1800)};
+const imgTag=(p,i)=>p.imgs[i]?`<img src="${p.imgs[i]}" alt="${p.name}" loading="lazy" onerror="this.remove()">`:"";
+const ph=p=>p.imgs.length?"":`<span>${p.name}</span>`;
+function card(p){return `<a class="card" href="#/p/${p.id}"><div class="im">${p.isNew?'<span class="tag">Новинка</span>':""}${ph(p)}${imgTag(p,0)}${imgTag(p,1)}<div class="q">Подробнее</div></div><h3>${p.name}</h3><div class="pr">${money(p.price)}</div></a>`}
+function nav(){const l=CATS.map(c=>`<a href="#/c/${c[0]}">${c[1]}</a>`).join("");$("#drop").innerHTML=l;$("#fc").innerHTML=l;
+$("#mob").innerHTML=l+'<a href="#/about">О бренде</a><a href="#/delivery">Доставка и оплата</a><a href="#/care">Уход</a><a href="#/contacts">Контакты</a><a href="#/account">Аккаунт</a>'}
+function home(){const n=P.filter(p=>p.isNew).slice(0,4);
+return `<div class="hero"><div><h1 class="serif">Ваш стиль, ваша уникальность</h1><p>Женский трикотаж · Екатеринбург</p><p><a class="btn fill" href="#/c/all">Смотреть коллекцию</a></p></div></div>
+<section><div class="tl"><h2 class="serif">Новинки</h2><a class="lk" href="#/c/novinki">Все</a></div><div class="grid" style="padding:0">${n.map(card).join("")}</div></section>
+<section style="padding-top:0"><div class="cats">${[["kostyumy","Костюмы / комплекты"],["kardigany","Кардиганы"],["svitery","Свитеры и джемперы"]].map(c=>`<a class="cat serif" href="#/c/${c[0]}"><span>${c[1]}</span></a>`).join("")}</div></section>
+<section style="background:var(--tone);text-align:center"><p class="serif" style="font-size:clamp(24px,3.4vw,44px);max-width:900px;margin:0 auto;line-height:1.3">Красота может выражаться в простоте. Лаконичный дизайн, премиальные материалы, удобный крой и длина макси.</p></section>`}
+let F={sort:"def",size:""};
+function catalog(id){const t=id==="all"?"Коллекция":CN[id]||"Коллекция";
+let l=P.filter(p=>id==="all"||p.cats.includes(id));
+const sizes=[...new Set(P.flatMap(p=>p.sizes))];
+if(F.size)l=l.filter(p=>p.sizes.includes(F.size));
+if(F.sort==="asc")l=[...l].sort((a,b)=>a.price-b.price);if(F.sort==="desc")l=[...l].sort((a,b)=>b.price-a.price);
+return `<div class="crumb">Главная / ${t}</div><div style="padding:8px 32px 24px"><h1 class="serif" style="font-size:48px">${t}</h1></div>
+<div class="bar"><div class="tabs">${[["all","Все"],...CATS].map(c=>`<a class="lk ${c[0]===id?"on":""}" href="#/c/${c[0]}">${c[1]}</a>`).join("")}</div>
+<div class="chips">${sizes.map(s=>`<button class="chip ${F.size===s?"on":""}" data-s="${s}">${s}</button>`).join("")}</div>
+<select id="so"><option value="def">Сортировка</option><option value="asc" ${F.sort==="asc"?"selected":""}>Цена ↑</option><option value="desc" ${F.sort==="desc"?"selected":""}>Цена ↓</option></select></div>
+<div class="grid">${l.map(card).join("")||'<p style="grid-column:1/-1">Ничего не найдено.</p>'}</div>`}
+let sel="";
+function product(id){const p=P.find(x=>x.id===id);if(!p)return'<div class="txt"><h1 class="serif">Товар не найден</h1></div>';
+sel="";const g=(p.imgs.length?p.imgs:[null,null]).map(u=>`<div class="im">${u?`<img src="${u}" alt="${p.name}" onerror="this.remove()">`:p.name}</div>`).join("");
+return `<div class="crumb"><a href="#/c/all">Каталог</a> / ${p.name}</div><div class="pp"><div class="gal">${g}</div><div class="info"><h1 class="serif">${p.name}</h1><div class="pr">${money(p.price)}</div>
+<p>${p.desc}</p><p style="margin-top:20px;font-size:11px;letter-spacing:.14em;text-transform:uppercase">Размер</p><div class="sizes">${p.sizes.map(s=>`<button class="sz" data-z="${s}">${s}</button>`).join("")}</div>
+<button class="btn fill w" id="add" data-id="${p.id}">Добавить в корзину</button>
+<div class="acc" style="margin-top:32px"><details open><summary>Описание</summary><p>Производство Gluhova Natalya, Екатеринбург. Премиальные материалы, ручная отделка, комфортный крой.</p></details>
+<details><summary>Доставка</summary><p>Отправляем по России. Подробные условия — на странице «Доставка и оплата».</p></details>
+<details><summary>Уход</summary><p>Деликатная стирка, сушка в горизонтальном положении. Подробнее — в разделе «Уход за изделиями».</p></details></div></div></div>
+<section><div class="tl"><h2 class="serif">Вам может понравиться</h2></div><div class="grid" style="padding:0">${P.filter(x=>x.id!==p.id).slice(0,4).map(card).join("")}</div></section>`}
+function addToCart(id,size){const p=P.find(x=>x.id===id);const e=cart.find(c=>c.id===id&&c.size===size);e?e.q++:cart.push({id,size,q:1});save();toast("Добавлено в корзину")}
+function renderCart(){$("#cn").textContent=cart.reduce((s,c)=>s+c.q,0);
+const tot=cart.reduce((s,c)=>s+c.q*P.find(p=>p.id===c.id).price,0);
+$("#cart").innerHTML=`<div class="hd"><span>Корзина</span><button id="cx">Закрыть</button></div><div class="items">${cart.map((c,i)=>{const p=P.find(x=>x.id===c.id);return `<div class="it"><div class="im">${imgTag(p,0)}</div><div><a href="#/p/${p.id}">${p.name}</a><div style="color:var(--mute)">Размер: ${c.size} · ${money(p.price)}</div><div class="qty"><button data-m="${i}">−</button><span>${c.q}</span><button data-p="${i}">+</button></div> <button data-d="${i}" style="font-size:12px;text-decoration:underline;margin-left:10px">Удалить</button></div></div>`}).join("")||'<p style="color:var(--mute)">Корзина пуста</p>'}</div>
+<div style="padding-top:16px"><div style="display:flex;justify-content:space-between;margin-bottom:14px"><span>Итого</span><b>${money(tot)}</b></div><button class="btn fill w" id="co">Оформить заказ</button></div>`}
+const pages={about:["О бренде","Gluhova Natalya создан, чтобы показать женщинам: не нужно открывать слишком многое или выбирать сложные конструкции, чтобы быть свободной и настоящей. Красота может выражаться в простоте.","Главный фокус бренда — сама женщина и её природная красота. Идеальная посадка, высококачественный крой, авторская ручная отделка."],
+delivery:["Доставка и оплата","Актуальные условия доставки и оплаты уточняйте на natalyagluhova.ru/dostavka-i-oplata-produkcii или у менеджера: +7 (960) 304-79-77."],
+care:["Уход за изделиями","Подробные рекомендации по уходу — на natalyagluhova.ru/uhod-za-izdeliyami. Трикотаж рекомендуем стирать деликатно и сушить в горизонтальном положении."],
+contacts:["Контакты","Екатеринбург · ежедневно 8:00–21:00","Тел.: +7 (960) 304-79-77 · E-mail: Kerzhaeva@gmail.com","WhatsApp, Telegram, Instagram @natalkagluhova"],
+privacy:["Персональные данные","Условия обработки персональных данных — natalyagluhova.ru/users/agreement"]};
+function txt(k){const a=pages[k];return `<div class="txt"><h1 class="serif">${a[0]}</h1>${a.slice(1).map(t=>`<p>${t}</p>`).join("")}</div>`}
+function checkout(){const t=cart.reduce((s,c)=>s+c.q*P.find(p=>p.id===c.id).price,0);
+return `<div class="txt"><h1 class="serif">Оформление заказа</h1><p>Итого: ${money(t)}</p><div class="f"><input id="n" placeholder="Имя"><input id="ph" placeholder="Телефон"><input id="ad" placeholder="Адрес доставки"><button class="btn fill" id="send">Отправить заказ</button></div></div>`}
+function account(){return `<div class="txt"><h1 class="serif">Аккаунт</h1><div class="f"><input placeholder="E-mail"><input type="password" placeholder="Пароль"><button class="btn fill" onclick="toast('Подключите бэкенд авторизации')">Войти</button></div></div>`}
+function route(){const h=location.hash.slice(2).split("/");let v;
+if(!h[0])v=home();else if(h[0]==="c")v=catalog(h[1]||"all");else if(h[0]==="p")v=product(h[1]);else if(h[0]==="checkout")v=checkout();else if(h[0]==="account")v=account();else v=pages[h[0]]?txt(h[0]):home();
+app.innerHTML=v;app.style.animation="none";app.offsetHeight;app.style.animation="";scrollTo(0,0);$("#mob").classList.remove("open");$("#drop").classList.remove("open");closeAll()}
+function closeAll(){["cart","srch"].forEach(i=>$("#"+i).classList.remove("open"));$("#ov").classList.remove("open")}
+function open(i){closeAll();$("#"+i).classList.add("open");$("#ov").classList.add("open");if(i==="srch")setTimeout(()=>$("#si").focus(),300)}
+document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;
+if(t.dataset.s!==undefined){F.size=F.size===t.dataset.s?"":t.dataset.s;route()}
+if(t.dataset.z){sel=t.dataset.z;document.querySelectorAll(".sz").forEach(b=>b.classList.toggle("on",b===t))}
+if(t.id==="add"){const p=P.find(x=>x.id===t.dataset.id);if(!sel){if(p.sizes.length===1)sel=p.sizes[0];else{toast("Выберите размер");return}}addToCart(p.id,sel);open("cart")}
+if(t.dataset.p!==undefined){cart[t.dataset.p].q++;save()}
+if(t.dataset.m!==undefined){const c=cart[t.dataset.m];c.q>1?c.q--:cart.splice(t.dataset.m,1);save()}
+if(t.dataset.d!==undefined){cart.splice(t.dataset.d,1);save()}
+if(t.id==="cx")closeAll();if(t.id==="co"){if(!cart.length)return toast("Корзина пуста");closeAll();location.hash="#/checkout"}
+if(t.id==="send"){if(!$("#n").value||!$("#ph").value)return toast("Заполните имя и телефон");cart=[];save();app.innerHTML='<div class="txt"><h1 class="serif">Спасибо!</h1><p>Заказ принят, мы свяжемся с вами.</p></div>'}
+});
+document.addEventListener("change",e=>{if(e.target.id==="so"){F.sort=e.target.value;route()}});
+$("#cb").onclick=()=>open("cart");$("#sb").onclick=()=>open("srch");$("#sx").onclick=closeAll;$("#ov").onclick=closeAll;
+$("#catBtn").onclick=()=>$("#drop").classList.toggle("open");$("#bg").onclick=()=>$("#mob").classList.toggle("open");
+$("#si").oninput=e=>{const q=e.target.value.toLowerCase().trim();
+const r=q?P.filter(p=>(p.name+" "+p.desc+" "+p.cats.map(c=>CN[c]).join(" ")).toLowerCase().includes(q)):[];
+$("#sr").innerHTML=r.map(card).join("")||(q?"<p>Ничего не найдено</p>":"")};
+$("#sr").onclick=closeAll;
+addEventListener("scroll",()=>$("#hd").classList.toggle("sc",scrollY>10));
+addEventListener("hashchange",route);nav();renderCart();route();
+</script></body></html>
