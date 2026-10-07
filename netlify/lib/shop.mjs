@@ -1,4 +1,5 @@
 import { getStore, getDeployStore } from "@netlify/blobs";
+import { fsStore } from "./fsstore.mjs";
 
 const IG = "https://graph.instagram.com";
 const CATS = [
@@ -11,7 +12,8 @@ const CATS = [
 
 const isProd = () => globalThis.Netlify?.context?.deploy?.context === "production";
 export const store = (name) =>
-  isProd() ? getStore({ name, consistency: "strong" }) : getDeployStore({ name, consistency: "strong" });
+  process.env.STORE_DIR ? fsStore(name)
+    : isProd() ? getStore({ name, consistency: "strong" }) : getDeployStore({ name, consistency: "strong" });
 
 export const emptyState = () => ({ products: {}, ig: {}, manual: {}, seen: {}, token: null, lastSync: null, log: [] });
 
