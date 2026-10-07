@@ -119,7 +119,9 @@ footer{padding:48px 16px calc(24px + env(safe-area-inset-bottom))}.fg{gap:28px 1
 .info{position:static;padding:24px 16px}.fg{grid-template-columns:1fr 1fr}.sres{grid-template-columns:1fr 1fr}.srch{padding:16px}
 .card .q{display:none}}
 .fav{position:absolute;top:10px;right:10px;z-index:3;font-size:20px;width:32px;height:32px;line-height:32px;background:rgba(255,255,255,.85)}
-.f select{font:inherit;padding:12px;border:1px solid var(--line);background:#fff}.f input[type=checkbox]{width:auto;margin-right:8px}.f label{font-size:13px}.cl button{display:block;width:100%;text-align:left;padding:8px 12px;border:1px solid var(--line);border-top:0}
+.f select{font:inherit;padding:12px;border:1px solid var(--line);background:#fff}.f input[type=checkbox]{width:auto;margin-right:8px}.f label{font-size:13px}.ac{position:relative}.cl{position:absolute;left:0;right:0;top:100%;z-index:30;background:#fff;border:1px solid var(--line);border-top:0;box-shadow:0 12px 24px rgba(0,0,0,.08);max-height:320px;overflow-y:auto}
+.cl button{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);font-size:14px}.cl button:last-child{border-bottom:0}
+.cl button b{font-weight:400}.cl button span{color:var(--mute);font-size:12px;text-align:right}.cl button.on,.cl button:hover{background:var(--tone)}.cl p{padding:11px 12px;color:var(--mute);font-size:13px}
 </style></head><body>
 <header id="hd">
 <nav><button class="burger" id="bg" aria-label="Меню" aria-expanded="false"><i></i><i></i></button><button class="lk" id="catBtn">Каталог</button><a class="lk hide-m" href="#/about">О бренде</a></nav>
@@ -233,24 +235,41 @@ function txt(k){const a=pages[k];return `<div class="txt"><h1 class="serif">${a[
 let CK={city:null,cost:null,t:null};
 const api=(u,o)=>fetch("/api/"+u,o).then(r=>r.json());
 const sub=()=>cart.reduce((s,c)=>s+c.q*(P.find(p=>p.id===c.id)||{price:0}).price,0);
-function sumUpd(){const e=$("#sum");if(e)e.innerHTML=`Товары: ${money(sub())}<br>Доставка: ${CK.cost==null?"выберите город":money(CK.cost)}<br><b>Итого: ${money(sub()+(CK.cost||0))}</b>`}
-async function calc(){if(!CK.city)return;const d=$("#dt").value==="cdek_door";$("#dc").textContent="Считаем…";
+function sumUpd(){const e=$("#sum");if(e)e.innerHTML=`Товары: ${money(sub())}<br>Доставка: ${CK.cost==null?(CK.city?"уточняется":"выберите город"):money(CK.cost)}<br><b>Итого: ${money(sub()+(CK.cost||0))}</b>`}
+let CITIES=null,acI=-1,acL=[];
+const nrm=x=>String(x).toLowerCase().replace(/ё/g,"е").replace(/[\s-]+/g," ").trim();
+function loadCities(){return CITIES?Promise.resolve(CITIES):fetch("cities.json").then(r=>r.json()).then(d=>CITIES=d.map(c=>({name:c[0],region:c[1],k:nrm(c[0])}))).catch(()=>CITIES=[])}
+function suggest(){const q=nrm($("#cy").value),box=$("#cl");acI=-1;
+if(q.length<2||!CITIES){acL=[];box.hidden=true;return}
+const a=[],b=[];for(const c of CITIES){if(c.k.startsWith(q))a.push(c);else if(c.k.split(" ").some(w=>w.startsWith(q)))b.push(c);if(a.length>=8)break}
+acL=a.concat(b).slice(0,8);
+box.innerHTML=acL.map((c,i)=>`<button type="button" data-ci="${i}"><b>${escH(c.name)}</b>${c.region?`<span>${escH(c.region)}</span>`:""}</button>`).join("")||'<p>Город не найден — проверьте название</p>';box.hidden=false}
+function pickCity(c){CK.city={name:c.name,region:c.region,code:null};$("#cy").value=c.name;$("#cl").hidden=true;resolveCdek()}
+async function resolveCdek(){const c=CK.city;$("#dc").textContent="Считаем доставку…";CK.cost=null;sumUpd();
+try{const r=await api("cdek?action=cities&q="+encodeURIComponent(c.name));const list=Array.isArray(r)?r:[];const reg=nrm(c.region).split(" ")[0]||"";
+const m=list.find(x=>nrm(x.city)===nrm(c.name)&&(!reg||nrm(x.region||"").includes(reg)))||list.find(x=>nrm(x.city)===nrm(c.name));
+if(CK.city!==c)return;if(!m)throw 0;c.code=m.code;calc()}catch(e){if(CK.city!==c)return;$("#pv").style.display="none";$("#dc").textContent="Стоимость доставки СДЭК пока недоступна. Оформить заказ можно по телефону +7 (960) 304-79-77."}}
+document.addEventListener("focusin",e=>{if(e.target.id==="cy")loadCities().then(suggest)});
+document.addEventListener("focusout",e=>{if(e.target.id==="cy")setTimeout(()=>{const b=$("#cl");if(b)b.hidden=true;if(!CK.city){const q=nrm($("#cy")?.value||"");const ex=(CITIES||[]).find(c=>c.k===q);if(ex)pickCity(ex)}},180)});
+document.addEventListener("keydown",e=>{if(e.target.id!=="cy"||$("#cl").hidden||!acL.length)return;
+if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();acI=(acI+(e.key==="ArrowDown"?1:-1)+acL.length)%acL.length;document.querySelectorAll("#cl button").forEach((x,i)=>x.classList.toggle("on",i===acI))}
+else if(e.key==="Enter"){e.preventDefault();pickCity(acL[Math.max(acI,0)])}else if(e.key==="Escape")$("#cl").hidden=true});
+async function calc(){if(!CK.city||!CK.city.code)return;const d=$("#dt").value==="cdek_door";$("#dc").textContent="Считаем…";
 try{const r=await api(`cdek?action=tariff&to=${CK.city.code}&door=${d?1:0}&n=${cart.reduce((s,c)=>s+c.q,0)}`);CK.cost=r.cost;$("#dc").textContent=r.cost!=null?`СДЭК: ${money(r.cost)}, срок ${r.min}–${r.max} дн.`:"Не удалось рассчитать доставку"}catch(e){CK.cost=null;$("#dc").textContent="Ошибка расчёта"}sumUpd();
 $("#pv").style.display=d?"none":"block";if(!d){const r=await api("cdek?action=pvz&city="+CK.city.code).catch(()=>[]);$("#pv").innerHTML=(Array.isArray(r)?r:[]).map(x=>`<option value="${x.code}">${x.location.address_full||x.location.address}</option>`).join("")||"<option value=''>Пунктов нет</option>"}}
 function checkout(){setTimeout(sumUpd,0);CK={city:null,cost:null};
 return `<div class="txt"><h1 class="serif">Оформление заказа</h1><div class="f" style="max-width:520px">
 <select id="dt"><option value="cdek_pvz">СДЭК — пункт выдачи</option><option value="cdek_door">СДЭК — курьер</option></select>
-<input id="cy" placeholder="Город" autocomplete="off"><div class="cl" id="cl"></div><select id="pv"></select>
+<div class="ac"><input id="cy" placeholder="Город — начните вводить" autocomplete="off" autocapitalize="words" spellcheck="false"><div class="cl" id="cl" hidden></div></div><select id="pv" style="display:none"></select>
 <input id="ad" placeholder="Адрес (для курьера)"><div id="dc" style="color:var(--mute)"></div>
 <input id="n" placeholder="Имя"><input id="ph" placeholder="Телефон" type="tel"><input id="em" placeholder="E-mail" type="email">
 <label><input type="checkbox" id="sub">Хочу получать рассылку</label>
 <label><input type="checkbox" id="ag">Согласен с <a href="#/offer" style="text-decoration:underline">офертой</a> и <a href="#/privacy" style="text-decoration:underline">политикой</a></label>
 <div id="sum"></div><button class="btn fill" id="pay">Перейти к оплате</button></div></div>`}
-let ct;document.addEventListener("input",e=>{if(e.target.id!=="cy")return;clearTimeout(ct);const q=e.target.value.trim();if(q.length<2)return;
-ct=setTimeout(async()=>{const r=await api("cdek?action=cities&q="+encodeURIComponent(q)).catch(()=>[]);$("#cl").innerHTML=(Array.isArray(r)?r:[]).map(c=>`<button data-city="${c.code}" data-cn="${c.city}">${c.city}${c.region?", "+c.region:""}</button>`).join("")},300)});
+document.addEventListener("input",e=>{if(e.target.id!=="cy")return;if(CK.city&&CK.city.name!==e.target.value){CK.city=null;CK.cost=null;$("#pv").style.display="none";$("#dc").textContent="";sumUpd()}loadCities().then(suggest)});
 document.addEventListener("change",e=>{if(e.target.id==="dt")calc()});
 async function pay(){const g=i=>$("#"+i).value.trim();
-if(!cart.length)return toast("Корзина пуста");if(!CK.city)return toast("Выберите город");if(!g("n")||!g("ph")||!g("em"))return toast("Заполните контакты");if(!$("#ag").checked)return toast("Подтвердите согласие");
+if(!cart.length)return toast("Корзина пуста");if(!CK.city){$("#cy").focus();return toast("Выберите город из списка подсказок")}if(!CK.city.code||CK.cost==null)return toast("Доставка СДЭК пока недоступна — позвоните нам: +7 (960) 304-79-77");if(!g("n")||!g("ph")||!g("em"))return toast("Заполните контакты");if(!$("#ag").checked)return toast("Подтвердите согласие");
 $("#pay").disabled=true;
 try{const r=await api("create-order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items:cart.map(c=>({id:c.id,size:c.size,q:c.q})),contact:{name:g("n"),phone:g("ph"),email:g("em")},delivery:{type:$("#dt").value,city_code:CK.city.code,city:CK.city.name,pvz:$("#pv").value,address:g("ad")},subscribe:$("#sub").checked})});
 if(r.confirmation_url)location.href=r.confirmation_url;else{toast(r.error||"Ошибка оплаты");$("#pay").disabled=false}}catch(e){toast("Сервер недоступен");$("#pay").disabled=false}}
@@ -303,7 +322,7 @@ function open(i){closeAll();$("#"+i).classList.add("open");$("#ov").classList.ad
 document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;
 if(t.dataset.f){e.preventDefault();toggleFav(t.dataset.f);return}
 if(t.dataset.fc){const p=P.find(x=>x.id===t.dataset.fc);if(soldOut(p))return toast("Нет в наличии");if(p.sizes.length===1){addToCart(p.id,p.sizes[0],1);open("cart")}else{toast("Выберите размер на странице товара");location.hash="#/p/"+p.id}return}
-if(t.dataset.city){CK.city={code:t.dataset.city,name:t.dataset.cn};$("#cy").value=t.dataset.cn;$("#cl").innerHTML="";calc()}
+if(t.dataset.ci!==undefined&&acL[+t.dataset.ci]){pickCity(acL[+t.dataset.ci]);return}
 if(t.id==="pay")pay();if(t.dataset.am){AU.mode=t.dataset.am;AU.step=0;route()}if(t.id&&t.id.startsWith("a-"))authAct(t.id);
 if(t.dataset.s!==undefined){F.size=F.size===t.dataset.s?"":t.dataset.s;route()}
 if(t.dataset.z){sel=t.dataset.z;document.querySelectorAll(".sz").forEach(b=>b.classList.toggle("on",b===t))}
