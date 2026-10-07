@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Управление — Gluhova Natalya</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--fg:#111;--mute:#5c5c57;--line:#e6e4df;--tone:#efece6;--ok:#2f6b3a;--bad:#a12a2a}
+*{box-sizing:border-box;margin:0}
+body{font:300 14px/1.5 Inter,Helvetica,Arial,sans-serif;color:var(--fg);background:var(--bg);padding:24px 16px 64px;max-width:1100px;margin:0 auto}
+h1,h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:400}h1{font-size:34px}h2{font-size:26px;margin:28px 0 12px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:1px solid var(--fg);padding:8px 14px;font-size:12px;letter-spacing:.06em}
+button.fill{background:var(--fg);color:#fff}button:disabled{opacity:.4;cursor:default}
+input,select,textarea{border:1px solid var(--line);padding:9px 10px;width:100%;background:#fff}
+label{display:grid;gap:4px;font-size:12px;color:var(--mute)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tabs{display:flex;gap:18px;border-bottom:1px solid var(--line);margin:20px 0 4px;flex-wrap:wrap}
+.tabs button{border:0;padding:10px 0;text-transform:uppercase;letter-spacing:.12em;font-size:11px}.tabs button.on{border-bottom:1px solid var(--fg)}
+.muted{color:var(--mute);font-size:12px}
+.item{display:grid;grid-template-columns:1fr auto;gap:8px 16px;padding:14px 0;border-bottom:1px solid var(--line);align-items:center}
+.item .nm{font-weight:400}.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);padding:4px 10px;font-size:12px}.chip.off{background:var(--tone);color:var(--mute);text-decoration:line-through}
+.badge{font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border:1px solid var(--line);margin-left:6px}
+.form{display:grid;gap:12px;max-width:560px}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap}.thumbs img{width:72px;height:96px;object-fit:cover}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--fg);color:#fff;padding:10px 18px;font-size:13px;opacity:0;transition:.3s;pointer-events:none}.toast.on{opacity:1}
+table{border-collapse:collapse;width:100%;font-size:13px}td,th{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+.scroll{overflow-x:auto}
+@media(max-width:640px){.item{grid-template-columns:1fr}}
+</style></head><body>
+<h1>Управление магазином</h1>
+<div id="login" class="form" style="margin-top:20px"><label>Пароль администратора<input id="pw" type="password" autocomplete="current-password"></label><div><button class="fill" id="enter">Войти</button></div></div>
+<div id="main" hidden>
+<p class="muted" id="status"></p>
+<div class="row" style="margin-top:12px"><button id="sync">Синхронизировать с Instagram</button><button id="logout">Выйти</button></div>
+<div class="tabs"><button data-tab="items" class="on">Товары и наличие</button><button data-tab="add">Добавить товар</button><button data-tab="orders">Заказы</button><button data-tab="log">Журнал</button></div>
+<section id="t-items"><p class="muted" style="margin:10px 0">Нажмите на размер, чтобы отметить, что его нет. «Авто» — вернуть наличие под управление Instagram.</p><div id="items"></div></section>
+<section id="t-add" hidden><h2>Новый товар</h2><div class="form">
+<label>Название<input id="f-name" maxlength="90"></label>
+<label>Цена, ₽<input id="f-price" type="number" min="1" step="1"></label>
+<label>Раздел<select id="f-cat"><option value="">—</option><option value="platya">Платья</option><option value="yubki">Юбки</option><option value="kostyumy">Костюмы / комплекты</option><option value="kardigany">Кардиганы</option><option value="svitery">Свитеры и джемперы</option></select></label>
+<label>Размеры через запятую (пусто — единый размер)<input id="f-sizes" placeholder="XS/S, M"></label>
+<label>Описание<textarea id="f-desc" rows="3" maxlength="300"></textarea></label>
+<label class="row" style="color:var(--fg)"><input id="f-new" type="checkbox" style="width:auto" checked> Отметить как новинку</label>
+<label>Фото (до 8)<input id="f-photos" type="file" accept="image/*" multiple></label>
+<div class="thumbs" id="f-thumbs"></div>
+<div><button class="fill" id="f-save">Сохранить товар</button></div></div></section>
+<section id="t-orders" hidden><h2>Заказы</h2><div class="scroll"><table><thead><tr><th>Дата</th><th>Заказ</th><th>Покупатель</th><th>Доставка</th><th>Товары</th><th>Сумма</th></tr></thead><tbody id="orders"></tbody></table></div></section>
+<section id="t-log" hidden><h2>Журнал</h2><div id="log"></div></section>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const $=s=>document.querySelector(s);
+const el=(t,a={},...k)=>{const e=document.createElement(t);for(const[x,v]of Object.entries(a)){if(x==="on")e.onclick=v;else if(x==="cls")e.className=v;else e.setAttribute(x,v)}for(const c of k)e.append(c);return e};
+const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),2200)};
+let KEY="";try{KEY=sessionStorage.getItem("gn_admin")||""}catch(e){}
+let S=null,photos=[];
+async function call(action,data={}){const r=await fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json","x-admin-key":KEY},body:JSON.stringify({action,...data})});
+const d=await r.json().catch(()=>({error:"Ошибка сервера"}));if(r.status===401){logout();throw new Error(d.error)}if(!r.ok)throw new Error(d.error||"Ошибка");return d}
+function logout(){KEY="";try{sessionStorage.removeItem("gn_admin")}catch(e){}$("#main").hidden=true;$("#login").hidden=false}
+async function load(){S=await call("state");$("#login").hidden=true;$("#main").hidden=false;render()}
+function stockOf(id){const m=S.manual[id]||{},g=S.ig[id]||{};return{out:m.out??g.out??false,sizesOut:m.sizesOut??g.sizesOut??[],manual:!!S.manual[id]}}
+function render(){
+$("#status").textContent=(S.igConfigured?"Instagram подключён":"Instagram не подключён (нет IG_ACCESS_TOKEN)")+" · последняя синхронизация: "+(S.lastSync?new Date(S.lastSync).toLocaleString("ru-RU"):"ещё не было");
+const list=[...S.products.map(p=>({...p,dyn:true})),...S.static];const box=$("#items");box.replaceChildren();
+for(const p of list){const st=stockOf(p.id);
+const chips=el("div",{cls:"chips"},...p.sizes.map(s=>el("button",{cls:"chip"+(st.sizesOut.includes(s)?" off":""),on:()=>setSizes(p,s)},s)));
+const info=el("div",{},el("div",{cls:"nm"},p.name,p.dyn?el("span",{cls:"badge"},p.source==="instagram"?"Instagram":"вручную"):"",p.hidden?el("span",{cls:"badge"},"скрыт"):"",st.manual?el("span",{cls:"badge"},"вручную"):""),
+el("div",{cls:"muted"},p.price.toLocaleString("ru-RU")+" ₽ · код: "+p.id),chips);
+const acts=el("div",{cls:"row"},
+el("button",{cls:st.out?"fill":"",on:()=>call("stock",{id:p.id,out:!st.out,sizesOut:st.sizesOut}).then(d=>{S=d;render();toast("Сохранено")}).catch(e=>toast(e.message))},st.out?"Нет в наличии":"В наличии"),
+st.manual?el("button",{on:()=>call("stock",{id:p.id,reset:true}).then(d=>{S=d;render()}).catch(e=>toast(e.message))},"Авто"):"",
+p.dyn?el("button",{on:()=>call("hide",{id:p.id,hidden:!p.hidden}).then(d=>{S=d;render()}).catch(e=>toast(e.message))},p.hidden?"Показать":"Скрыть"):"");
+box.append(el("div",{cls:"item"},info,acts))}
+$("#log").replaceChildren(...(S.log.length?S.log.map(l=>el("p",{cls:"muted"},new Date(l.at).toLocaleString("ru-RU")+" — "+l.text)):[el("p",{cls:"muted"},"Пока пусто")]))}
+function setSizes(p,s){const st=stockOf(p.id);const so=st.sizesOut.includes(s)?st.sizesOut.filter(x=>x!==s):[...st.sizesOut,s];
+call("stock",{id:p.id,out:st.out,sizesOut:so}).then(d=>{S=d;render();toast("Сохранено")}).catch(e=>toast(e.message))}
+async function shrink(file){const img=await createImageBitmap(file);const k=Math.min(1,1440/Math.max(img.width,img.height));
+const c=document.createElement("canvas");c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+return c.toDataURL("image/jpeg",.85).split(",")[1]}
+$("#f-photos").onchange=async e=>{const files=[...e.target.files].slice(0,8);$("#f-thumbs").replaceChildren();photos=[];
+for(const f of files){try{const d=await call("upload",{data:await shrink(f)});photos.push(d.url);$("#f-thumbs").append(el("img",{src:d.url,alt:""}))}catch(err){toast(err.message)}}};
+$("#f-save").onclick=async()=>{const sizes=$("#f-sizes").value.split(",").map(s=>s.trim()).filter(Boolean);
+try{S=await call("product",{name:$("#f-name").value,price:$("#f-price").value,cats:$("#f-cat").value?[$("#f-cat").value]:[],sizes,desc:$("#f-desc").value,isNew:$("#f-new").checked,imgs:photos});
+toast("Товар добавлен на сайт");photos=[];["#f-name","#f-price","#f-sizes","#f-desc","#f-photos"].forEach(s=>$(s).value="");$("#f-thumbs").replaceChildren();render()}catch(e){toast(e.message)}};
+async function loadOrders(){try{const d=await call("orders");$("#orders").replaceChildren(...d.orders.map(o=>el("tr",{},
+el("td",{},new Date(o.created).toLocaleString("ru-RU")),el("td",{},o.order_id+" · "+o.provider),
+el("td",{},o.name,el("br"),o.phone,el("br"),o.email),el("td",{},(o.delivery==="cdek_door"?"Курьер: ":"ПВЗ: ")+o.city+" "+(o.address||o.pvz||"")),
+el("td",{},...o.items.map(i=>el("div",{},i.name+" × "+i.q))),el("td",{},Number(o.total).toLocaleString("ru-RU")+" ₽"))))}catch(e){toast(e.message)}}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b));
+for(const t of["items","add","orders","log"])$("#t-"+t).hidden=t!==b.dataset.tab;if(b.dataset.tab==="orders")loadOrders()});
+$("#enter").onclick=()=>{KEY=$("#pw").value;try{sessionStorage.setItem("gn_admin",KEY)}catch(e){}load().catch(e=>toast(e.message))};
+$("#pw").onkeydown=e=>{if(e.key==="Enter")$("#enter").click()};
+$("#logout").onclick=logout;
+$("#sync").onclick=async e=>{e.target.disabled=true;try{S=await call("sync");render();toast(S.log[0]?S.log[0].text:"Готово")}catch(err){toast(err.message)}e.target.disabled=false};
+if(KEY)load().catch(()=>logout());
+</script></body></html>

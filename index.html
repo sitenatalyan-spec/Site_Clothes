@@ -66,6 +66,8 @@ section{padding:72px 32px}
 .info h1{font-size:34px;line-height:1.15}.info .pr{font-size:18px;margin:12px 0 28px}
 .sizes{display:flex;gap:8px;margin:10px 0 24px;flex-wrap:wrap}
 .sz{min-width:52px;padding:10px 14px;border:1px solid var(--line);font-size:12px}.sz.on{border-color:var(--fg)}
+.sz:disabled{color:var(--mute);text-decoration:line-through;cursor:not-allowed;background:var(--tone)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.card .tag.no{background:var(--fg);color:#fff}.card.out .im img{filter:grayscale(.6);opacity:.7}
 .acc details{border-top:1px solid var(--line);padding:14px 0}.acc summary{cursor:pointer;font-size:11px;letter-spacing:.14em;text-transform:uppercase;list-style:none}
 .acc p{margin-top:10px;color:#444}
 .crumb{padding:16px 32px;font-size:12px;color:var(--mute)}
@@ -127,33 +129,41 @@ section{padding:48px 16px}.hero{padding:32px 16px}
 const CATS=[["novinki","Новинки"],["platya","Платья"],["yubki","Юбки"],["kostyumy","Костюмы / комплекты"],["kardigany","Кардиганы"],["svitery","Свитеры и джемперы"]];
 const CN=Object.fromEntries(CATS);
 const P=[
-["dzhemper-sherst","Джемпер из вискозы в голубом цвете",7500,["svitery"],true,["M","XS/S"],"Джемпер из вискозы голубого цвета.",["studio/dzhemper-sherst-1.jpg","studio/dzhemper-sherst-2.jpg","studio/dzhemper-sherst-3.jpg","studio/dzhemper-sherst-4.jpg"]],
-["kardigan","Кардиган",8500,["kardigany"],false,["M","XS/S"],"Кардиган лаконичного кроя.",["studio/kardigan-1.jpg","studio/kardigan-2.jpg"]],
-["kardigan-1","Кардиган",8500,["kardigany"],false,["M","XS/S"],"Кардиган лаконичного кроя.",["studio/kardigan-1-1.jpg","studio/kardigan-1-2.jpg","studio/kardigan-1-3.jpg"]],
-["kardigan-v-rozovom-cvete-1","Кардиган в красном цвете",8500,["kardigany"],true,["единый размер"],"Кардиган красного цвета.",["studio/kardigan-v-rozovom-cvete-1-1.jpg","studio/kardigan-v-rozovom-cvete-1-2.jpg","studio/kardigan-v-rozovom-cvete-1-3.jpg","studio/kardigan-v-rozovom-cvete-1-4.jpg"]],
-["kardigan-v-rozovom-cvete","Кардиган в розовом цвете",8500,["kardigany"],true,["единый размер"],"Кардиган розового цвета.",["studio/kardigan-v-rozovom-cvete-1.jpg","studio/kardigan-v-rozovom-cvete-2.jpg","studio/kardigan-v-rozovom-cvete-3.jpg"]],
-["komlekt-kardigan-s-yubkoj-iz-viskozy","Комплект: кардиган с юбкой из вискозы",17500,["kostyumy","yubki","kardigany"],false,["единый размер"],"Комплект из кардигана и юбки макси из вискозы.",["studio/komlekt-kardigan-s-yubkoj-iz-viskozy-1.jpg"]],
-["yubka-molochnogo-cveta","Комплект из вискозы",12500,["kostyumy","yubki"],false,["единый размер"],"Комплект из вискозы молочного цвета.",["studio/yubka-molochnogo-cveta-1.jpg","studio/yubka-molochnogo-cveta-2.jpg"]],
-["kostyum-azhur-belyj","Костюм Ажур (белый)",15000,["kostyumy"],false,["M","XS/S"],"Ажурный костюм белого цвета.",["studio/kostyum-azhur-belyj-3.jpg"]],
-["kostyum-v-bordovom-cvete-s-yubkoj-midi","Костюм в бордовом цвете с юбкой миди",9000,["kostyumy","yubki"],false,["M","XS/S"],"Костюм бордового цвета с юбкой миди.",["studio/kostyum-v-bordovom-cvete-s-yubkoj-midi-1.jpg","studio/kostyum-v-bordovom-cvete-s-yubkoj-midi-2.jpg","studio/kostyum-v-bordovom-cvete-s-yubkoj-midi-4.jpg"]],
-["kostyum-1","Костюм в голубом цвете",15000,["kostyumy"],false,["единый размер"],"Костюм голубого цвета.",["studio/kostyum-1-1.jpg","studio/kostyum-1-2.jpg"]],
-["elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov","Элегантное силуэтное платье из нежного тонкого хлопка для весенних образов",7000,["platya"],false,["S","M"],"Элегантное силуэтное платье из нежного тонкого хлопка для весенних образов.",["studio/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-1.jpg","studio/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-2.jpg","studio/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-3.jpg","studio/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-4.jpg","studio/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-5.jpg"]],
-["kofta","Кофта",5000,["svitery"],true,["единый размер"],"Кофта.",["studio/kofta-1.jpg"]],
-["kostyum-2","Костюм в черном цвете",11000,["kostyumy"],false,["единый размер"],"Костюм в черном цвете.",["studio/kostyum-2-2.jpg","studio/kostyum-2-4.jpg"]],
-["kostyum-3","Костюм в красном цвете",16000,["kostyumy"],true,["M","XS/S"],"Костюм в красном цвете.",["studio/kostyum-3-1.jpg","studio/kostyum-3-2.jpg"]],
-["kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty","Костюм из шерсти с вышивкой ручной работы",15500,["kostyumy"],false,["единый размер"],"Костюм из шерсти с вышивкой ручной работы.",["studio/kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-1.jpg","studio/kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-2.jpg","studio/kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-3.jpg"]],
-["kostyum-iz-shersti-s-yubkoj-midi","Костюм из шерсти с юбкой миди",9000,["kostyumy"],false,["M","XS/S"],"Костюм из шерсти с юбкой миди.",["studio/kostyum-iz-shersti-s-yubkoj-midi-1.jpg","studio/kostyum-iz-shersti-s-yubkoj-midi-2.jpg","studio/kostyum-iz-shersti-s-yubkoj-midi-3.jpg"]],
-["kostyum-v-krasnom-cvete","Костюм в розовом цвете",16000,["kostyumy"],true,["M","XS/S"],"Костюм в розовом цвете.",["studio/kostyum-v-krasnom-cvete-1.jpg","studio/kostyum-v-krasnom-cvete-2.jpg"]],
-["kostyum","Костюм в розовом цвете",15000,["kostyumy"],false,["M","XS/S"],"Костюм в розовом цвете.",["studio/kostyum-1.jpg"]],
-["plate-bordovoe","Платье бордовое",7000,["platya"],false,["S","M"],"Платье бордовое.",["studio/plate-bordovoe-1.jpg","studio/plate-bordovoe-2.jpg","studio/plate-bordovoe-3.jpg"]],
-["plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota","Платье из хлопка с вышивкой (ручная работа)",13000,["platya"],false,["единый размер"],"Платье из хлопка с вышивкой (ручная работа).",["studio/plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-1.jpg","studio/plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-2.jpg","studio/plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-3.jpg"]],
-["plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov","Платье-кардиган из хлопка для весенних выходов",9000,["platya"],false,["S","M"],"Платье-кардиган из хлопка для весенних выходов.",["studio/plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-1.jpg","studio/plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-2.jpg","studio/plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-3.jpg"]],
-["plate-midi-nebesnogo-golubogo-cveta-iz-nezhnogo-hlopka","Платье миди небесного голубого цвета из нежного хлопка",7000,["platya"],false,["единый размер"],"Платье миди небесного голубого цвета из нежного хлопка.",["studio/plate-midi-nebesnogo-golubogo-cveta-iz-nezhnogo-hlopka-1.jpg","studio/plate-midi-nebesnogo-golubogo-cveta-iz-nezhnogo-hlopka-2.jpg","studio/plate-midi-nebesnogo-golubogo-cveta-iz-nezhnogo-hlopka-3.jpg"]],
-["plate-rozovoe","Платье розовое",7000,["platya"],false,["единый размер"],"Платье розовое.",["studio/plate-rozovoe-1.jpg","studio/plate-rozovoe-3.jpg"]],
-["yubka-molochnogo-cveta-1","Юбка из вискозы",8500,["yubki"],true,["M","XS/S"],"Юбка из вискозы.",["studio/yubka-molochnogo-cveta-1-1.jpg","studio/yubka-molochnogo-cveta-1-2.jpg","studio/yubka-molochnogo-cveta-1-3.jpg"]],
-["yubka","Юбка",9000,["yubki"],true,["единый размер"],"Юбка.",["studio/yubka-1.jpg","studio/yubka-2.jpg"]]
+["dzhemper-sherst","Джемпер из вискозы в голубом цвете",7500,["svitery"],true,["M","XS/S"],"Джемпер из вискозы голубого цвета.",["photos/dzhemper-sherst-1.jpg","photos/dzhemper-sherst-2.jpg","photos/dzhemper-sherst-3.jpg","photos/dzhemper-sherst-4.jpg"]],
+["kardigan","Кардиган",8500,["kardigany"],false,["M","XS/S"],"Кардиган лаконичного кроя.",["photos/kardigan-1.jpg","photos/kardigan-2.jpg"]],
+["kardigan-1","Кардиган",8500,["kardigany"],false,["M","XS/S"],"Кардиган лаконичного кроя.",["photos/kardigan-1-1.jpg","photos/kardigan-1-2.jpg","photos/kardigan-1-3.jpg"]],
+["kardigan-v-rozovom-cvete-1","Кардиган в красном цвете",8500,["kardigany"],true,["единый размер"],"Кардиган красного цвета.",["photos/kardigan-v-rozovom-cvete-1-1.jpg","photos/kardigan-v-rozovom-cvete-1-2.jpg","photos/kardigan-v-rozovom-cvete-1-3.jpg","photos/kardigan-v-rozovom-cvete-1-4.jpg"]],
+["kardigan-v-rozovom-cvete","Кардиган в розовом цвете",8500,["kardigany"],true,["единый размер"],"Кардиган розового цвета.",["photos/kardigan-v-rozovom-cvete-1.jpg","photos/kardigan-v-rozovom-cvete-2.jpg","photos/kardigan-v-rozovom-cvete-3.jpg"]],
+["komlekt-kardigan-s-yubkoj-iz-viskozy","Комплект: кардиган с юбкой из вискозы",17500,["kostyumy","yubki","kardigany"],false,["единый размер"],"Комплект из кардигана и юбки макси из вискозы.",["photos/komlekt-kardigan-s-yubkoj-iz-viskozy-1.jpg"]],
+["yubka-molochnogo-cveta","Комплект из вискозы",12500,["kostyumy","yubki"],false,["единый размер"],"Комплект из вискозы молочного цвета.",["photos/yubka-molochnogo-cveta-1.jpg","photos/yubka-molochnogo-cveta-2.jpg"]],
+["kostyum-azhur-belyj","Костюм Ажур (белый)",15000,["kostyumy"],false,["M","XS/S"],"Ажурный костюм белого цвета.",["photos/kostyum-azhur-belyj-1.jpg","photos/kostyum-azhur-belyj-2.jpg","photos/kostyum-azhur-belyj-3.jpg"]],
+["kostyum-v-bordovom-cvete-s-yubkoj-midi","Костюм в бордовом цвете с юбкой миди",9000,["kostyumy","yubki"],false,["M","XS/S"],"Костюм бордового цвета с юбкой миди.",["photos/kostyum-v-bordovom-cvete-s-yubkoj-midi-1.jpg","photos/kostyum-v-bordovom-cvete-s-yubkoj-midi-2.jpg","photos/kostyum-v-bordovom-cvete-s-yubkoj-midi-3.jpg","photos/kostyum-v-bordovom-cvete-s-yubkoj-midi-4.jpg"]],
+["kostyum-1","Костюм в голубом цвете",15000,["kostyumy"],false,["единый размер"],"Костюм голубого цвета.",["photos/kostyum-1-1.jpg","photos/kostyum-1-2.jpg"]],
+["elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov","Элегантное силуэтное платье из нежного тонкого хлопка для весенних образов",7000,["platya"],false,["S","M"],"Элегантное силуэтное платье из нежного тонкого хлопка для весенних образов.",["photos/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-1.jpg","photos/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-2.jpg","photos/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-3.jpg","photos/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-4.jpg","photos/elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-5.jpg"]],
+["kofta","Кофта",5000,["svitery"],true,["единый размер"],"Кофта.",["photos/kofta-1.jpg"]],
+["kostyum-2","Костюм в черном цвете",11000,["kostyumy"],false,["единый размер"],"Костюм в черном цвете.",["photos/kostyum-2-1.jpg","photos/kostyum-2-2.jpg","photos/kostyum-2-3.jpg","photos/kostyum-2-4.jpg"]],
+["kostyum-3","Костюм в красном цвете",16000,["kostyumy"],true,["M","XS/S"],"Костюм в красном цвете.",["photos/kostyum-3-1.jpg","photos/kostyum-3-2.jpg"]],
+["kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty","Костюм из шерсти с вышивкой ручной работы",15500,["kostyumy"],false,["единый размер"],"Костюм из шерсти с вышивкой ручной работы.",["photos/kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-1.jpg","photos/kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-2.jpg","photos/kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-3.jpg"]],
+["kostyum-iz-shersti-s-yubkoj-midi","Костюм из шерсти с юбкой миди",9000,["kostyumy"],false,["M","XS/S"],"Костюм из шерсти с юбкой миди.",["photos/kostyum-iz-shersti-s-yubkoj-midi-1.jpg","photos/kostyum-iz-shersti-s-yubkoj-midi-2.jpg","photos/kostyum-iz-shersti-s-yubkoj-midi-3.jpg"]],
+["kostyum-v-krasnom-cvete","Костюм в розовом цвете",16000,["kostyumy"],true,["M","XS/S"],"Костюм в розовом цвете.",["photos/kostyum-v-krasnom-cvete-1.jpg","photos/kostyum-v-krasnom-cvete-2.jpg"]],
+["kostyum","Костюм в розовом цвете",15000,["kostyumy"],false,["M","XS/S"],"Костюм в розовом цвете.",["photos/kostyum-1.jpg"]],
+["plate-bordovoe","Платье бордовое",7000,["platya"],false,["S","M"],"Платье бордовое.",["photos/plate-bordovoe-1.jpg","photos/plate-bordovoe-2.jpg","photos/plate-bordovoe-3.jpg"]],
+["plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota","Платье из хлопка с вышивкой (ручная работа)",13000,["platya"],false,["единый размер"],"Платье из хлопка с вышивкой (ручная работа).",["photos/plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-1.jpg","photos/plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-2.jpg","photos/plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-3.jpg"]],
+["plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov","Платье-кардиган из хлопка для весенних выходов",9000,["platya"],false,["S","M"],"Платье-кардиган из хлопка для весенних выходов.",["photos/plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-1.jpg","photos/plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-2.jpg","photos/plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-3.jpg"]],
+["plate-midi-nebesnogo-golubogo-cveta-iz-nezhnogo-hlopka","Платье миди небесного голубого цвета из нежного хлопка",7000,["platya"],false,["единый размер"],"Платье миди небесного голубого цвета из нежного хлопка.",["photos/plate-midi-nebesnogo-golubogo-cveta-iz-nezhnogo-hlopka-1.jpg","photos/plate-midi-nebesnogo-golubogo-cveta-iz-nezhnogo-hlopka-2.jpg","photos/plate-midi-nebesnogo-golubogo-cveta-iz-nezhnogo-hlopka-3.jpg"]],
+["plate-rozovoe","Платье розовое",7000,["platya"],false,["единый размер"],"Платье розовое.",["photos/plate-rozovoe-1.jpg","photos/plate-rozovoe-2.jpg","photos/plate-rozovoe-3.jpg"]],
+["yubka-molochnogo-cveta-1","Юбка из вискозы",8500,["yubki"],true,["M","XS/S"],"Юбка из вискозы.",["photos/yubka-molochnogo-cveta-1-1.jpg","photos/yubka-molochnogo-cveta-1-2.jpg","photos/yubka-molochnogo-cveta-1-3.jpg"]],
+["yubka","Юбка",9000,["yubki"],true,["единый размер"],"Юбка.",["photos/yubka-1.jpg","photos/yubka-2.jpg"]]
 ].map(a=>({id:a[0],name:a[1],price:a[2],cats:a[3],isNew:a[4],sizes:a[5],desc:a[6],imgs:a[7]||[]}));
 P.forEach(p=>{if(p.isNew)p.cats=["novinki",...p.cats]});
+const ST={};
+const soldOut=p=>(ST[p.id]||{}).out||false;
+const sizeOut=(p,s)=>soldOut(p)||((ST[p.id]||{}).sizesOut||[]).includes(s);
+const escH=x=>String(x).replace(/[&<>"']/g,c=>"&#"+c.charCodeAt(0)+";");
+function applyShop(d){Object.assign(ST,d.stock||{});
+for(const x of d.products||[]){if(!/^[\w-]{1,120}$/.test(x.id)||P.some(p=>p.id===x.id)||!x.imgs||!x.imgs.length)continue;
+const p={id:String(x.id),name:escH(x.name),price:Number(x.price)||0,cats:(x.cats||[]).map(String),isNew:!!x.isNew,sizes:(x.sizes||["единый размер"]).map(escH),desc:escH(x.desc||""),imgs:x.imgs.filter(u=>/^\/api\/ig-img\?k=[\w-]+$/.test(u))};
+if(p.isNew)p.cats=["novinki",...p.cats];P.unshift(p)}}
 const $=s=>document.querySelector(s),app=$("#app");
 const money=n=>n.toLocaleString("ru-RU")+" ₽";
 let cart=[];try{cart=JSON.parse(localStorage.getItem("gn_cart")||"[]")}catch(e){}
@@ -164,7 +174,7 @@ const imgTag=(p,i)=>p.imgs[i]?`<img src="${p.imgs[i]}" alt="${p.name}" loading="
 const frame=(p,u,lazy)=>u?`<div class="sl ph"><img src="${u}" alt="${p.name}"${lazy?' loading="lazy"':""} onerror="this.remove()"></div>`:`<div class="sl"><div class="d3">${u?`<img src="${u}" alt="${p.name}"${lazy?' loading="lazy"':""} onerror="this.remove()">`:""}</div></div>`;
 const shots=p=>p.imgs.length?p.imgs:[null];
 const dots=p=>p.imgs.length>1?`<div class="dots">${p.imgs.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div>`:"";
-function card(p){return `<a class="card" href="#/p/${p.id}"><div class="im"><button class="fav" data-f="${p.id}" aria-label="В избранное">${favs.includes(p.id)?"♥":"♡"}</button>${p.isNew?'<span class="tag">Новинка</span>':""}<div class="vs">${shots(p).map(u=>frame(p,u,true)).join("")}</div>${dots(p)}<div class="q">Подробнее</div></div><h3>${p.name}</h3><div class="pr">${money(p.price)}</div></a>`}
+function card(p){return `<a class="card${soldOut(p)?" out":""}" href="#/p/${p.id}"><div class="im"><button class="fav" data-f="${p.id}" aria-label="В избранное">${favs.includes(p.id)?"♥":"♡"}</button>${soldOut(p)?'<span class="tag no">Нет в наличии</span>':p.isNew?'<span class="tag">Новинка</span>':""}<div class="vs">${shots(p).map(u=>frame(p,u,true)).join("")}</div>${dots(p)}<div class="q">Подробнее</div></div><h3>${p.name}</h3><div class="pr">${money(p.price)}</div></a>`}
 function nav(){const l=CATS.map(c=>`<a href="#/c/${c[0]}">${c[1]}</a>`).join("");$("#drop").innerHTML=l;$("#fc").innerHTML=l;
 $("#mob").innerHTML=l+'<a href="#/about">О бренде</a><a href="#/delivery">Доставка и оплата</a><a href="#/care">Уход</a><a href="#/contacts">Контакты</a><a href="#/fav">Избранное</a><a href="#/account">Аккаунт</a>'}
 function home(){const n=P.filter(p=>p.isNew).slice(0,4);
@@ -187,16 +197,16 @@ let sel="";
 function product(id){const p=P.find(x=>x.id===id);if(!p)return'<div class="txt"><h1 class="serif">Товар не найден</h1></div>';
 sel="";const g=shots(p).map(u=>`<div class="im">${frame(p,u,false)}</div>`).join("");
 return `<div class="crumb"><a href="#/c/all">Каталог</a> / ${p.name}</div><div class="pp"><div class="gal">${g}</div><div class="info"><h1 class="serif">${p.name}</h1><div class="pr">${money(p.price)}</div>
-<p>${p.desc}</p><p style="margin-top:20px;font-size:11px;letter-spacing:.14em;text-transform:uppercase">Размер</p><div class="sizes">${p.sizes.map(s=>`<button class="sz" data-z="${s}">${s}</button>`).join("")}</div>
-<button class="btn fill w" id="add" data-id="${p.id}">Добавить в корзину</button>
+<p>${p.desc}</p><p style="margin-top:20px;font-size:11px;letter-spacing:.14em;text-transform:uppercase">Размер</p><div class="sizes">${p.sizes.map(s=>`<button class="sz" data-z="${s}"${sizeOut(p,s)?' disabled title="Нет в наличии"':""}>${s}</button>`).join("")}</div>
+${soldOut(p)||p.sizes.every(s=>sizeOut(p,s))?'<button class="btn fill w" disabled>Нет в наличии</button>':`<button class="btn fill w" id="add" data-id="${p.id}">Добавить в корзину</button>`}
 <div class="acc" style="margin-top:32px"><details open><summary>Описание</summary><p>Производство Gluhova Natalya, Екатеринбург. Премиальные материалы, ручная отделка, комфортный крой.</p></details>
 <details><summary>Доставка</summary><p>Отправляем по России. Подробные условия — на странице «Доставка и оплата».</p></details>
 <details><summary>Уход</summary><p>Деликатная стирка, сушка в горизонтальном положении. Подробнее — в разделе «Уход за изделиями».</p></details></div></div></div>
 <section><div class="tl"><h2 class="serif">Вам может понравиться</h2></div><div class="grid" style="padding:0">${P.filter(x=>x.id!==p.id).slice(0,4).map(card).join("")}</div></section>`}
 function addToCart(id,size){const p=P.find(x=>x.id===id);const e=cart.find(c=>c.id===id&&c.size===size);e?e.q++:cart.push({id,size,q:1});save();toast("Добавлено в корзину")}
 function renderCart(){$("#cn").textContent=cart.reduce((s,c)=>s+c.q,0);
-const tot=cart.reduce((s,c)=>s+c.q*P.find(p=>p.id===c.id).price,0);
-$("#cart").innerHTML=`<div class="hd"><span>Корзина</span><button id="cx">Закрыть</button></div><div class="items">${cart.map((c,i)=>{const p=P.find(x=>x.id===c.id);return `<div class="it"><div class="im">${imgTag(p,0)}</div><div><a href="#/p/${p.id}">${p.name}</a><div style="color:var(--mute)">Размер: ${c.size} · ${money(p.price)}</div><div class="qty"><button data-m="${i}">−</button><span>${c.q}</span><button data-p="${i}">+</button></div> <button data-d="${i}" style="font-size:12px;text-decoration:underline;margin-left:10px">Удалить</button></div></div>`}).join("")||'<p style="color:var(--mute)">Корзина пуста</p>'}</div>
+const tot=cart.reduce((s,c)=>s+c.q*(P.find(p=>p.id===c.id)||{price:0}).price,0);
+$("#cart").innerHTML=`<div class="hd"><span>Корзина</span><button id="cx">Закрыть</button></div><div class="items">${cart.map((c,i)=>{const p=P.find(x=>x.id===c.id);if(!p)return"";return `<div class="it"><div class="im">${imgTag(p,0)}</div><div><a href="#/p/${p.id}">${p.name}</a><div style="color:var(--mute)">Размер: ${c.size} · ${money(p.price)}</div><div class="qty"><button data-m="${i}">−</button><span>${c.q}</span><button data-p="${i}">+</button></div> <button data-d="${i}" style="font-size:12px;text-decoration:underline;margin-left:10px">Удалить</button></div></div>`}).join("")||'<p style="color:var(--mute)">Корзина пуста</p>'}</div>
 <div style="padding-top:16px"><div style="display:flex;justify-content:space-between;margin-bottom:14px"><span>Итого</span><b>${money(tot)}</b></div><button class="btn fill w" id="co">Оформить заказ</button></div>`}
 const pages={about:["О бренде","Gluhova Natalya создан, чтобы показать женщинам: не нужно открывать слишком многое или выбирать сложные конструкции, чтобы быть свободной и настоящей. Красота может выражаться в простоте.","Главный фокус бренда — сама женщина и её природная красота. Идеальная посадка, высококачественный крой, авторская ручная отделка."],
 delivery:["Доставка и оплата","Актуальные условия доставки и оплаты уточняйте на natalyagluhova.ru/dostavka-i-oplata-produkcii или у менеджера: +7 (960) 304-79-77."],
@@ -208,7 +218,7 @@ privacy:["Персональные данные","Условия обработ�
 function txt(k){const a=pages[k];return `<div class="txt"><h1 class="serif">${a[0]}</h1>${a.slice(1).map(t=>`<p>${t}</p>`).join("")}</div>`}
 let CK={city:null,cost:null,t:null};
 const api=(u,o)=>fetch("/api/"+u,o).then(r=>r.json());
-const sub=()=>cart.reduce((s,c)=>s+c.q*P.find(p=>p.id===c.id).price,0);
+const sub=()=>cart.reduce((s,c)=>s+c.q*(P.find(p=>p.id===c.id)||{price:0}).price,0);
 function sumUpd(){const e=$("#sum");if(e)e.innerHTML=`Товары: ${money(sub())}<br>Доставка: ${CK.cost==null?"выберите город":money(CK.cost)}<br><b>Итого: ${money(sub()+(CK.cost||0))}</b>`}
 async function calc(){if(!CK.city)return;const d=$("#dt").value==="cdek_door";$("#dc").textContent="Считаем…";
 try{const r=await api(`cdek?action=tariff&to=${CK.city.code}&door=${d?1:0}&n=${cart.reduce((s,c)=>s+c.q,0)}`);CK.cost=r.cost;$("#dc").textContent=r.cost!=null?`СДЭК: ${money(r.cost)}, срок ${r.min}–${r.max} дн.`:"Не удалось рассчитать доставку"}catch(e){CK.cost=null;$("#dc").textContent="Ошибка расчёта"}sumUpd();
@@ -277,12 +287,12 @@ function closeAll(){["cart","srch"].forEach(i=>$("#"+i).classList.remove("open")
 function open(i){closeAll();$("#"+i).classList.add("open");$("#ov").classList.add("open");if(i==="srch")setTimeout(()=>$("#si").focus(),300)}
 document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;
 if(t.dataset.f){e.preventDefault();toggleFav(t.dataset.f);return}
-if(t.dataset.fc){const p=P.find(x=>x.id===t.dataset.fc);if(p.sizes.length===1){addToCart(p.id,p.sizes[0]);open("cart")}else{toast("Выберите размер на странице товара");location.hash="#/p/"+p.id}return}
+if(t.dataset.fc){const p=P.find(x=>x.id===t.dataset.fc);if(soldOut(p))return toast("Нет в наличии");if(p.sizes.length===1){addToCart(p.id,p.sizes[0]);open("cart")}else{toast("Выберите размер на странице товара");location.hash="#/p/"+p.id}return}
 if(t.dataset.city){CK.city={code:t.dataset.city,name:t.dataset.cn};$("#cy").value=t.dataset.cn;$("#cl").innerHTML="";calc()}
 if(t.id==="pay")pay();if(t.dataset.am){AU.mode=t.dataset.am;AU.step=0;route()}if(t.id&&t.id.startsWith("a-"))authAct(t.id);
 if(t.dataset.s!==undefined){F.size=F.size===t.dataset.s?"":t.dataset.s;route()}
 if(t.dataset.z){sel=t.dataset.z;document.querySelectorAll(".sz").forEach(b=>b.classList.toggle("on",b===t))}
-if(t.id==="add"){const p=P.find(x=>x.id===t.dataset.id);if(!sel){if(p.sizes.length===1)sel=p.sizes[0];else{toast("Выберите размер");return}}addToCart(p.id,sel);open("cart")}
+if(t.id==="add"){const p=P.find(x=>x.id===t.dataset.id);if(!sel){if(p.sizes.length===1)sel=p.sizes[0];else{toast("Выберите размер");return}}if(sizeOut(p,sel))return toast("Этого размера нет в наличии");addToCart(p.id,sel);open("cart")}
 if(t.dataset.p!==undefined){cart[t.dataset.p].q++;save()}
 if(t.dataset.m!==undefined){const c=cart[t.dataset.m];c.q>1?c.q--:cart.splice(t.dataset.m,1);save()}
 if(t.dataset.d!==undefined){cart.splice(t.dataset.d,1);save()}
@@ -304,4 +314,5 @@ document.addEventListener("mousemove",e=>{if(still)return;const m=e.target.close
 const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;m.style.setProperty("--ry",(x*16-4).toFixed(1)+"deg");m.style.setProperty("--rx",(-y*10+2).toFixed(1)+"deg")});
 document.addEventListener("mouseout",e=>{const m=e.target.closest(".card .im,.gal .im");if(m&&!m.contains(e.relatedTarget)){m.style.removeProperty("--ry");m.style.removeProperty("--rx")}});
 addEventListener("hashchange",route);nav();renderCart();$("#fn").textContent=favs.length;route();
+if(location.protocol.startsWith("http"))fetch("/api/shop").then(r=>r.ok?r.json():null).then(d=>{if(!d)return;applyShop(d);renderCart();if(!/checkout/.test(location.hash))route()}).catch(()=>{});
 </script></body></html>
