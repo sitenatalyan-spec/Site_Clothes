@@ -16,6 +16,11 @@ say() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 [ "$(id -u)" = 0 ] || { echo "Запустите от root (sudo -i)"; exit 1; }
 
 say "1/7 Пакеты: nginx, git, certbot, Node.js 22"
+# Запас памяти на диске (swap) для серверов с 1 ГБ памяти
+if ! swapon --show | grep -q . && [ ! -f /swapfile ]; then
+  fallocate -l 1G /swapfile && chmod 600 /swapfile && mkswap /swapfile >/dev/null && swapon /swapfile
+  grep -q '^/swapfile' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
 apt-get install -y sudo nginx git curl ca-certificates certbot python3-certbot-nginx ufw
