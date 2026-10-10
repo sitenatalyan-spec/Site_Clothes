@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /.netlify/
+Disallow: /api/
+
+Sitemap: https://gluhovanatalya.ru/sitemap.xml
