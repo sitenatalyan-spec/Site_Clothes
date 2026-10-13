@@ -27,7 +27,7 @@ main{min-height:70vh;animation:in .5s}
 @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
 .hero{height:calc(100vh - 64px);min-height:480px;background:var(--tone);display:flex;align-items:flex-end;padding:48px 32px;position:relative}
 .hero h1{font-size:clamp(40px,7vw,96px);line-height:1;max-width:11em}
-.hero>div{position:relative;z-index:1;max-width:52%}.hero:after{content:"";position:absolute;top:0;right:0;bottom:0;width:44%;background:url("photos/hero.jpg") center 30%/cover}
+.hero>div{position:relative;z-index:1;max-width:52%}.hero:after{content:"";position:absolute;top:0;right:0;bottom:0;width:44%;background:url("photos/w/hero.webp") center 30%/cover}
 .hero p{margin-top:20px}
 .btn{display:inline-block;border:1px solid var(--fg);padding:14px 34px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;transition:.3s}
 .btn:hover,.btn.fill{background:var(--fg);color:#fff}.btn.fill:hover{background:#fff;color:var(--fg)}
@@ -104,7 +104,7 @@ header{padding:0 6px;height:56px;grid-template-columns:1fr auto 1fr;z-index:50}h
 .mob{top:56px;padding:12px 24px calc(32px + env(safe-area-inset-bottom));gap:0;overflow-y:auto}
 .mob a{font:400 26px/1.2 "Cormorant Garamond",Georgia,serif;padding:12px 0;border-bottom:1px solid var(--line)}
 .mob a.sm{font:400 12px/1.4 Inter,Helvetica,Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;border:0;padding:9px 0}.mob a.sm:first-of-type{margin-top:20px}
-.hero{height:calc(100svh - 56px);color:#fff;background:linear-gradient(to top,rgba(20,16,12,.72),rgba(20,16,12,.35) 32%,rgba(20,16,12,0) 58%),url("photos/hero.jpg") center 30%/cover var(--tone)}.hero:after{display:none}.hero>div{max-width:none}
+.hero{height:calc(100svh - 56px);color:#fff;background:linear-gradient(to top,rgba(20,16,12,.72),rgba(20,16,12,.35) 32%,rgba(20,16,12,0) 58%),url("photos/w/hero.webp") center 30%/cover var(--tone)}.hero:after{display:none}.hero>div{max-width:none}
 .hero p{color:rgba(255,255,255,.9)}.hero .btn.fill{background:#fff;color:#111;border-color:#fff}.info{top:56px}}
 @media(max-width:380px){main .hero h1{font-size:38px}}
 @media(max-width:760px){
@@ -187,8 +187,9 @@ let cart=[];try{cart=JSON.parse(localStorage.getItem("gn_cart")||"[]")}catch(e){
 let favs=[];try{favs=JSON.parse(localStorage.getItem("gn_favs")||"[]")}catch(e){}
 const save=()=>{try{localStorage.setItem("gn_cart",JSON.stringify(cart))}catch(e){}renderCart()};
 const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),1800)};
-const imgTag=(p,i)=>p.imgs[i]?`<img src="${p.imgs[i]}" alt="${p.name}" loading="lazy" onerror="this.remove()">`:"";
-const frame=(p,u,lazy)=>u?`<div class="sl ph"><img src="${u}" alt="${p.name}"${lazy?' loading="lazy"':""} onerror="this.remove()"></div>`:`<div class="sl"><div class="d3">${u?`<img src="${u}" alt="${p.name}"${lazy?' loading="lazy"':""} onerror="this.remove()">`:""}</div></div>`;
+const imgTag=(p,i)=>p.imgs[i]?`<img src="${pic(p.imgs[i],1)}" alt="${p.name}" loading="lazy" onerror="this.remove()">`:"";
+const pic=(u,sm)=>/^photos\/[\w-]+\.jpg$/.test(u||"")?u.replace(/^photos\/(.+)\.jpg$/,`photos/${sm?"s":"w"}/$1.webp`):u;
+const frame=(p,u,lazy)=>u?`<div class="sl ph"><img src="${pic(u,lazy)}" alt="${p.name}"${lazy?' loading="lazy"':""} onerror="this.remove()"></div>`:`<div class="sl"><div class="d3">${u?`<img src="${u}" alt="${p.name}"${lazy?' loading="lazy"':""} onerror="this.remove()">`:""}</div></div>`;
 const shots=p=>p.imgs.length?p.imgs:[null];
 const dots=p=>p.imgs.length>1?`<div class="dots">${p.imgs.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div>`:"";
 function card(p){return `<a class="card${soldOut(p)?" out":""}" href="#/p/${p.id}"><div class="im"><button class="fav" data-f="${p.id}" aria-label="В избранное">${favs.includes(p.id)?"♥":"♡"}</button>${soldOut(p)?'<span class="tag no">Нет в наличии</span>':p.isNew?'<span class="tag">Новинка</span>':""}<div class="vs">${shots(p).map(u=>frame(p,u,true)).join("")}</div>${dots(p)}<div class="q">Подробнее</div></div><h3>${p.name}</h3><div class="pr">${money(p.price)}</div></a>`}
