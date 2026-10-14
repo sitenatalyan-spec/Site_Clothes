@@ -14,7 +14,7 @@ const require = createRequire(import.meta.url);
 const TYPES = { ".html": "text/html; charset=utf-8", ".json": "application/json; charset=utf-8", ".jpg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".woff2": "font/woff2", ".svg": "image/svg+xml", ".txt": "text/plain; charset=utf-8", ".xml": "application/xml" };
 const PUBLIC_FILES = new Set(["index.html", "admin.html", "cities.json", "robots.txt", "sitemap.xml", "favicon.ico"]);
 const PUBLIC_DIRS = ["photos/", "fonts/"];
-const FUNCTIONS = new Set(["admin", "cdek", "config", "create-order", "ig-img", "shop", "sms-hook"]);
+const FUNCTIONS = new Set(["admin", "auth", "cdek", "create-order", "ig-img", "shop"]);
 
 const mods = new Map();
 async function loadFn(name) {
@@ -53,7 +53,7 @@ async function runFunction(name, req, res, url) {
   res.end(r.isBase64Encoded ? Buffer.from(r.body || "", "base64") : r.body || "");
 }
 
-function serveStatic(rel, res, head) {
+function serveStatic(rel, req, res, head) {
   const file = path.join(ROOT, rel);
   if (!file.startsWith(ROOT + path.sep)) return false;
   let st;
@@ -61,9 +61,13 @@ function serveStatic(rel, res, head) {
   if (!st.isFile()) return false;
   const ext = path.extname(file).toLowerCase();
   const html = ext === ".html";
+  // Повторные визиты: браузер спрашивает «изменилось ли?» и получает короткий ответ 304 без файла.
+  const etag = `W/"${st.size.toString(36)}-${Math.floor(st.mtimeMs).toString(36)}"`;
+  const cache = html ? "no-cache" : ext === ".json" ? "public, max-age=3600" : "public, max-age=2592000";
+  if (req.headers["if-none-match"] === etag) { res.writeHead(304, { ETag: etag, "Cache-Control": cache }).end(); return true; }
   res.writeHead(200, {
-    "Content-Type": TYPES[ext] || "application/octet-stream", "Content-Length": st.size,
-    "Cache-Control": html ? "no-cache" : ext === ".json" ? "public, max-age=3600" : "public, max-age=2592000",
+    "Content-Type": TYPES[ext] || "application/octet-stream", "Content-Length": st.size, ETag: etag,
+    "Last-Modified": st.mtime.toUTCString(), "Cache-Control": cache,
     "X-Content-Type-Options": "nosniff", ...(html ? { "Referrer-Policy": "strict-origin-when-cross-origin", "X-Frame-Options": "SAMEORIGIN" } : {}),
     ...(rel === "admin.html" ? { "X-Robots-Tag": "noindex" } : {}),
   });
@@ -82,7 +86,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method !== "GET" && req.method !== "HEAD") { res.writeHead(405).end(); return; }
     let rel = decodeURIComponent(url.pathname).replace(/^\/+/, "") || "index.html";
-    if ((PUBLIC_FILES.has(rel) || PUBLIC_DIRS.some((d) => rel.startsWith(d))) && !rel.includes("..") && serveStatic(rel, res, req.method === "HEAD")) return;
+    if ((PUBLIC_FILES.has(rel) || PUBLIC_DIRS.some((d) => rel.startsWith(d))) && !rel.includes("..") && serveStatic(rel, req, res, req.method === "HEAD")) return;
     res.writeHead(302, { Location: "/" }).end();
   } catch (err) {
     console.error(req.method, url.pathname, err);

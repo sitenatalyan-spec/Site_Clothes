@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import C from "./catalog.js";
 import cdek from "../lib/cdek.js";
 import { loadState, stockOf, store } from "../lib/shop.mjs";
+import { userFromRequest, addOrderToUser, saveUser } from "../lib/auth.mjs";
 
 const j = (status, body) => Response.json(body, { status });
 const env = (k) => Netlify.env.get(k);
@@ -39,9 +40,19 @@ export default async (req) => {
   lines.push({ name: "Доставка СДЭК", price: t.cost, q: 1, kind: "service" });
 
   const total = sum + t.cost, orderId = "GN-" + Date.now().toString(36).toUpperCase();
-  const meta = { order_id: orderId, name, phone, email, delivery: d.type, city: String(d.city || "").slice(0, 100), pvz: String(d.pvz || "").slice(0, 50), address: String(d.address || "").slice(0, 200), subscribe: b.subscribe ? "yes" : "no" };
+  const user = await userFromRequest(req).catch(() => null);
+  const meta = { order_id: orderId, ...(user ? { user: user.id } : {}), name, phone, email, delivery: d.type, city: String(d.city || "").slice(0, 100), pvz: String(d.pvz || "").slice(0, 50), address: String(d.address || "").slice(0, 200), subscribe: b.subscribe ? "yes" : "no" };
   const ok = env("SITE_URL") + "/#/order-ok";
-  const saveOrder = (extra) => store("orders").setJSON(orderId, { ...meta, items: lines, total, created: new Date().toISOString(), ...extra }).catch((e) => console.error("saveOrder", e.message));
+  const saveOrder = async (extra) => {
+    try {
+      await store("orders").setJSON(orderId, { ...meta, items: lines, total, created: new Date().toISOString(), ...extra });
+      if (user) {
+        await addOrderToUser(user.id, orderId);
+        // Запоминаем имя и e-mail, чтобы в следующий раз подставить их автоматически.
+        if (!user.name || !user.email) { user.name ||= name; user.email ||= email; await saveUser(user); }
+      }
+    } catch (e) { console.error("saveOrder", e.message); }
+  };
 
   if (env("PAYMENT_PROVIDER") === "tochka") {
     const r = await fetch((env("TOCHKA_API_URL") || "https://enter.tochka.com/uapi") + "/acquiring/v1.0/payments_with_receipt", {
