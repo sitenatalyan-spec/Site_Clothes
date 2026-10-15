@@ -1,4 +1,5 @@
 import http from "node:http";
+import zlib from "node:zlib";
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
@@ -11,9 +12,9 @@ process.env.STORE_DIR ||= path.join(ROOT, "data");
 globalThis.Netlify = { env: { get: (k) => process.env[k] }, context: { deploy: { context: "production" } } };
 const require = createRequire(import.meta.url);
 
-const TYPES = { ".html": "text/html; charset=utf-8", ".json": "application/json; charset=utf-8", ".jpg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".woff2": "font/woff2", ".svg": "image/svg+xml", ".txt": "text/plain; charset=utf-8", ".xml": "application/xml" };
+const TYPES = { ".html": "text/html; charset=utf-8", ".json": "application/json; charset=utf-8", ".jpg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".woff2": "font/woff2", ".svg": "image/svg+xml", ".txt": "text/plain; charset=utf-8", ".xml": "application/xml", ".js": "text/javascript; charset=utf-8" };
 const PUBLIC_FILES = new Set(["index.html", "admin.html", "cities.json", "robots.txt", "sitemap.xml", "favicon.ico"]);
-const PUBLIC_DIRS = ["photos/", "fonts/"];
+const PUBLIC_DIRS = ["photos/", "fonts/", "js/"];
 const FUNCTIONS = new Set(["admin", "auth", "cdek", "create-order", "ig-img", "shop"]);
 
 const mods = new Map();
@@ -53,6 +54,7 @@ async function runFunction(name, req, res, url) {
   res.end(r.isBase64Encoded ? Buffer.from(r.body || "", "base64") : r.body || "");
 }
 
+const gzCache = new Map();
 function serveStatic(rel, req, res, head) {
   const file = path.join(ROOT, rel);
   if (!file.startsWith(ROOT + path.sep)) return false;
@@ -61,17 +63,25 @@ function serveStatic(rel, req, res, head) {
   if (!st.isFile()) return false;
   const ext = path.extname(file).toLowerCase();
   const html = ext === ".html";
+  // Текстовые файлы отдаём сжатыми (кэш в памяти до изменения файла)
+  const gz = [".html", ".js", ".json", ".svg", ".txt", ".xml"].includes(ext) && /\bgzip\b/.test(req.headers["accept-encoding"] || "");
+  let body = null;
+  if (gz) {
+    const c = gzCache.get(file);
+    body = c && c.mtime === st.mtimeMs ? c.data : zlib.gzipSync(fs.readFileSync(file), { level: 9 });
+    gzCache.set(file, { mtime: st.mtimeMs, data: body });
+  }
   // Повторные визиты: браузер спрашивает «изменилось ли?» и получает короткий ответ 304 без файла.
   const etag = `W/"${st.size.toString(36)}-${Math.floor(st.mtimeMs).toString(36)}"`;
   const cache = html ? "no-cache" : ext === ".json" ? "public, max-age=3600" : "public, max-age=2592000";
   if (req.headers["if-none-match"] === etag) { res.writeHead(304, { ETag: etag, "Cache-Control": cache }).end(); return true; }
   res.writeHead(200, {
-    "Content-Type": TYPES[ext] || "application/octet-stream", "Content-Length": st.size, ETag: etag,
+    "Content-Type": TYPES[ext] || "application/octet-stream", "Content-Length": body ? body.length : st.size, ...(gz ? { "Content-Encoding": "gzip", Vary: "Accept-Encoding" } : {}), ETag: etag,
     "Last-Modified": st.mtime.toUTCString(), "Cache-Control": cache,
     "X-Content-Type-Options": "nosniff", ...(html ? { "Referrer-Policy": "strict-origin-when-cross-origin", "X-Frame-Options": "SAMEORIGIN" } : {}),
     ...(rel === "admin.html" ? { "X-Robots-Tag": "noindex" } : {}),
   });
-  if (head) res.end(); else fs.createReadStream(file).pipe(res);
+  if (head) res.end(); else if (body) res.end(body); else fs.createReadStream(file).pipe(res);
   return true;
 }
 
