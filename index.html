@@ -604,7 +604,7 @@ document.addEventListener("mouseout",e=>{const m=e.target.closest(".card .im,.ga
 
 let heroT=0,rvObs=null;
 const HD=6000;
-function heroStart(){clearTimeout(heroT);const b=document.querySelector(".h2");if(!b)return;const pans=[...b.querySelectorAll(".pn")].map(p=>[...p.querySelectorAll("img")]),bars=[...b.querySelectorAll(".pg i")],steps=pans[0].length;let i=0;
+function heroStart(){const b=document.querySelector(".h2");if(!b||b.dataset.run)return;b.dataset.run=1;clearTimeout(heroT);const pans=[...b.querySelectorAll(".pn")].map(p=>[...p.querySelectorAll("img")]),bars=[...b.querySelectorAll(".pg i")],steps=pans[0].length;let i=0;
 b.style.setProperty("--d",HD+"ms");
 const wake=()=>pans.flat().forEach(x=>{if(x.dataset.src){x.srcset=x.dataset.srcset;x.src=x.dataset.src;delete x.dataset.src}});
 if(document.readyState==="complete")setTimeout(wake,1200);else addEventListener("load",()=>setTimeout(wake,1200),{once:true});
@@ -626,5 +626,7 @@ addEventListener("scroll",onScroll,{passive:true});addEventListener("resize",rai
 
 addEventListener("hashchange",route);nav();renderCart();$("#fn").textContent=favs.length;route();
 if(location.protocol.startsWith("http")){api("auth?action=providers").then(d=>{PROV=d||{};if(!ME)refreshAuthUI()}).catch(()=>{PROV={}});loadMe()}
-if(location.protocol.startsWith("http"))fetch("/api/shop").then(r=>r.ok?r.json():null).then(d=>{if(!d)return;applyShop(d);renderCart();if(!/checkout|account/.test(location.hash))route()}).catch(()=>{});
+if(location.protocol.startsWith("http"))fetch("/api/shop").then(r=>r.ok?r.json():null).then(d=>{if(!d)return;applyShop(d);renderCart();if(/checkout|account/.test(location.hash))return;const hr=document.body.classList.contains("home")&&app.querySelector(".h2");if(!hr)return route();
+// на главной не перерисовываем первый экран, чтобы фото и надпись не начинали анимацию заново
+const t=document.createElement("div");t.innerHTML=home();t.querySelector(".h2").replaceWith(hr);app.replaceChildren(...t.childNodes)}).catch(()=>{});
 </script></body></html>
