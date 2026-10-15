@@ -159,14 +159,6 @@ footer{padding:48px 16px calc(24px + env(safe-area-inset-bottom))}.fg{gap:28px 1
 .card .im:after,.gal .im:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at var(--mx,50%) var(--my,25%),rgba(255,255,255,.22),rgba(255,255,255,0) 50%),linear-gradient(to bottom,rgba(255,255,255,.05),rgba(0,0,0,.06));opacity:.55;transition:opacity .5s}
 .card .im:hover:after,.gal .im:hover:after{opacity:1}
 .sl.ph img{filter:contrast(1.03) saturate(1.04)}
-#intro{position:fixed;inset:0;z-index:200;background:linear-gradient(#4f8fdc,#9cc7f2 55%,#dcebfb);transition:opacity 1.1s ease}#intro canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 1.2s}#intro.go canvas{opacity:1}
-#intro.end{opacity:0;pointer-events:none}
-.in-t{position:absolute;left:0;right:0;top:38%;text-align:center;color:#fff;font:400 clamp(22px,6vw,84px)/1 "Cormorant Garamond",Georgia,serif;letter-spacing:.18em;white-space:nowrap;text-shadow:0 2px 30px rgba(40,70,120,.35);pointer-events:none;padding:0 12px}
-.in-t span{display:inline-block;opacity:0;filter:blur(10px);transform:translateY(14px);transition:opacity 1.1s ease,filter 1.1s ease,transform 1.1s ease}
-.in-t.on span{opacity:1;filter:none;transform:none}
-.in-t:after{content:"";display:block;width:0;height:1px;background:rgba(255,255,255,.85);margin:22px auto 0;transition:width 1.6s ease 1.2s}.in-t.on:after{width:min(320px,50vw)}
-.in-t small{display:block;margin-top:16px;font:400 11px/1.4 Inter,Helvetica,Arial,sans-serif;letter-spacing:.3em;text-transform:uppercase;opacity:0;transition:opacity 1.2s ease 1.6s}.in-t.on small{opacity:.9}
-.in-s{position:absolute;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:2;color:#fff;border:1px solid rgba(255,255,255,.7);padding:10px 18px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;background:rgba(255,255,255,.08);backdrop-filter:blur(6px)}
 @media(prefers-reduced-motion:reduce){.hero .hbg img{transition:opacity .01s}}
 </style></head><body>
 <header id="hd">
@@ -506,17 +498,6 @@ if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
 heroT=setInterval(()=>{if(!document.body.contains(b))return clearInterval(heroT);if(document.hidden)return;const n=(i+1)%im.length;if(!im[n].complete||im[n].dataset.src)return;
 im[i].classList.remove("on");d[i].classList.remove("on");i=n;im[i].classList.add("on");d[i].classList.add("on")},6000)}
 
-(function(){let q=new URLSearchParams(location.search).get("intro"),seen=0;try{seen=localStorage.getItem("gn_intro")}catch(e){}
-const c=navigator.connection||{};
-if(q!=="1"&&(seen||!/^#?\/?$/.test(location.hash)||matchMedia("(prefers-reduced-motion:reduce)").matches||c.saveData||/2g/.test(c.effectiveType||"")))return;
-try{const g=document.createElement("canvas");if(!(g.getContext("webgl2")||g.getContext("webgl")))return}catch(e){return}
-const d=document.createElement("div");d.id="intro";d.innerHTML='<div class="in-t">'+[..."GLUHOVA NATALYA"].map((ch,i)=>`<span style="transition-delay:${(i*.07).toFixed(2)}s">${ch===" "?"&nbsp;":ch}</span>`).join("")+'<small>Женский трикотаж</small></div><button class="in-s" type="button">Пропустить</button>';
-document.body.appendChild(d);document.documentElement.style.overflow="hidden";
-let over=0;window.gnIntroDone=()=>{if(over)return;over=1;try{localStorage.setItem("gn_intro","1")}catch(e){}d.classList.add("end");document.documentElement.style.overflow="";setTimeout(()=>d.remove(),1300)};
-d.querySelector(".in-s").onclick=()=>window.gnIntroStop?window.gnIntroStop():window.gnIntroDone();
-window.GN_INTRO_IMGS=P.map(p=>p.imgs[0]).filter(u=>/^photos\//.test(u||"")).map(u=>pic(u,1));
-const add=(src,cb)=>{const e=document.createElement("script");e.src=src;e.onload=cb;e.onerror=window.gnIntroDone;document.body.appendChild(e)};
-add("js/three.min.js?v=160",()=>add("js/intro.js?v=1"));setTimeout(()=>{if(!window.gnIntroStop)window.gnIntroDone()},12000)})();
 addEventListener("hashchange",route);nav();renderCart();$("#fn").textContent=favs.length;route();
 if(location.protocol.startsWith("http")){api("auth?action=providers").then(d=>{PROV=d||{};if(!ME)refreshAuthUI()}).catch(()=>{PROV={}});loadMe()}
 if(location.protocol.startsWith("http"))fetch("/api/shop").then(r=>r.ok?r.json():null).then(d=>{if(!d)return;applyShop(d);renderCart();if(!/checkout|account/.test(location.hash))route()}).catch(()=>{});
