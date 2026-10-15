@@ -62,7 +62,7 @@ section{padding:72px 32px}
 .card .tag{position:absolute;top:12px;left:12px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;background:#fff;padding:3px 8px;z-index:2}
 .card .q{position:absolute;left:0;right:0;bottom:0;background:rgba(255,255,255,.92);padding:10px;text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;transform:translateY(100%);transition:transform .35s;z-index:2}
 .card:hover .q{transform:none}
-.card h3{font-size:13px;font-weight:400;margin-top:12px}.card .pr{color:var(--mute)}
+.card h3{font-size:13px;font-weight:400;margin-top:12px}.card .pr{color:var(--mute);font-weight:400}
 .pp{display:grid;grid-template-columns:1.3fr 1fr;gap:0}
 .gal{display:grid;gap:4px}.gal .im{aspect-ratio:3/4;background:#fff;position:relative;overflow:hidden}
 .gal .sl{position:absolute;inset:0;height:auto}
@@ -70,11 +70,11 @@ section{padding:72px 32px}
 .info h1{font-size:34px;line-height:1.15}.info .pr{font-size:18px;margin:12px 0 28px}
 .sizes{display:flex;gap:8px;margin:10px 0 24px;flex-wrap:wrap}
 .sz{min-width:52px;padding:10px 14px;border:1px solid var(--line);font-size:12px}.sz.on{border-color:var(--fg)}
-.sz:disabled{color:var(--mute);text-decoration:line-through;cursor:not-allowed;background:var(--tone)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.sz:disabled{color:var(--mute);font-weight:400;text-decoration:line-through;cursor:not-allowed;background:var(--tone)}.btn:disabled{opacity:.45;cursor:not-allowed}
 .card .tag.no{background:var(--fg);color:#fff}.card.out .im img{filter:grayscale(.6);opacity:.7}
 .acc details{border-top:1px solid var(--line);padding:14px 0}.acc summary{cursor:pointer;font-size:11px;letter-spacing:.14em;text-transform:uppercase;list-style:none}
-.acc p{margin-top:10px;color:#444}
-.crumb{padding:16px 32px;font-size:12px;color:var(--mute)}
+.acc p{margin-top:10px;color:#444;font-weight:400}
+.crumb{padding:16px 32px;font-size:12px;color:var(--mute);font-weight:400}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:.3s;z-index:40}.ov.open{opacity:1;pointer-events:auto}
 .side{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:#fff;z-index:50;transform:translateX(100%);transition:transform .4s;padding:28px;display:flex;flex-direction:column}
 .side.open{transform:none}
@@ -92,8 +92,8 @@ section{padding:72px 32px}
 footer{background:var(--tone);padding:64px 32px 32px;margin-top:40px}
 .fg{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px}
 footer h4{font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;font-weight:500}
-footer a{display:block;margin-bottom:6px;color:#444}footer a:hover{color:#000}
-.cp{margin-top:48px;color:var(--mute);font-size:12px}
+footer a{display:block;margin-bottom:6px;color:#444;font-weight:400}footer a:hover{color:#000}
+.cp{margin-top:48px;color:var(--mute);font-weight:400;font-size:12px}
 .mob{position:fixed;inset:0;background:#fff;z-index:45;padding:80px 24px 24px;transform:translateX(-100%);transition:transform .4s;display:flex;flex-direction:column;gap:14px}
 .mob.open{transform:none}.mob a{font-size:30px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);background:var(--fg);color:#fff;padding:12px 22px;font-size:12px;opacity:0;transition:.3s;z-index:60;pointer-events:none}.toast.on{opacity:1;transform:translate(-50%,0)}
@@ -124,7 +124,7 @@ footer{padding:48px 16px calc(24px + env(safe-area-inset-bottom))}.fg{gap:28px 1
 .fav{position:absolute;top:10px;right:10px;z-index:3;font-size:20px;width:32px;height:32px;line-height:32px;background:rgba(255,255,255,.85)}
 .f select{font:inherit;padding:12px;border:1px solid var(--line);background:#fff}.f input[type=checkbox]{width:auto;margin-right:8px}.f label{font-size:13px}.ac{position:relative}.cl{position:absolute;left:0;right:0;top:100%;z-index:30;background:#fff;border:1px solid var(--line);border-top:0;box-shadow:0 12px 24px rgba(0,0,0,.08);max-height:320px;overflow-y:auto}
 .cl button{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);font-size:14px}.cl button:last-child{border-bottom:0}
-.cl button b{font-weight:400}.cl button span{color:var(--mute);font-size:12px;text-align:right}.cl button.on,.cl button:hover{background:var(--tone)}.cl p{padding:11px 12px;color:var(--mute);font-size:13px}
+.cl button b{font-weight:400}.cl button span{color:var(--mute);font-weight:400;font-size:12px;text-align:right}.cl button.on,.cl button:hover{background:var(--tone)}.cl p{padding:11px 12px;color:var(--mute);font-weight:400;font-size:13px}
 /* Кнопка «Смотреть все» и плитки разделов на главной */
 .more{display:inline-flex;align-items:center;gap:12px;background:var(--fg);color:#fff;border:1px solid var(--fg);padding:14px 24px;font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;transition:background .3s,color .3s}
 .more i{font-style:normal;font-size:15px;line-height:1;transition:transform .3s}.more:hover{background:#fff;color:var(--fg)}.more:hover i{transform:translateX(4px)}
@@ -134,19 +134,19 @@ footer{padding:48px 16px calc(24px + env(safe-area-inset-bottom))}.fg{gap:28px 1
 @media(max-width:760px){.tl h2{font-size:30px}.more{padding:12px 16px;gap:8px}.cats{grid-template-columns:1fr 1fr}}
 /* Оформление заказа */
 .fh{font:400 26px/1.2 "Cormorant Garamond",Georgia,serif;margin-top:12px}
-.lb{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}
+.lb{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:400;margin-bottom:6px}
 .seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--fg)}.seg button{padding:13px 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase}.seg button.on{background:var(--fg);color:#fff}
 .near{display:inline-flex;align-items:center;gap:6px;font-size:13px;text-decoration:underline;text-underline-offset:3px;margin-top:10px}.near svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5}
 .here{display:flex;justify-content:space-between;gap:10px;background:var(--tone);padding:8px 12px;font-size:13px;margin-top:8px}
-.pvc{border:1px solid var(--fg);padding:12px 14px;margin-top:10px;font-size:13px}.pvc b{font-weight:500;display:block;font-size:14px;margin-bottom:2px}.pvc span{color:var(--mute)}
-.cl .gh{padding:8px 12px 4px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);background:#faf9f7;border-bottom:1px solid var(--line)}
-.cl button.ad b:before{content:"⌖ ";color:var(--mute)}
+.pvc{border:1px solid var(--fg);padding:12px 14px;margin-top:10px;font-size:13px}.pvc b{font-weight:500;display:block;font-size:14px;margin-bottom:2px}.pvc span{color:var(--mute);font-weight:400}
+.cl .gh{padding:8px 12px 4px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:400;background:#faf9f7;border-bottom:1px solid var(--line)}
+.cl button.ad b:before{content:"⌖ ";color:var(--mute);font-weight:400}
 .box{border:1px solid var(--line);background:#faf9f7;padding:16px;display:grid;gap:12px;max-width:560px;margin-bottom:24px}.box p{margin:0}
 /* Аккаунт */
 .auth{display:grid;gap:12px;max-width:420px;margin-top:24px}.auth input{width:100%;font:300 16px Inter,Helvetica,Arial,sans-serif;border:1px solid var(--line);padding:13px 12px;outline:0}.auth input:focus,.f input:focus{border-color:var(--fg)}
 .gbtn{display:flex!important;align-items:center;justify-content:center;gap:10px}.gbtn svg{width:18px;height:18px}
-.or{display:flex;align-items:center;gap:12px;color:var(--mute);font-size:12px;letter-spacing:.14em;text-transform:uppercase}.or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
-.mute{color:var(--mute)}
+.or{display:flex;align-items:center;gap:12px;color:var(--mute);font-weight:400;font-size:12px;letter-spacing:.14em;text-transform:uppercase}.or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
+.mute{color:var(--mute);font-weight:400}
 .acc2{display:grid;grid-template-columns:320px 1fr;gap:48px;max-width:1080px;margin:0 auto;padding:56px 32px}
 .ord{border:1px solid var(--line);padding:18px 20px;margin-bottom:12px}.ord .oh{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}.ord .oh b{font-weight:500}.ord ul{list-style:none;padding:0;margin:0 0 10px}.ord li{display:flex;justify-content:space-between;gap:12px;padding:4px 0;font-size:13px}
 @media(max-width:760px){.acc2{grid-template-columns:1fr;padding:32px 16px;gap:32px}}
@@ -160,10 +160,10 @@ footer{padding:48px 16px calc(24px + env(safe-area-inset-bottom))}.fg{gap:28px 1
 <div class="mob" id="mob"></div>
 <main id="app"></main>
 <footer><div class="fg">
-<div><div class="logo serif" style="text-align:left;font-size:22px">Gluhova Natalya</div><p style="margin-top:12px;max-width:280px;color:#444">Производство женской трикотажной одежды в Екатеринбурге.</p></div>
+<div><div class="logo serif" style="text-align:left;font-size:22px">Gluhova Natalya</div><p style="margin-top:12px;max-width:280px;color:#444;font-weight:400">Производство женской трикотажной одежды в Екатеринбурге.</p></div>
 <div><h4>Каталог</h4><div id="fc"></div></div>
 <div><h4>Информация</h4><a href="#/delivery">Доставка и оплата</a><a href="#/care">Уход за изделиями</a><a href="#/refund">Возврат и обмен</a><a href="#/offer">Публичная оферта</a><a href="#/privacy">Политика конфиденциальности</a><a href="#/about">О бренде</a><a href="#/contacts">Контакты</a></div>
-<div><h4>Контакты</h4><a href="tel:+79603047977">+7 (960) 304-79-77</a><a href="mailto:Kerzhaeva@gmail.com">Kerzhaeva@gmail.com</a><a href="https://wa.me/79603047977">WhatsApp</a><a href="https://t.me/+79603047977">Telegram</a><a href="https://www.instagram.com/natalkagluhova">Instagram</a><span style="color:#444">Ежедневно 8:00–21:00</span></div>
+<div><h4>Контакты</h4><a href="tel:+79603047977">+7 (960) 304-79-77</a><a href="mailto:Kerzhaeva@gmail.com">Kerzhaeva@gmail.com</a><a href="https://wa.me/79603047977">WhatsApp</a><a href="https://t.me/+79603047977">Telegram</a><a href="https://www.instagram.com/natalkagluhova">Instagram</a><span style="color:#444;font-weight:400">Ежедневно 8:00–21:00</span></div>
 </div><div class="cp">© 2025–2026 ИП Шнайдер Наталья Анатольевна · ИНН 211301663799 · <a style="display:inline" href="#/privacy">Обработка персональных данных</a></div></footer>
 <div class="ov" id="ov"></div>
 <aside class="side" id="cart"></aside>
@@ -264,7 +264,7 @@ ${soldOut(p)||p.sizes.every(s=>sizeOut(p,s))?'<button class="btn fill w" disable
 function addToCart(id,size,quiet){const p=P.find(x=>x.id===id);const e=cart.find(c=>c.id===id&&c.size===size);e?e.q++:cart.push({id,size,q:1});save();if(!quiet)toast("Добавлено в корзину")}
 function renderCart(){const cn=cart.reduce((s,c)=>s+c.q,0);$("#cn").textContent=cn;$("#cn").classList.toggle("z",!cn);
 const tot=cart.reduce((s,c)=>s+c.q*(P.find(p=>p.id===c.id)||{price:0}).price,0);
-$("#cart").innerHTML=`<div class="hd"><span>Корзина</span><button id="cx">Закрыть</button></div><div class="items">${cart.map((c,i)=>{const p=P.find(x=>x.id===c.id);if(!p)return"";return `<div class="it"><div class="im">${imgTag(p,0)}</div><div><a href="#/p/${p.id}">${p.name}</a><div style="color:var(--mute)">Размер: ${c.size} · ${money(p.price)}</div><div class="qty"><button data-m="${i}">−</button><span>${c.q}</span><button data-p="${i}">+</button></div> <button data-d="${i}" style="font-size:12px;text-decoration:underline;margin-left:10px">Удалить</button></div></div>`}).join("")||'<p style="color:var(--mute)">Корзина пуста</p>'}</div>
+$("#cart").innerHTML=`<div class="hd"><span>Корзина</span><button id="cx">Закрыть</button></div><div class="items">${cart.map((c,i)=>{const p=P.find(x=>x.id===c.id);if(!p)return"";return `<div class="it"><div class="im">${imgTag(p,0)}</div><div><a href="#/p/${p.id}">${p.name}</a><div style="color:var(--mute);font-weight:400">Размер: ${c.size} · ${money(p.price)}</div><div class="qty"><button data-m="${i}">−</button><span>${c.q}</span><button data-p="${i}">+</button></div> <button data-d="${i}" style="font-size:12px;text-decoration:underline;margin-left:10px">Удалить</button></div></div>`}).join("")||'<p style="color:var(--mute);font-weight:400">Корзина пуста</p>'}</div>
 <div style="padding-top:16px"><div style="display:flex;justify-content:space-between;margin-bottom:14px"><span>Итого</span><b>${money(tot)}</b></div><button class="btn fill w" id="co">Оформить заказ</button></div>`}
 const pages={about:["О бренде","Gluhova Natalya создан, чтобы показать женщинам: не нужно открывать слишком многое или выбирать сложные конструкции, чтобы быть свободной и настоящей. Красота может выражаться в простоте.","Главный фокус бренда — сама женщина и её природная красота. Идеальная посадка, высококачественный крой, авторская ручная отделка."],
 delivery:["Доставка и оплата","Актуальные условия доставки и оплаты уточняйте на natalyagluhova.ru/dostavka-i-oplata-produkcii или у менеджера: +7 (960) 304-79-77."],
