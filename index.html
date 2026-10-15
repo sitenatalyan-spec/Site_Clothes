@@ -424,7 +424,7 @@ if(!ME)return `<div class="txt"><h1 class="serif">Вход</h1><p class="mute">$
 const u=ME;return `<div class="acc2"><div><h1 class="serif" style="font-size:40px;line-height:1.1">Личный кабинет</h1><div class="auth" style="margin-top:20px">
 <div><label class="lb" for="a-n">Имя</label><input id="a-n" value="${esc(u.name)}" placeholder="Имя и фамилия" autocomplete="name"></div>
 <div><label class="lb" for="a-e">E-mail для чеков</label><input id="a-e" type="email" value="${esc(u.email)}" placeholder="E-mail" autocomplete="email"></div>
-<div><span class="lb">Телефон</span>${u.phone?esc(fmtPh(u.phone)):AU.add?`<div class="auth" style="margin-top:0">${phoneForm()}</div>`:'<button class="lk" id="a-addph">Привязать номер телефона</button>'}</div>
+<div><span class="lb">Телефон</span>${u.phone?esc(fmtPh(u.phone)):!(PROV&&PROV.phone)?'<span class="mute">не указан</span>':AU.add?`<div class="auth" style="margin-top:0">${phoneForm()}</div>`:'<button class="lk" id="a-addph">Привязать номер телефона</button>'}</div>
 ${u.google?'<p class="mute" style="font-size:13px">Вход через Google подключён</p>':""}
 <button class="btn fill w" id="a-save">Сохранить</button><a class="btn w" href="#/fav" style="text-align:center">Избранное (${favs.length})</a><button class="lk" id="a-out" style="justify-self:start">Выйти</button></div></div>
 <div><h2 class="serif" style="font-size:32px;margin-bottom:16px">Мои заказы</h2>${ordersHtml()}</div></div>`}
