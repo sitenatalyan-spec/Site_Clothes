@@ -13,7 +13,7 @@ PORT=$(val PORT); PORT=${PORT:-8080}
 
 echo; echo "== Сайт"
 if systemctl is-active -q gluhova 2>/dev/null; then ok "сайт запущен"; else bad "сайт не запущен — пришлите вывод: journalctl -u gluhova -n 30"; fi
-ok "версия из GitHub: $(git -C $APP log -1 --format='%h от %cd' --date=format:'%d.%m %H:%M' 2>/dev/null)"
+ok "версия из GitHub: $(git -c safe.directory=$APP -C $APP log -1 --format='%h от %cd' --date=format:'%d.%m %H:%M' 2>/dev/null)"
 code=$(curl -s -o /dev/null -m 10 -w '%{http_code}' "http://127.0.0.1:$PORT/")
 [ "$code" = 200 ] && ok "главная страница отвечает" || bad "главная страница не отвечает (код $code)"
 
