@@ -339,9 +339,9 @@ const srcset=u=>/^photos\/[\w-]+\.jpg$/.test(u||"")?`${pic(u,1)} 600w, ${pic(u,0
 // card=1: карточка в списке — сразу грузим только первое фото, остальные по data-src, когда покупатель начнёт листать.
 // card=0: страница товара — первое фото с высоким приоритетом, браузер сам выбирает 600 или 1080 px.
 function frame(p,u,card,i){if(!u)return'<div class="sl"><div class="d3"></div></div>';const a=` alt="${p.name}" decoding="async" onerror="this.remove()"`;
-if(card)return `<div class="sl ph"><img ${i?`data-src="${pic(u,1)}"`:`src="${pic(u,1)}" loading="lazy"`}${a}></div>`;
+if(card){const ss=srcset(u),cs=ss?` srcset="${ss}" sizes="(max-width:760px) 50vw, 26vw"`:"";return `<div class="sl ph"><img ${i?`data-src="${pic(u,1)}"${cs.replace(" srcset="," data-srcset=")}`:`src="${pic(u,1)}"${cs} loading="lazy"`}${a}></div>`}
 const ss=srcset(u);return `<div class="sl ph"><img src="${pic(u,0)}"${ss?` srcset="${ss}" sizes="${SZ}"`:""}${i?' loading="lazy"':' fetchpriority="high"'}${a}></div>`}
-function wake(el){el.querySelectorAll("img[data-src]").forEach(x=>{x.src=x.dataset.src;x.removeAttribute("data-src")})}
+function wake(el){el.querySelectorAll("img[data-src]").forEach(x=>{if(x.dataset.srcset){x.srcset=x.dataset.srcset;x.removeAttribute("data-srcset")}x.src=x.dataset.src;x.removeAttribute("data-src")})}
 const PRE=new Set();
 function prefetch(id){if(PRE.has(id))return;PRE.add(id);const p=P.find(x=>x.id===id);if(!p||!p.imgs[0])return;const i=new Image();const ss=srcset(p.imgs[0]);if(ss){i.sizes=SZ;i.srcset=ss}i.src=pic(p.imgs[0],0)}
 const shots=p=>p.imgs.length?p.imgs:[null];
@@ -354,7 +354,9 @@ return `<a class="cat serif" href="#/c/${id}">${p?`<img src="${pic(p.imgs[0],1)}
 return CATS.filter(c=>c[0]!=="novinki").map(tile).join("")+`<a class="cat serif all" href="#/c/all"><span>Вся коллекция<small>${P.length} ${plural(P.length)} →</small></span></a>`}
 const plural=n=>{const a=n%10,b=n%100;return a===1&&b!==11?"модель":a>=2&&a<=4&&(b<10||b>=20)?"модели":"моделей"};
 // Главный экран: на компьютере три колонки фото, каждая листает свои кадры с небольшим сдвигом во времени; на телефоне — одна колонка со всеми кадрами.
-const HERO=[["hero","kardigan-v-rozovom-cvete-1-1","kostyum-v-krasnom-cvete-1"],["kostyum-iz-shersti-s-yubkoj-midi-1","kostyum-3-1","plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-3"],["kostyum-azhur-belyj-1","kostyum-2-2","plate-midi-nebesnogo-golubogo-cveta-iz-nezhnogo-hlopka-1"]];
+const HERO=[["hero","kardigan-1-3","plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-2"],["kostyum-iz-shersti-s-yubkoj-midi-1","kostyum-v-bordovom-cvete-s-yubkoj-midi-1","plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-3"],["kostyum-azhur-belyj-1","kardigan-1","kostyum-1"]];
+// Фото, которые изначально сняты в низком разрешении: для крупных блоков главной выбираем другие кадры
+const BLUR=new Set("kardigan-v-rozovom-cvete-3 kostyum-v-krasnom-cvete-2 kardigan-v-rozovom-cvete-1-1 kardigan-v-rozovom-cvete-1-2 kardigan-v-rozovom-cvete-1-3 kostyum-3-1 kostyum-v-krasnom-cvete-1 kardigan-v-rozovom-cvete-1-4 kostyum-3-2 kardigan-v-rozovom-cvete-1 kardigan-v-rozovom-cvete-2 kostyum-2-1 kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-2 kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-1 yubka-molochnogo-cveta-1-1 yubka-molochnogo-cveta-1-2 kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-3 yubka-molochnogo-cveta-1-3 elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-2 plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-2 dzhemper-sherst-3 plate-bordovoe-3 dzhemper-sherst-1 yubka-1 yubka-molochnogo-cveta-1".split(" ").map(f=>`photos/${f}.jpg`));
 const ph=(f,sz,cls,lazy)=>`<img${cls?` class="${cls}"`:""} src="photos/s/${f}.webp" srcset="photos/s/${f}.webp 600w, photos/w/${f}.webp 1080w" sizes="${sz}" alt=""${lazy?' loading="lazy"':""} decoding="async" onerror="this.remove()">`;
 const prodOf=f=>P.find(p=>p.imgs.includes(`photos/${f}.jpg`));
 function heroHtml(){const mob=matchMedia("(max-width:760px)").matches,pan=mob?[HERO[0].map((_,i)=>HERO.map(c=>c[i])).flat()]:HERO,steps=pan[0].length;
@@ -363,9 +365,9 @@ return `<div class="h2" style="--n:${pan.length}">${pan.map((c,k)=>`<div class="
 <div class="ct"><div class="ey">Женский трикотаж · Екатеринбург</div><h1 class="serif"><span class="w">${w("Gluhova",.15)}</span><span class="w">${w("Natalya",.45)}</span></h1><p class="sub">Лаконичный крой, премиальная пряжа, ручная отделка</p><a class="btn" href="#/c/all">Смотреть коллекцию</a></div>
 <div class="ft"><div class="pg">${Array.from({length:steps},(_,i)=>`<i class="${i?"":"on"}"><b></b></i>`).join("")}<span style="margin-left:8px" id="hn">01 / ${String(steps).padStart(2,"0")}</span></div><div class="sc">Листайте</div></div></div>`}
 const STORIES=[["about","О бренде","hero"],["c/novinki","Новинки","kardigan-v-rozovom-cvete-1-1"],["delivery","Доставка","kofta-1"],["care","Уход","kostyum-azhur-belyj-2"],["refund","Возврат","kardigan-1"],["contacts","Контакты","kostyum-v-bordovom-cvete-s-yubkoj-midi-4"]];
-const LOOKS=[["kostyum-3-1","Образ 01",47,60],["plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-1","Образ 02",50,46]];
+const LOOKS=[["kostyum-iz-shersti-s-yubkoj-midi-3","Образ 01",50,50],["kostyum-v-bordovom-cvete-s-yubkoj-midi-2","Образ 02",50,50]];
 function home(){setTimeout(homeStart,0);const all=P.filter(p=>p.isNew).sort((a,b)=>soldOut(a)-soldOut(b));
-const ed=prodOf("kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-1");
+const ed=prodOf("plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-2");
 const look=([f,t,x,y])=>{const p=prodOf(f);return `<div class="lb2 rvi">${ph(f,"(max-width:760px) 100vw, 50vw","",1)}<div class="lt">${t}</div>${p?`<div class="hs" style="left:${x}%;top:${y}%"><button aria-label="${p.name}">+</button><a href="#/p/${p.id}"><b>${p.name}</b><span>${money(p.price)} →</span></a></div>`:""}</div>`};
 const mq=["Ручная отделка","Премиальная пряжа","Сделано в Екатеринбурге","Идеальная посадка","Доставка СДЭК по России"];
 return heroHtml()+`
@@ -373,15 +375,15 @@ return heroHtml()+`
 <div class="mq" aria-hidden="true"><div>${[0,1].map(()=>mq.map(t=>`<span>${t}</span>`).join("")).join("")}</div></div>
 <section><div class="sh rv"><small>New drop</small><h2 class="serif">Новинки</h2></div><div class="rl rv"><div class="rt" id="rt">${all.map(card).join("")}</div>
 <div class="rn"><div class="rbar"><i id="rb"></i></div><div class="ar"><button data-rl="-1" aria-label="Назад">←</button><button data-rl="1" aria-label="Вперёд">→</button></div><a class="more" href="#/c/novinki">Все новинки <i>→</i></a></div></div></section>
-${ed?`<div class="ed"><a class="bi rvi" href="#/p/${ed.id}" data-px>${ph("kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-1","(max-width:760px) 100vw, 52vw","",1)}</a>
+${ed?`<div class="ed"><a class="bi rvi" href="#/p/${ed.id}" data-px>${ph("plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-2","(max-width:760px) 100vw, 52vw","",1)}</a>
 <div class="tx rv"><small>Авторская работа</small><h2 class="serif">Ручная<br>вышивка</h2><p>Главный фокус бренда — сама женщина и её природная красота. Идеальная посадка, высококачественный крой и авторская ручная отделка: каждое изделие отшито в Екатеринбурге.</p><a class="lnk" href="#/p/${ed.id}">${ed.name} <i>→</i></a>
-<div class="si rvi">${ph("plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-1","26vw","",1)}</div></div></div>`:""}
+<div class="si rvi">${ph("kostyum-iz-shersti-s-yubkoj-midi-2","26vw","",1)}</div></div></div>`:""}
 <section style="padding-top:0"><div class="sh rv"><small>Lookbook</small><h2 class="serif">Образы</h2></div><div class="lk2">${LOOKS.map(look).join("")}</div></section>
 <section style="padding-top:24px"><div class="sh rv"><small>Каталог</small><h2 class="serif">Разделы</h2></div><div class="cats2">${catTiles2()}</div></section>
 <div class="qt"><p class="rv">Красота может выражаться в простоте. Лаконичный дизайн, премиальные материалы, удобный крой и длина макси.</p><small class="rv">Gluhova Natalya</small></div>
 <div class="adv">${[["Ручная отделка","Авторские детали и вышивка, выполненные вручную."],["Премиальные материалы","Шерсть, вискоза и хлопок приятные к телу."],["Идеальная посадка","Лаконичный крой, который подчёркивает фигуру."],["Доставка по России","Отправляем СДЭК в пункт выдачи или до двери."]].map(([h,p],i)=>`<div class="rv" style="transition-delay:${i*.08}s"><b>0${i+1}</b><h3>${h}</h3><p>${p}</p></div>`).join("")}</div>`}
-function catTiles2(){const used=new Set();return CATS.filter(c=>c[0]!=="novinki").map(([id,t],i)=>{const l=P.filter(p=>p.cats.includes(id));if(!l.length)return"";const p=l.find(x=>x.imgs[0]&&!used.has(x.imgs[0]))||l[0];if(p.imgs[0])used.add(p.imgs[0]);
-return `<a class="c2 rv" style="transition-delay:${(i%3)*.08}s" href="#/c/${id}">${p.imgs[0]?`<img src="${pic(p.imgs[0],1)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:""}<span>${t}<small>${l.length} ${plural(l.length)}</small></span><i>↗</i></a>`}).join("")+`<a class="c2 all rv" href="#/c/all"><span>Вся коллекция<small style="font:400 13px Inter,Helvetica,Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-top:10px">${P.length} ${plural(P.length)}</small></span><i>↗</i></a>`}
+function catTiles2(){const used=new Set();return CATS.filter(c=>c[0]!=="novinki").map(([id,t],i)=>{const l=P.filter(p=>p.cats.includes(id));if(!l.length)return"";const all=l.flatMap(x=>x.imgs.map((u,k)=>[u,k])).filter(([u])=>!used.has(u)).sort((a,b)=>BLUR.has(a[0])-BLUR.has(b[0])||a[1]-b[1]),u=(all[0]||[])[0];if(u)used.add(u);const p={imgs:[u]};
+return `<a class="c2 rv" style="transition-delay:${(i%3)*.08}s" href="#/c/${id}">${p.imgs[0]?`<img src="${pic(p.imgs[0],1)}" srcset="${srcset(p.imgs[0])}" sizes="(max-width:760px) 50vw, 33vw" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:""}<span>${t}<small>${l.length} ${plural(l.length)}</small></span><i>↗</i></a>`}).join("")+`<a class="c2 all rv" href="#/c/all"><span>Вся коллекция<small style="font:400 13px Inter,Helvetica,Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-top:10px">${P.length} ${plural(P.length)}</small></span><i>↗</i></a>`}
 let F={sort:"def",size:""};
 function catalog(id){const t=id==="all"?"Коллекция":CN[id]||"Коллекция";
 let l=P.filter(p=>id==="all"||p.cats.includes(id));
