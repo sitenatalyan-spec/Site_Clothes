@@ -333,7 +333,8 @@ let favs=[];try{favs=JSON.parse(localStorage.getItem("gn_favs")||"[]")}catch(e){
 const save=()=>{try{localStorage.setItem("gn_cart",JSON.stringify(cart))}catch(e){}renderCart()};
 const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),1800)};
 const imgTag=(p,i)=>p.imgs[i]?`<img src="${pic(p.imgs[i],1)}" alt="${p.name}" loading="lazy" onerror="this.remove()">`:"";
-const pic=(u,sm)=>/^photos\/[\w-]+\.jpg$/.test(u||"")?u.replace(/^photos\/(.+)\.jpg$/,`photos/${sm?"s":"w"}/$1.webp`):u;
+const IV="?v=2"; // меняйте номер, когда заменяете файлы фото, чтобы браузеры не показывали старые из кэша
+const pic=(u,sm)=>/^photos\/[\w-]+\.jpg$/.test(u||"")?u.replace(/^photos\/(.+)\.jpg$/,`photos/${sm?"s":"w"}/$1.webp${IV}`):u;
 const SZ="(max-width:760px) 100vw, 57vw";
 const srcset=u=>/^photos\/[\w-]+\.jpg$/.test(u||"")?`${pic(u,1)} 600w, ${pic(u,0)} 1080w`:"";
 // card=1: карточка в списке — сразу грузим только первое фото, остальные по data-src, когда покупатель начнёт листать.
@@ -357,11 +358,11 @@ const plural=n=>{const a=n%10,b=n%100;return a===1&&b!==11?"модель":a>=2&&
 const HERO=[["hero","kardigan-1-3","plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-2"],["kostyum-iz-shersti-s-yubkoj-midi-1","kostyum-v-bordovom-cvete-s-yubkoj-midi-1","plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-3"],["kostyum-azhur-belyj-1","kardigan-1","kostyum-1"]];
 // Фото, которые изначально сняты в низком разрешении: для крупных блоков главной выбираем другие кадры
 const BLUR=new Set("kardigan-v-rozovom-cvete-3 kostyum-v-krasnom-cvete-2 kardigan-v-rozovom-cvete-1-1 kardigan-v-rozovom-cvete-1-2 kardigan-v-rozovom-cvete-1-3 kostyum-3-1 kostyum-v-krasnom-cvete-1 kardigan-v-rozovom-cvete-1-4 kostyum-3-2 kardigan-v-rozovom-cvete-1 kardigan-v-rozovom-cvete-2 kostyum-2-1 kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-2 kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-1 yubka-molochnogo-cveta-1-1 yubka-molochnogo-cveta-1-2 kostyum-iz-shersti-s-vyshivkoj-ruchnoj-raboty-3 yubka-molochnogo-cveta-1-3 elegantnoe-siluetnoe-plate-iz-nezhnogo-tonkogo-hlopka-dlya-vesennih-obrazov-2 plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-2 dzhemper-sherst-3 plate-bordovoe-3 dzhemper-sherst-1 yubka-1 yubka-molochnogo-cveta-1".split(" ").map(f=>`photos/${f}.jpg`));
-const ph=(f,sz,cls,lazy)=>`<img${cls?` class="${cls}"`:""} src="photos/s/${f}.webp" srcset="photos/s/${f}.webp 600w, photos/w/${f}.webp 1080w" sizes="${sz}" alt=""${lazy?' loading="lazy"':""} decoding="async" onerror="this.remove()">`;
+const ph=(f,sz,cls,lazy)=>`<img${cls?` class="${cls}"`:""} src="photos/s/${f}.webp${IV}" srcset="photos/s/${f}.webp${IV} 600w, photos/w/${f}.webp${IV} 1080w" sizes="${sz}" alt=""${lazy?' loading="lazy"':""} decoding="async" onerror="this.remove()">`;
 const prodOf=f=>P.find(p=>p.imgs.includes(`photos/${f}.jpg`));
 function heroHtml(){const mob=matchMedia("(max-width:760px)").matches,pan=mob?[HERO[0].map((_,i)=>HERO.map(c=>c[i])).flat()]:HERO,steps=pan[0].length;
 const w=(t,d)=>[...t].map((ch,i)=>`<span style="animation-delay:${(d+i*.05).toFixed(2)}s">${ch===" "?"&nbsp;":ch}</span>`).join("");
-return `<div class="h2" style="--n:${pan.length}">${pan.map((c,k)=>`<div class="pn">${c.map((f,i)=>`<img class="${i?"":"on"}" ${i?"data-":""}src="photos/${mob?"w":"s"}/${f}.webp" ${i?"data-":""}srcset="photos/s/${f}.webp 600w, photos/w/${f}.webp 1080w" sizes="${mob?"100vw":"34vw"}" alt=""${!i&&k===(mob?0:1)?' fetchpriority="high"':""} decoding="async">`).join("")}</div>`).join("")}
+return `<div class="h2" style="--n:${pan.length}">${pan.map((c,k)=>`<div class="pn">${c.map((f,i)=>`<img class="${i?"":"on"}" ${i?"data-":""}src="photos/${mob?"w":"s"}/${f}.webp${IV}" ${i?"data-":""}srcset="photos/s/${f}.webp${IV} 600w, photos/w/${f}.webp${IV} 1080w" sizes="${mob?"100vw":"34vw"}" alt=""${!i&&k===(mob?0:1)?' fetchpriority="high"':""} decoding="async">`).join("")}</div>`).join("")}
 <div class="ct"><div class="ey">Женский трикотаж · Екатеринбург</div><h1 class="serif"><span class="w">${w("Gluhova",.15)}</span><span class="w">${w("Natalya",.45)}</span></h1><p class="sub">Лаконичный крой, премиальная пряжа, ручная отделка</p><a class="btn" href="#/c/all">Смотреть коллекцию</a></div>
 <div class="ft"><div class="pg">${Array.from({length:steps},(_,i)=>`<i class="${i?"":"on"}"><b></b></i>`).join("")}<span style="margin-left:8px" id="hn">01 / ${String(steps).padStart(2,"0")}</span></div><div class="sc">Листайте</div></div></div>`}
 const STORIES=[["about","О бренде","hero"],["c/novinki","Новинки","kardigan-v-rozovom-cvete-1-1"],["delivery","Доставка","kofta-1"],["care","Уход","kostyum-azhur-belyj-2"],["refund","Возврат","kardigan-1"],["contacts","Контакты","kostyum-v-bordovom-cvete-s-yubkoj-midi-4"]];
