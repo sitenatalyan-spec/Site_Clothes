@@ -147,6 +147,8 @@ footer{padding:48px 16px calc(24px + env(safe-area-inset-bottom))}.fg{gap:28px 1
 .gbtn{display:flex!important;align-items:center;justify-content:center;gap:10px}.gbtn svg{width:18px;height:18px}
 .or{display:flex;align-items:center;gap:12px;color:var(--mute);font-weight:400;font-size:12px;letter-spacing:.14em;text-transform:uppercase}.or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
 .mute{color:var(--mute);font-weight:400}
+.dh{font-size:30px;margin:36px 0 12px}.dg{display:block;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;margin:22px 0 6px}
+.dr{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--line)}.dr b{font-weight:500;white-space:nowrap}.txt a{text-decoration:underline;text-underline-offset:3px}.txt p{font-size:16px;line-height:1.7;color:#333}.dr{font-size:16px}.dg{font-size:13px}
 .acc2{display:grid;grid-template-columns:320px 1fr;gap:48px;max-width:1080px;margin:0 auto;padding:56px 32px}
 .ord{border:1px solid var(--line);padding:18px 20px;margin-bottom:12px}.ord .oh{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}.ord .oh b{font-weight:500}.ord ul{list-style:none;padding:0;margin:0 0 10px}.ord li{display:flex;justify-content:space-between;gap:12px;padding:4px 0;font-size:13px}
 @media(max-width:760px){.acc2{grid-template-columns:1fr;padding:32px 16px;gap:32px}}
@@ -407,13 +409,19 @@ const tot=cart.reduce((s,c)=>s+c.q*(P.find(p=>p.id===c.id)||{price:0}).price,0);
 $("#cart").innerHTML=`<div class="hd"><span>Корзина</span><button id="cx">Закрыть</button></div><div class="items">${cart.map((c,i)=>{const p=P.find(x=>x.id===c.id);if(!p)return"";return `<div class="it"><div class="im">${imgTag(p,0)}</div><div><a href="#/p/${p.id}">${p.name}</a><div style="color:var(--mute);font-weight:400">Размер: ${c.size} · ${money(p.price)}</div><div class="qty"><button data-m="${i}">−</button><span>${c.q}</span><button data-p="${i}">+</button></div> <button data-d="${i}" style="font-size:12px;text-decoration:underline;margin-left:10px">Удалить</button></div></div>`}).join("")||'<p style="color:var(--mute);font-weight:400">Корзина пуста</p>'}</div>
 <div style="padding-top:16px"><div style="display:flex;justify-content:space-between;margin-bottom:14px"><span>Итого</span><b>${money(tot)}</b></div><button class="btn fill w" id="co">Оформить заказ</button></div>`}
 const pages={about:["О бренде","Gluhova Natalya создан, чтобы показать женщинам: не нужно открывать слишком многое или выбирать сложные конструкции, чтобы быть свободной и настоящей. Красота может выражаться в простоте.","Главный фокус бренда — сама женщина и её природная красота. Идеальная посадка, высококачественный крой, авторская ручная отделка."],
-delivery:["Доставка и оплата","Актуальные условия доставки и оплаты уточняйте на natalyagluhova.ru/dostavka-i-oplata-produkcii или у менеджера: +7 (960) 304-79-77."],
+delivery:["Доставка и оплата","Мы оперативно доставим ваш заказ в любую точку России и зарубежья.",
+'<h2 class="dh serif">Доставка</h2>Доставка осуществляется в любую точку России курьерской службой СДЭК: курьером до двери или в пункт выдачи. Точную стоимость сайт рассчитает при оформлении заказа, когда вы укажете город.',
+'<span class="dg">По Екатеринбургу</span><span class="dr"><span>Курьером СДЭК до двери</span><b>от 300 ₽</b></span><span class="dr"><span>В пункт выдачи СДЭК</span><b>от 300 ₽</b></span>',
+'<span class="dg">В регионы России</span><span class="dr"><span>Курьером СДЭК до двери</span><b>от 450 ₽</b></span><span class="dr"><span>В пункт выдачи СДЭК</span><b>от 400 ₽</b></span>',
+'<span class="dg">Самовывоз</span>Самовывоз в Екатеринбурге — договоритесь о времени с менеджером: <a href="tel:+79603047977">+7 (960) 304-79-77</a>.',
+'<h2 class="dh serif">Оплата</h2>Оплата онлайн на сайте картами МИР, Visa, Mastercard или через СБП. После оплаты на e-mail придёт электронный чек.',
+'Также возможна оплата наличными при получении — уточните у менеджера по телефону <a href="tel:+79603047977">+7 (960) 304-79-77</a>, в <a href="https://wa.me/79603047977">WhatsApp</a> или <a href="https://t.me/+79603047977">Telegram</a>. Работаем ежедневно с 8:00 до 21:00.'],
 care:["Уход за изделиями","Подробные рекомендации по уходу — на natalyagluhova.ru/uhod-za-izdeliyami. Трикотаж рекомендуем стирать деликатно и сушить в горизонтальном положении."],
 contacts:["Контакты","Екатеринбург · ежедневно 8:00–21:00","Тел.: +7 (960) 304-79-77 · E-mail: Kerzhaeva@gmail.com","WhatsApp, Telegram, Instagram @natalkagluhova"],
 refund:["Возврат и обмен","Возврат товара надлежащего качества возможен в течение 14 дней с момента получения, если сохранены товарный вид, бирки и потребительские свойства (ст. 25 Закона «О защите прав потребителей»).","Чтобы оформить возврат или обмен, напишите на Kerzhaeva@gmail.com или в WhatsApp +7 (960) 304-79-77, указав номер заказа. Деньги возвращаются тем же способом, которым был оплачен заказ.","[Текст нужно проверить и уточнить у юриста: сроки, расходы на обратную доставку, исключения.]"],
 offer:["Публичная оферта","Продавец: ИП Шнайдер Наталья Анатольевна, ИНН 211301663799. Оформляя заказ на сайте, покупатель принимает условия настоящей оферты.","Предмет договора — продажа товаров, представленных в каталоге. Цена и наличие указаны на сайте. Оплата — онлайн банковской картой или через СБП. Доставка — СДЭК.","[Полный текст оферты подготовьте с юристом.]"],
 privacy:["Персональные данные","Условия обработки персональных данных — natalyagluhova.ru/users/agreement"]};
-function txt(k){const a=pages[k];return `<div class="txt"><h1 class="serif">${a[0]}</h1>${a.slice(1).map(t=>`<p>${t}</p>`).join("")}</div>`}
+function txt(k){const a=pages[k];return `<div class="txt"><h1 class="serif">${a[0]}</h1>${a.slice(1).map(t=>t.startsWith("<h2")?t.replace("</h2>","</h2><p>")+"</p>":`<p>${t}</p>`).join("")}</div>`}
 /* ===== Оформление заказа и доставка СДЭК ===== */
 let CK={type:"cdek_pvz",city:null,cost:null,pvz:null,here:null};
 let FEAT=null;const feats=()=>FEAT?Promise.resolve(FEAT):api("cdek?action=features").then(d=>FEAT=d||{}).catch(()=>FEAT={});
