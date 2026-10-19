@@ -86,7 +86,7 @@ try{S=await call("product",{name:$("#f-name").value,price:$("#f-price").value,ca
 toast("Товар добавлен на сайт");photos=[];["#f-name","#f-price","#f-sizes","#f-desc","#f-photos"].forEach(s=>$(s).value="");$("#f-thumbs").replaceChildren();render()}catch(e){toast(e.message)}};
 async function loadOrders(){try{const d=await call("orders");$("#orders").replaceChildren(...d.orders.map(o=>el("tr",{},
 el("td",{},new Date(o.created).toLocaleString("ru-RU")),el("td",{},o.order_id+" · "+o.provider),
-el("td",{},o.name,el("br"),o.phone,el("br"),o.email),el("td",{},(o.delivery==="cdek_door"?"Курьер: ":"ПВЗ: ")+o.city+" "+(o.address||"")+(o.delivery!=="cdek_door"&&o.pvz?" (код "+o.pvz+")":"")),
+el("td",{},o.name,el("br"),o.phone,el("br"),o.email),el("td",{},(o.delivery==="cdek_door"?"Курьер: ":o.delivery==="cdek_postamat"?"Постамат: ":"ПВЗ: ")+(o.tariff_name?"СДЭК "+o.tariff_name+" · ":"")+o.city+" "+(o.address||"")+(o.delivery!=="cdek_door"&&o.pvz?" (код "+o.pvz+")":"")),
 el("td",{},...o.items.map(i=>el("div",{},i.name+" × "+i.q))),el("td",{},Number(o.total).toLocaleString("ru-RU")+" ₽"))))}catch(e){toast(e.message)}}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b));
 for(const t of["items","add","orders","log"])$("#t-"+t).hidden=t!==b.dataset.tab;if(b.dataset.tab==="orders")loadOrders()});

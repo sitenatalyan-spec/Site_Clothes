@@ -249,6 +249,22 @@ header.tr .logo{opacity:0;transform:translateY(-6px)}header .logo{transition:opa
 .ed{grid-template-columns:1fr;gap:28px;padding:56px 16px}.ed .si{display:none}
 .lk2{grid-template-columns:1fr;gap:10px}.cats2{grid-template-columns:1fr 1fr;gap:8px}.c2{border-radius:16px;padding:12px}.c2 span{font-size:10px;letter-spacing:.12em}.c2 i{width:30px;height:30px;font-size:12px}
 .qt{padding:72px 16px}.adv{grid-template-columns:1fr 1fr}.adv div{padding:24px 16px 28px;border-bottom:1px solid var(--line)}.adv div:nth-child(2){border-right:0}.adv b{font-size:34px}}
+/* Оформление: тарифы СДЭК и выбор оплаты */
+.sn{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--tone);font:400 15px Inter,Helvetica,Arial,sans-serif;font-style:normal;margin-right:12px;vertical-align:3px;color:#7a6a55}
+.tl{display:grid;gap:8px}.tg{font:400 20px/1.3 "Cormorant Garamond",Georgia,serif;margin:10px 0 2px}.tg span{color:var(--mute)}
+.trf{display:grid;grid-template-columns:22px 1fr;gap:4px 10px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:border-color .2s,background .2s}
+.trf:hover{border-color:#cfc8bc}.trf:has(input:checked){border-color:var(--fg);background:#faf9f7}
+.trf input{grid-row:1/4;width:18px;height:18px;margin:2px 0 0;accent-color:#111}.tn{font-size:15px;font-weight:400}.tn small{color:var(--mute);font-size:13px}
+.td{display:flex;align-items:center;gap:8px;color:var(--mute);font-size:14px}.td svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.4}.tc{font-size:17px;font-weight:500}
+.sum{display:grid;grid-template-columns:1fr auto;gap:6px 16px;border-top:1px solid var(--line);padding-top:16px;font-size:15px}.sum b{font-weight:400;text-align:right}.sum .tt{font-size:18px;font-weight:500;padding-top:6px}
+.psh{position:fixed;inset:0;z-index:70;background:rgba(20,16,12,.45);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .25s}.psh.on{opacity:1}
+.pbx{position:relative;background:#fff;border-radius:22px;padding:30px 26px 24px;width:min(460px,100%);transform:translateY(16px);transition:transform .3s}.psh.on .pbx{transform:none}
+.pbx h3{font-size:32px;line-height:1.1}.pbx>.mute{margin:6px 0 20px;font-size:15px}
+.px{position:absolute;top:14px;right:16px;font-size:18px;width:36px;height:36px;border-radius:50%}.px:hover{background:var(--tone)}
+.pm{display:grid;grid-template-columns:1fr auto;gap:4px 12px;width:100%;text-align:left;border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:10px;transition:border-color .2s,background .2s}
+.pm:hover{border-color:var(--fg);background:#faf9f7}.pm b{font-weight:500;font-size:16px}.pm span{grid-column:1;color:var(--mute);font-size:13px}.pm i{grid-row:1/3;grid-column:2;align-self:center;font-style:normal;font-size:18px}
+.pm:disabled{opacity:.5;cursor:wait}.pm.ld{opacity:1}.pm.ld i{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:760px){.psh{align-items:flex-end;padding:0}.pbx{border-radius:22px 22px 0 0;padding:26px 16px calc(20px + env(safe-area-inset-bottom))}}
 /* Главная: мелкий текст крупнее и контрастнее */
 .h2 .ey{font-size:13px;letter-spacing:.24em;opacity:1;font-weight:400}
 .h2 .sub{font-size:17px;letter-spacing:.02em;font-weight:400}
@@ -426,11 +442,13 @@ offer:["Публичная оферта","Продавец: ИП Шнайдер 
 privacy:["Согласие на обработку персональных данных", "Настоящим я, действуя своей волей и в своём интересе, при размещении (вводе) своих персональных данных на интернет-сайте индивидуального предпринимателя Шнайдер Натальи Анатольевны (ИНН 211301663799, далее — Оператор) подтверждаю своё согласие на обработку указанных мной персональных данных Оператором в целях предложения мне услуг, новых услуг, предлагаемых Оператором, в целях проведения опросов, анкетирования, рекламных и маркетинговых исследований в отношении услуг, предоставляемых Оператором, в том числе путём осуществления прямых контактов со мною посредством средств связи, указанных мной на настоящем сайте.", "Настоящее право (согласие) предоставляется на осуществление любых действий в отношении моих персональных данных, которые необходимы и желаемы для достижения вышеуказанных целей, включая, без ограничения, сбор, систематизацию, накопление, хранение, уточнение (обновление, изменение), использование, передачу, обезличивание, блокирование и уничтожение персональных данных, под которыми понимаются все данные, указанные мной на настоящем сайте.", "Настоящим подтверждаю, что уведомлён о том, что обработка персональных данных осуществляется Оператором любым способом, в том числе как с использованием средств автоматизации (включая программное обеспечение), так и без использования средств автоматизации (с использованием различных материальных носителей, включая бумажные носители).", "<span class=\"dg\">Оператор</span>Индивидуальный предприниматель Шнайдер Наталья Анатольевна, ИНН 211301663799. Вопросы по персональным данным: <a href=\"mailto:Kerzhaeva@gmail.com\">Kerzhaeva@gmail.com</a>, <a href=\"tel:+79603047977\">+7 (960) 304-79-77</a>."]};
 function txt(k){const a=pages[k];return `<div class="txt"><h1 class="serif">${a[0]}</h1>${a.slice(1).map(t=>t.startsWith("<h2")?t.replace("</h2>","</h2><p>")+"</p>":`<p>${t}</p>`).join("")}</div>`}
 /* ===== Оформление заказа и доставка СДЭК ===== */
-let CK={type:"cdek_pvz",city:null,cost:null,pvz:null,here:null};
+let CK={city:null,tariffs:null,tariff:null,cost:null,pvz:null,here:null};
+const MODE_DOOR=3,MODE_POST=7;
+const isDoor=()=>CK.tariff&&CK.tariff.mode===MODE_DOOR;
 let FEAT=null;const feats=()=>FEAT?Promise.resolve(FEAT):api("cdek?action=features").then(d=>FEAT=d||{}).catch(()=>FEAT={});
 const api=(u,o)=>fetch("/api/"+u,o).then(r=>r.json());
 const sub=()=>cart.reduce((s,c)=>s+c.q*(P.find(p=>p.id===c.id)||{price:0}).price,0);
-function sumUpd(){const e=$("#sum");if(e)e.innerHTML=`Товары: ${money(sub())}<br>Доставка: ${CK.cost==null?(CK.city?"уточняется":"выберите город"):money(CK.cost)}<br><b>Итого: ${money(sub()+(CK.cost||0))}</b>`}
+function sumUpd(){const e=$("#sum");if(e)e.innerHTML=`<span>Товары</span><b>${money(sub())}</b><span>Доставка</span><b>${CK.cost==null?(CK.city?"выберите способ":"выберите город"):money(CK.cost)}</b><span class="tt">Итого</span><b class="tt">${money(sub()+(CK.cost||0))}</b>`}
 const nrm=x=>String(x).toLowerCase().replace(/ё/g,"е").replace(/[\s-]+/g," ").trim();
 const deb=(f,ms)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>f(...a),ms)}};
 const km=m=>m<1000?Math.max(10,Math.round(m/10)*10)+" м":(m/1000).toFixed(m<10000?1:0).replace(".",",")+" км";
@@ -444,6 +462,8 @@ function ddHide(k){const b=$("#"+DD[k].box);if(b)b.hidden=true}
 const opt=(k,i,main,side,cls)=>`<button type="button" class="${cls||""}" data-dd="${k}" data-i="${i}"><b>${main}</b>${side?`<span>${side}</span>`:""}</button>`;
 function ddPick(k,i){const it=DD[k].items[i];if(!it)return;if(k==="cy")pickCity(it);else if(k==="pv")it.kind==="addr"?pickHere(it):pickPvz(it);else pickAddr(it)}
 document.addEventListener("mousedown",e=>{if(e.target.closest(".cl"))e.preventDefault()});
+document.addEventListener("click",e=>{if(e.target.id==="psh")payClose()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#psh")&&!$("#psh").hidden)payClose()});
 document.addEventListener("keydown",e=>{const d=DD[e.target.id];if(!d)return;const b=$("#"+d.box);if(!b||b.hidden)return;const btns=[...b.querySelectorAll("button[data-dd]")];if(!btns.length)return;
 if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();d.i=(d.i+(e.key==="ArrowDown"?1:-1)+btns.length)%btns.length;btns.forEach((x,i)=>x.classList.toggle("on",i===d.i));btns[d.i].scrollIntoView({block:"nearest"})}
 else if(e.key==="Enter"){e.preventDefault();btns[Math.max(d.i,0)].click()}else if(e.key==="Escape")b.hidden=true});
@@ -458,22 +478,30 @@ if(q.length<3)return ddShow("cy","<p>Продолжайте вводить…</p
 const cyRemote=deb(async q=>{const my=++cySeq,el=$("#cy");if(!el)return;const r=await api("cdek?action=cities&q="+encodeURIComponent(el.value.trim())).catch(()=>[]);if(my!==cySeq||!$("#cy")||nrm($("#cy").value)!==q)return;
 const l=(Array.isArray(r)?r:[]).filter(x=>x.code&&x.city).slice(0,8).map(x=>({name:x.city,region:[x.sub_region,x.region].filter(Boolean).join(", "),code:x.code}));
 ddShow("cy",l.length?l.map((c,i)=>opt("cy",i,escH(c.name),escH(c.region))).join(""):"<p>Город не найден — проверьте название</p>",l)},300);
-function pickCity(c){CK.city={name:c.name,region:c.region||"",code:c.code||null};CK.pvz=null;CK.here=null;PVA=[];$("#cy").value=c.name;ddHide("cy");hereUpd();pvzCard();c.code?calc(true):resolveCdek()}
-async function resolveCdek(){const c=CK.city;$("#dc").textContent="Считаем доставку…";CK.cost=null;sumUpd();
+function pickCity(c){CK.city={name:c.name,region:c.region||"",code:c.code||null};CK.pvz=null;CK.here=null;PVA=[];$("#cy").value=c.name;ddHide("cy");hereUpd();pvzCard();c.code?loadTariffs():resolveCdek()}
+async function resolveCdek(){const c=CK.city;$("#tl").innerHTML='<p class="mute">Считаем доставку…</p>';CK.cost=null;sumUpd();
 try{const r=await api("cdek?action=cities&q="+encodeURIComponent(c.name));const list=Array.isArray(r)?r:[];const reg=nrm(c.region).split(" ")[0]||"";
 const m=list.find(x=>nrm(x.city)===nrm(c.name)&&(!reg||nrm(x.region||"").includes(reg)))||list.find(x=>nrm(x.city)===nrm(c.name));
-if(CK.city!==c)return;if(!m)throw 0;c.code=m.code;calc(true)}catch(e){if(CK.city!==c)return;$("#pw").hidden=true;$("#dc").textContent="Стоимость доставки СДЭК пока недоступна. Оформить заказ можно по телефону +7 (960) 304-79-77."}}
-function dtSet(t){CK.type=t;document.querySelectorAll("[data-dt]").forEach(b=>b.classList.toggle("on",b.dataset.dt===t));$("#aw").hidden=t!=="cdek_door";$("#pw").hidden=t==="cdek_door"||!(CK.city&&CK.city.code);calc()}
-async function calc(next){if(!CK.city||!CK.city.code)return;const door=CK.type==="cdek_door",code=CK.city.code;$("#dc").textContent="Считаем доставку…";CK.cost=null;sumUpd();
-$("#pw").hidden=door;$("#aw").hidden=!door;
-try{const r=await api(`cdek?action=tariff&to=${code}&door=${door?1:0}&n=${cart.reduce((s,c)=>s+c.q,0)}`);if(!CK.city||CK.city.code!==code||(CK.type==="cdek_door")!==door)return;
-CK.cost=r.cost;$("#dc").textContent=r.cost!=null?`Доставка СДЭК: ${money(r.cost)}, ${r.min}–${r.max} дн.`:"Не удалось рассчитать доставку в этот город"}catch(e){CK.cost=null;$("#dc").textContent="Ошибка расчёта доставки"}
-sumUpd();if(door){if(next)$("#ad").focus();return}
-if(PVC!==code){PV=null;$("#pv").value="";$("#pv").placeholder="Загружаем пункты выдачи…";
-const r=await api("cdek?action=pvz&city="+code).catch(()=>[]);if(!CK.city||CK.city.code!==code||!$("#pv"))return;
-PV=(Array.isArray(r)?r:[]).filter(x=>x.code&&x.address).map(x=>({...x,kind:"pvz",k:nrm(x.address+" "+x.name+" "+x.metro).replace(/[.,]/g," ")}));PVC=code;
-$("#pv").placeholder=PV.length?`Улица, метро или ваш адрес · ${PV.length} ${pvWord(PV.length)}`:"В этом городе нет пунктов СДЭК — выберите курьера"}
-if(next&&PV&&PV.length)$("#pv").focus();else if(document.activeElement===$("#pv"))pvSuggest()}
+if(CK.city!==c)return;if(!m)throw 0;c.code=m.code;loadTariffs()}catch(e){if(CK.city!==c)return;$("#pw").hidden=true;$("#tl").innerHTML='<p class="mute">Доставка СДЭК в этот город пока недоступна. Оформить заказ можно по телефону +7 (960) 304-79-77.</p>'}}
+/* Тарифы СДЭК: список с ценой (уже со страховкой) и сроком, как на прежнем сайте */
+const truck='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v9H2zM13 9h4l3 3v3h-7z"/><circle cx="6" cy="17" r="1.8"/><circle cx="17" cy="17" r="1.8"/></svg>';
+const days=(a,b)=>{const w=n=>{const x=n%10,y=n%100;return x===1&&y!==11?"дня":"дней"};return a===b?(a===1?"1 день":`${a} ${a%10>=2&&a%10<=4&&(a%100<10||a%100>=20)?"дня":"дней"}`):`от ${a} до ${b} ${w(b)}`};
+async function loadTariffs(){const code=CK.city&&CK.city.code;if(!code)return;CK.tariffs=null;CK.tariff=null;CK.cost=null;CK.pvz=null;pvzCard();$("#pw").hidden=true;$("#aw").hidden=true;sumUpd();
+const tl=$("#tl");tl.innerHTML='<p class="mute">Считаем стоимость доставки СДЭК…</p>';
+const r=await api(`cdek?action=tariffs&to=${code}&n=${cart.reduce((s,c)=>s+c.q,0)}&v=${sub()}`).catch(()=>null);if(!CK.city||CK.city.code!==code||!$("#tl"))return;
+if(!Array.isArray(r)||!r.length){tl.innerHTML='<p class="mute">Не удалось рассчитать доставку в этот город. Оформить заказ можно по телефону +7 (960) 304-79-77.</p>';return}
+CK.tariffs=r;const row=t=>`<label class="trf"><input type="radio" name="trf" value="${t.code}"><span class="tn">СДЭК — ${escH(t.name)} <small>(со страховкой)</small></span><span class="td">${truck}Срок доставки: ${days(t.min,t.max)}</span><b class="tc">${money(t.cost)}</b></label>`;
+const pick=r.filter(t=>t.mode!==MODE_DOOR),door=r.filter(t=>t.mode===MODE_DOOR);
+tl.innerHTML=(pick.length?`<div class="tg">Забрать самостоятельно <span>где удобно</span></div>${pick.map(row).join("")}`:"")+(door.length?`<div class="tg">Доставить по адресу <span>когда удобно</span></div>${door.map(row).join("")}`:"")}
+function pickTariff(code){const t=(CK.tariffs||[]).find(x=>x.code===+code);if(!t)return;const was=CK.tariff;CK.tariff=t;CK.cost=t.cost;sumUpd();
+const door=t.mode===MODE_DOOR;$("#aw").hidden=!door;$("#pw").hidden=door;if(door){$("#ad").focus();return}
+const type=t.mode===MODE_POST?"POSTAMAT":"PVZ";$("#pvl").textContent=t.mode===MODE_POST?"Постамат":"Пункт выдачи";
+if(!was||(was.mode===MODE_POST)!==(t.mode===MODE_POST)){CK.pvz=null;pvzCard();$("#pv").value=""}loadPoints(type,true)}
+async function loadPoints(type,focus){const code=CK.city.code,key=code+":"+type;if(PVC!==key){PV=null;$("#pv").value="";$("#pv").placeholder=type==="POSTAMAT"?"Загружаем постаматы…":"Загружаем пункты выдачи…";
+const r=await api(`cdek?action=pvz&city=${code}&type=${type}`).catch(()=>[]);if(!CK.city||CK.city.code!==code||!$("#pv"))return;
+PV=(Array.isArray(r)?r:[]).filter(x=>x.code&&x.address).map(x=>({...x,kind:"pvz",k:nrm(x.address+" "+x.name+" "+x.metro).replace(/[.,]/g," ")}));PVC=key;
+$("#pv").placeholder=PV.length?`Улица, метро или ваш адрес · ${PV.length} ${type==="POSTAMAT"?"постамат"+(PV.length%10===1&&PV.length%100!==11?"":PV.length%10>=2&&PV.length%10<=4&&(PV.length%100<10||PV.length%100>=20)?"а":"ов"):pvWord(PV.length)}`:(type==="POSTAMAT"?"В этом городе нет постаматов СДЭК — выберите пункт выдачи":"В этом городе нет пунктов СДЭК — выберите доставку до двери")}
+if(focus&&PV&&PV.length)$("#pv").focus();else if(document.activeElement===$("#pv"))pvSuggest()}
 
 /* Пункт выдачи: поиск по улице/метро, по своему адресу (DaData) или по местоположению */
 let PV=null,PVC=null,PVA=[],pvSeq=0,adSeq=0;
@@ -509,35 +537,46 @@ if(ME)h=`<div class="box"><p>Вы вошли как <b>${esc(ME.name||fmtPh(ME.p
 else if(PROV&&(PROV.google||PROV.phone))h=`<div class="box"><p>Войдите — заказ сохранится в личном кабинете, а данные подставятся автоматически.</p>${PROV.google?`<a class="btn w gbtn" href="/api/auth?action=google&next=checkout">${GL}Войти через Google</a>`:""}${PROV.phone?`<a class="btn w" href="#/account?next=checkout">Войти по номеру телефона</a>`:""}</div>`;
 return `<div id="colog">${h}</div>`}
 function coFill(){if(!ME)return;const f=(i,v)=>{const e=$("#"+i);if(e&&!e.value&&v)e.value=v};f("n",ME.name);f("ph",fmtPh(ME.phone));f("em",ME.email)}
-function checkout(){CK={type:"cdek_pvz",city:null,cost:null,pvz:null,here:null};PV=null;PVC=null;PVA=[];setTimeout(()=>{sumUpd();coFill();feats()},0);
+function checkout(){CK={city:null,tariffs:null,tariff:null,cost:null,pvz:null,here:null};PV=null;PVC=null;PVA=[];setTimeout(()=>{sumUpd();coFill();feats();payMethods()},0);
 return `<div class="txt" style="max-width:640px"><h1 class="serif">Оформление заказа</h1>${coLogin()}<div class="f" style="max-width:560px">
-<h3 class="fh">Доставка СДЭК</h3>
-<div class="seg"><button type="button" data-dt="cdek_pvz" class="on">Пункт выдачи</button><button type="button" data-dt="cdek_door">Курьер до двери</button></div>
+<h3 class="fh"><i class="sn">1</i>Город доставки</h3>
 <div class="ac"><label class="lb" for="cy">Город</label><input id="cy" placeholder="Начните вводить название" autocomplete="off" autocapitalize="words" spellcheck="false"><div class="cl" id="cl" hidden></div></div>
-<div id="pw" hidden><div class="ac"><label class="lb" for="pv">Пункт выдачи</label><input id="pv" placeholder="Улица, метро или ваш адрес" autocomplete="off" spellcheck="false"><div class="cl" id="pl" hidden></div></div>
+<h3 class="fh"><i class="sn">2</i>Выберите способ доставки</h3><div id="tl" class="tl"><p class="mute">Сначала укажите город — покажем все тарифы СДЭК с ценой и сроком.</p></div>
+<div id="pw" hidden><div class="ac"><label class="lb" for="pv" id="pvl">Пункт выдачи</label><input id="pv" placeholder="Улица, метро или ваш адрес" autocomplete="off" spellcheck="false"><div class="cl" id="pl" hidden></div></div>
 <button type="button" class="near" id="near"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Показать ближайшие ко мне</button><div id="hr"></div><div id="pi"></div></div>
 <div id="aw" hidden><div class="ac"><label class="lb" for="ad">Адрес доставки</label><input id="ad" placeholder="Улица и номер дома" autocomplete="off" spellcheck="false"><div class="cl" id="al" hidden></div></div><input id="ad2" placeholder="Квартира или офис, подъезд, этаж" style="margin-top:10px" autocomplete="off"></div>
-<div id="dc" class="mute"></div>
-<h3 class="fh">Получатель</h3>
+<h3 class="fh"><i class="sn">3</i>Получатель</h3>
 <input id="n" placeholder="Имя и фамилия" autocomplete="name"><input id="ph" placeholder="Телефон" type="tel" autocomplete="tel"><input id="em" placeholder="E-mail для чека" type="email" autocomplete="email">
 <label><input type="checkbox" id="sub">Хочу получать рассылку</label>
 <label><input type="checkbox" id="ag">Согласен с <a href="#/offer" style="text-decoration:underline">офертой</a> и <a href="#/privacy" style="text-decoration:underline">политикой</a></label>
-<div id="sum"></div><button class="btn fill" id="pay">Перейти к оплате</button></div></div>`}
+<div id="sum" class="sum"></div><button class="btn fill w" id="pay">Оплатить</button></div></div>
+<div class="psh" id="psh" hidden><div class="pbx" role="dialog" aria-modal="true" aria-labelledby="pst"><button type="button" class="px" id="pxx" aria-label="Закрыть">✕</button><h3 class="serif" id="pst">Способ оплаты</h3><p class="mute" id="pss"></p><div id="pml"></div></div></div>`}
 document.addEventListener("input",e=>{const id=e.target.id;
-if(id==="cy"){if(CK.city&&CK.city.name!==e.target.value){CK.city=null;CK.cost=null;CK.pvz=null;CK.here=null;$("#pw").hidden=true;$("#dc").textContent="";hereUpd();pvzCard();sumUpd()}loadCities().then(suggest)}
+if(id==="cy"){if(CK.city&&CK.city.name!==e.target.value){CK.city=null;CK.tariffs=null;CK.tariff=null;CK.cost=null;CK.pvz=null;CK.here=null;$("#pw").hidden=true;$("#aw").hidden=true;$("#tl").innerHTML='<p class="mute">Сначала укажите город — покажем все тарифы СДЭК с ценой и сроком.</p>';hereUpd();pvzCard();sumUpd()}loadCities().then(suggest)}
 if(id==="pv"){if(CK.pvz&&CK.pvz.address!==e.target.value){CK.pvz=null;pvzCard()}pvSuggest();pvAddr()}
 if(id==="ad")adSuggest();
 if(id==="a-c"&&e.target.value.replace(/\D/g,"").length===4)authAct("a-ver")});
 document.addEventListener("focusin",e=>{const id=e.target.id;if(id==="cy")loadCities().then(suggest);if(id==="pv")pvSuggest()});
 document.addEventListener("focusout",e=>{const id=e.target.id;if(!DD[id])return;setTimeout(()=>{if(document.activeElement&&document.activeElement.id===id)return;ddHide(id);
 if(id==="cy"&&!CK.city&&$("#cy")){const q=nrm($("#cy").value);const ex=(CITIES||[]).find(c=>c.k===q);if(ex)pickCity(ex)}},180)});
-async function pay(){const g=i=>$("#"+i).value.trim(),door=CK.type==="cdek_door";
-if(!cart.length)return toast("Корзина пуста");if(!CK.city){$("#cy").focus();return toast("Выберите город из списка подсказок")}if(!CK.city.code||CK.cost==null)return toast("Доставка СДЭК пока недоступна — позвоните нам: +7 (960) 304-79-77");
-if(!door&&!CK.pvz){$("#pv").focus();return toast("Выберите пункт выдачи из списка")}if(door&&g("ad").length<5){$("#ad").focus();return toast("Укажите адрес для курьера")}
-if(!g("n")||!g("ph")||!g("em"))return toast("Заполните контакты");if(!$("#ag").checked)return toast("Подтвердите согласие");
-$("#pay").disabled=true;const address=door?[g("ad"),g("ad2")].filter(Boolean).join(", "):CK.pvz.address;
-try{const r=await api("create-order",{method:"POST",headers:{"Content-Type":"application/json",...(TOK?{Authorization:"Bearer "+TOK}:{})},body:JSON.stringify({items:cart.map(c=>({id:c.id,size:c.size,q:c.q})),contact:{name:g("n"),phone:g("ph"),email:g("em")},delivery:{type:CK.type,city_code:CK.city.code,city:CK.city.name,pvz:door?"":CK.pvz.code,address},subscribe:$("#sub").checked})});
-if(r.confirmation_url)location.href=r.confirmation_url;else{toast(r.error||"Ошибка оплаты");$("#pay").disabled=false}}catch(e){toast("Сервер недоступен");$("#pay").disabled=false}}
+/* Оплата: сначала проверяем заказ, затем покупатель выбирает способ — Яндекс Пэй (или ЮKassa) либо СБП/карта через Точку */
+let PM=null;const payMethods=()=>PM?Promise.resolve(PM):api("create-order").then(d=>PM=d||{}).catch(()=>({}));
+const PAYS={yandexpay:["yandex","Яндекс Пэй","Картой любого банка, через Яндекс Пэй или частями в Сплит"],yookassa:["yandex","Картой и другими способами","Банковская карта, SberPay, T-Pay, ЮMoney"],tochka:["tochka","СБП или картой","Система быстрых платежей — через приложение вашего банка, или банковской картой"]};
+function coData(){const g=i=>$("#"+i).value.trim(),door=isDoor();
+if(!cart.length)return toast("Корзина пуста");if(!CK.city){$("#cy").focus();return toast("Выберите город из списка подсказок")}
+if(!CK.tariff){$("#tl").scrollIntoView({block:"center",behavior:"smooth"});return toast("Выберите способ доставки")}
+if(!door&&!CK.pvz){$("#pv").focus();return toast(CK.tariff.mode===MODE_POST?"Выберите постамат из списка":"Выберите пункт выдачи из списка")}if(door&&g("ad").length<5){$("#ad").focus();return toast("Укажите адрес для курьера")}
+if(!g("n")||!g("ph")||!g("em"))return toast("Заполните контакты получателя");if(!$("#ag").checked)return toast("Подтвердите согласие с офертой");
+return{items:cart.map(c=>({id:c.id,size:c.size,q:c.q})),contact:{name:g("n"),phone:g("ph"),email:g("em")},delivery:{tariff:CK.tariff.code,city_code:CK.city.code,city:CK.city.name,pvz:door?"":CK.pvz.code,address:door?[g("ad"),g("ad2")].filter(Boolean).join(", "):CK.pvz.address},subscribe:$("#sub").checked}}
+async function pay(){const d=coData();if(!d)return;const m=await payMethods();const l=[m.yandex&&PAYS[m.yandex],m.tochka&&PAYS.tochka].filter(Boolean);
+if(!l.length)return toast("Онлайн-оплата скоро заработает. Сейчас заказ можно оформить по телефону +7 (960) 304-79-77");
+$("#pss").textContent=`К оплате ${money(sub()+(CK.cost||0))}`;$("#pml").innerHTML=l.map(([k,t,s])=>`<button type="button" class="pm" data-pm="${k}"><b>${t}</b><span>${s}</span><i>→</i></button>`).join("");
+$("#psh").hidden=false;document.body.style.overflow="hidden";setTimeout(()=>$("#psh").classList.add("on"),10)}
+function payClose(){const s=$("#psh");if(!s)return;s.classList.remove("on");document.body.style.overflow="";setTimeout(()=>{if($("#psh"))s.hidden=true},250)}
+async function payGo(k,btn){const d=coData();if(!d)return payClose();document.querySelectorAll(".pm").forEach(b=>b.disabled=true);btn.classList.add("ld");
+try{const r=await api("create-order",{method:"POST",headers:{"Content-Type":"application/json",...(TOK?{Authorization:"Bearer "+TOK}:{})},body:JSON.stringify({...d,pay:k})});
+if(r.confirmation_url){location.href=r.confirmation_url;return}toast(r.error||"Ошибка оплаты")}catch(e){toast("Сервер недоступен, попробуйте ещё раз")}
+document.querySelectorAll(".pm").forEach(b=>b.disabled=false);btn.classList.remove("ld")}
 function toggleFav(id){favs=favs.includes(id)?favs.filter(x=>x!==id):[...favs,id];try{localStorage.setItem("gn_favs",JSON.stringify(favs))}catch(e){}
 document.querySelectorAll(`.fav[data-f="${id}"]`).forEach(b=>b.textContent=favs.includes(id)?"♥":"♡");$("#fn").textContent=favs.length;if(location.hash==="#/fav")route();pushFavs()}
 function favPage(){const l=P.filter(p=>favs.includes(p.id));return `<div style="padding:32px"><h1 class="serif" style="font-size:48px">Избранное</h1></div><div class="grid">${l.map(p=>card(p)+`<button class="btn w" style="grid-column:auto" data-fc="${p.id}">В корзину</button>`).join("")||'<p style="grid-column:1/-1">Пока пусто. Нажмите ♡ на карточке товара.</p>'}</div>`.replace(/<\/a><button/g,"</a><button")}
@@ -605,7 +644,7 @@ if(t.dataset.rl){const r=$("#rt");if(r)r.scrollBy({left:+t.dataset.rl*r.clientWi
 if(t.parentNode.classList.contains("hs")){t.parentNode.classList.toggle("open");return}
 if(t.dataset.fc){const p=P.find(x=>x.id===t.dataset.fc);if(soldOut(p))return toast("Нет в наличии");if(p.sizes.length===1){addToCart(p.id,p.sizes[0],1);open("cart")}else{toast("Выберите размер на странице товара");location.hash="#/p/"+p.id}return}
 if(t.dataset.dd){ddPick(t.dataset.dd,+t.dataset.i);return}
-if(t.dataset.dt){dtSet(t.dataset.dt);return}if(t.id==="near"){nearMe();return}if(t.id==="hx"){CK.here=null;hereUpd();pvSuggest();return}
+if(t.dataset.pm){payGo(t.dataset.pm,t);return}if(t.id==="pxx"){payClose();return}if(t.id==="near"){nearMe();return}if(t.id==="hx"){CK.here=null;hereUpd();pvSuggest();return}
 if(t.id==="pay")pay();if(t.id&&t.id.startsWith("a-"))authAct(t.id);
 if(t.dataset.s!==undefined){F.size=F.size===t.dataset.s?"":t.dataset.s;route()}
 if(t.dataset.z){sel=t.dataset.z;document.querySelectorAll(".sz").forEach(b=>b.classList.toggle("on",b===t))}
@@ -616,7 +655,7 @@ if(t.dataset.d!==undefined){cart.splice(t.dataset.d,1);save()}
 if(t.id==="cx")closeAll();if(t.id==="co"){if(!cart.length)return toast("Корзина пуста");closeAll();location.hash="#/checkout"}
 if(t.id==="send"){if(!$("#n").value||!$("#ph").value)return toast("Заполните имя и телефон");cart=[];save();app.innerHTML='<div class="txt"><h1 class="serif">Спасибо!</h1><p>Заказ принят, мы свяжемся с вами.</p></div>'}
 });
-document.addEventListener("change",e=>{if(e.target.id==="so"){F.sort=e.target.value;route()}});
+document.addEventListener("change",e=>{if(e.target.name==="trf"){pickTariff(e.target.value);return}if(e.target.id==="so"){F.sort=e.target.value;route()}});
 $("#cb").onclick=()=>open("cart");$("#sb").onclick=()=>open("srch");$("#sx").onclick=closeAll;$("#ov").onclick=closeAll;
 $("#catBtn").onclick=()=>{$("#drop").classList.toggle("open");onScroll()};$("#bg").onclick=()=>setMenu(!$("#mob").classList.contains("open"));$("#mob").onclick=e=>{if(e.target.closest("a"))setMenu(false)};
 $("#si").oninput=e=>{const q=e.target.value.toLowerCase().trim();
