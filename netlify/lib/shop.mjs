@@ -1,5 +1,6 @@
 import { getStore, getDeployStore } from "@netlify/blobs";
 import { fsStore } from "./fsstore.mjs";
+import crypto from "node:crypto";
 
 const IG = "https://graph.instagram.com";
 const CATS = [
@@ -78,7 +79,11 @@ export function parseCaption(caption) {
 }
 
 async function igToken(state) {
-  let t = state.token?.value || Netlify.env.get("IG_ACCESS_TOKEN");
+  // Продлённый токен хранится в state; если в настройках сервера вписали новый токен — берём его, а старый забываем.
+  const envT = Netlify.env.get("IG_ACCESS_TOKEN") || "";
+  const envId = envT ? crypto.createHash("sha256").update(envT).digest("hex").slice(0, 16) : "";
+  if (envT && state.token?.from !== envId) state.token = { value: envT, refreshedAt: null, from: envId };
+  let t = state.token?.value || envT;
   if (!t) throw new Error("Не задан IG_ACCESS_TOKEN");
   const age = Date.now() - new Date(state.token?.refreshedAt || 0).getTime();
   if (age > 7 * 864e5) {
@@ -86,7 +91,7 @@ async function igToken(state) {
     const d = await r.json().catch(() => ({}));
     if (d.access_token) {
       t = d.access_token;
-      state.token = { value: t, refreshedAt: new Date().toISOString() };
+      state.token = { value: t, refreshedAt: new Date().toISOString(), from: envId };
       addLog(state, "Токен Instagram продлён");
     }
   }
