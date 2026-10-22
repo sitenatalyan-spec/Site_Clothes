@@ -284,7 +284,108 @@ header.tr .logo{opacity:0;transform:translateY(-6px)}header .logo{transition:opa
 @media(max-width:760px){.h2 .ey{font-size:11px;letter-spacing:.14em}.h2 .sub{font-size:16px}
 .st a{font-size:11px;letter-spacing:.04em;width:80px}.c2 span{font-size:12px;letter-spacing:.06em}.c2 small{font-size:12px}
 .ed p{font-size:16px}.adv h3{font-size:13px;letter-spacing:.08em}.adv p{font-size:14px}.card h3{font-size:14px}}
+
+/* ===== Maison: та же палитра и шрифты, строгий «домовой» стиль ===== */
+:root{--gold:#b9ab97}
+body{font-weight:300;letter-spacing:.005em}
+::selection{background:#111;color:#fff}
+/* зерно плёнки */
+body:after{content:"";position:fixed;inset:0;z-index:95;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* строгие края */
+.btn,.more{border-radius:0;padding:16px 38px;font-size:11px;letter-spacing:.22em;font-weight:400}
+.more{padding:14px 26px}
+.card .im,.gal .im,.it .im,.c2,.lb2,.ed .bi,.ed .si,.trf,.pm{border-radius:0}
+.rvi{clip-path:inset(12% 0 0 0)}.rvi.in{clip-path:inset(0)}
+.card .im,.gal .im{box-shadow:none;transform:none!important}.card .im:after,.gal .im:after{display:none}
+.pbx{border-radius:4px}
+/* строка объявлений */
+.ann{background:#111;color:#e9e4dc;height:34px;overflow:hidden;font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;font-weight:400;display:flex;align-items:center;white-space:nowrap}
+.annw{display:inline-flex;animation:mq 46s linear infinite}.ann span{padding:0 48px;display:inline-flex;align-items:center;gap:48px}.ann span:after{content:"";width:4px;height:4px;border-radius:50%;background:var(--gold)}
+/* шапка */
+header{height:72px;border-bottom:1px solid transparent}header.sc{border-color:var(--line)}
+.logo{font-size:28px;letter-spacing:.2em}
+.lk{letter-spacing:.2em}
+.drop{top:72px;justify-content:center;padding:34px 32px 38px;gap:48px}.drop a{font:400 24px "Cormorant Garamond",Georgia,serif;position:relative}
+.drop a:after{content:"";position:absolute;left:0;right:100%;bottom:-2px;height:1px;background:currentColor;transition:right .4s}.drop a:hover:after{right:0}
+body.home main{margin-top:-72px}
+/* заставка */
+.intro{position:fixed;inset:0;z-index:200;background:#111;color:#fff;display:grid;place-items:center;animation:introOut .9s cubic-bezier(.7,0,.2,1) 1.35s forwards}
+.iw{display:flex;gap:.3em;font-size:clamp(34px,6vw,84px);letter-spacing:.14em;text-transform:uppercase;overflow:hidden}
+.iw span{display:inline-block;transform:translateY(110%);animation:introUp 1s cubic-bezier(.2,.7,.2,1) forwards}.iw span+span{animation-delay:.12s}
+.il{position:absolute;left:50%;bottom:calc(50% - 60px);width:120px;height:1px;background:var(--gold);transform:translateX(-50%) scaleX(0);animation:introLine 1s .45s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes introUp{to{transform:none}}@keyframes introLine{to{transform:translateX(-50%) scaleX(1)}}
+@keyframes introOut{to{transform:translateY(-100%);visibility:hidden}}
+body.intro-on{overflow:hidden}
+/* курсор */
+.cur{position:fixed;left:0;top:0;z-index:150;pointer-events:none;width:0;height:0}
+.cur:before{content:"";position:absolute;left:-14px;top:-14px;width:28px;height:28px;border:1px solid rgba(17,17,17,.55);border-radius:50%;transition:transform .35s cubic-bezier(.2,.7,.2,1),background .35s,border-color .35s;mix-blend-mode:difference;border-color:#fff}
+.cur span{position:absolute;left:-40px;top:-8px;width:80px;text-align:center;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:#111;opacity:0;transition:opacity .25s}
+.cur.big:before{transform:scale(3.1);background:rgba(255,255,255,.92);border-color:transparent;mix-blend-mode:normal}.cur.big span{opacity:1}
+.cur.lnk:before{transform:scale(.45);background:#fff}
+/* каталог */
+.ch{text-align:center;padding:26px 32px 36px}.ch .crumb{padding:0 0 18px}.ch h1{font-size:clamp(44px,6vw,84px);line-height:1;text-transform:uppercase;letter-spacing:.04em}
+.ch p{margin-top:12px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mute);font-weight:400}
+.bar{position:sticky;top:72px;z-index:15;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:14px 32px}
+.bar .tabs .lk{font-size:11px}
+.chip{border-radius:0;font-size:11px;letter-spacing:.12em;padding:6px 12px}
+.grid{grid-template-columns:repeat(3,1fr);gap:56px 22px;padding:44px 32px 72px}
+.card h3{font:400 12px/1.5 Inter,Helvetica,Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;margin-top:16px}
+.card .pr{font-size:13px;margin-top:4px;letter-spacing:.06em}
+.card .tag{background:rgba(255,255,255,.88);padding:4px 9px;top:12px;left:12px;font-size:9.5px;letter-spacing:.22em;color:#111}.card .tag.no{background:#111;color:#fff;padding:3px 8px}
+.card .fav{background:none;top:8px;right:8px}
+.card .q{background:rgba(255,255,255,.96);letter-spacing:.22em;padding:13px}
+.dots{display:none}
+#rt .card{min-width:0}
+/* товар */
+.crumb{font-size:11px;letter-spacing:.14em;text-transform:uppercase}.crumb a:hover{text-decoration:underline}
+.pp{grid-template-columns:1.45fr 1fr}
+.gal.g2{grid-template-columns:1fr 1fr;gap:4px}.gal.g2 .im:first-child{grid-column:1/-1}
+.info{padding:56px 64px;top:72px}
+.info .ey{font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:#7a6a55;margin-bottom:14px}
+.info h1{font-size:clamp(32px,3vw,46px);line-height:1.08}
+.info .pr{font-size:17px;letter-spacing:.06em;margin:16px 0 26px;padding-bottom:24px;border-bottom:1px solid var(--line);color:#111}
+.pd{color:#333;font-size:15px;line-height:1.7}
+.szl{margin-top:26px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:400}
+.sz{border-radius:0;min-width:64px;padding:13px 16px;font-size:12px;letter-spacing:.08em;transition:border-color .2s,background .2s}.sz:hover{border-color:#111}.sz.on{background:#111;color:#fff;border-color:#111}
+.perks{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:9px}.perks li{display:flex;align-items:center;gap:12px;font-size:13px;color:#444}.perks li:before{content:"";width:18px;height:1px;background:var(--gold)}
+.acc summary{display:flex;justify-content:space-between;align-items:center}.acc summary:after{content:"+";font-size:16px;font-weight:300;transition:transform .3s}.acc details[open] summary:after{transform:rotate(45deg)}
+.acc details{padding:16px 0}
+.rel{border-top:1px solid var(--line);margin-top:24px}.rel .grid{grid-template-columns:repeat(4,1fr)}
+/* информационные страницы */
+.txt{max-width:760px;padding:80px 24px 64px}.txt h1{font-size:clamp(40px,5vw,64px);line-height:1.05;margin-bottom:32px;text-align:center}
+.txt h1:after{content:"";display:block;width:56px;height:1px;background:var(--gold);margin:26px auto 0}
+/* корзина */
+.side{padding:30px 30px 26px}.side .hd{align-items:center;border-bottom:1px solid var(--line);padding-bottom:18px}
+.it{grid-template-columns:92px 1fr;gap:18px;padding:18px 0}.it a{font-family:"Cormorant Garamond",Georgia,serif;font-size:19px}
+.qty{border-radius:0}
+.ov{background:rgba(17,17,17,.42);backdrop-filter:blur(2px)}
+/* оформление */
+.trf{transition:border-color .2s,background .2s}.trf:has(input:checked){background:#faf9f7}
+.sum{border-top:1px solid #111}
+.f input,.auth input,.f select{border-radius:0}
+.box{border-radius:0}
+/* подвал */
+footer{background:#111;color:#e9e4dc;margin-top:0;padding:88px 32px 0;overflow:hidden}
+footer .logo{color:#fff}.fd{margin-top:16px;max-width:300px;color:#a8a39b;font-weight:300;line-height:1.7}
+footer h4{color:#fff;letter-spacing:.24em;font-weight:400;margin-bottom:18px}
+footer a{color:#bdb7ad;font-weight:300}footer a:hover{color:#fff}.fs{color:#8d877e;font-weight:300}
+.cp{color:#8d877e;border-top:1px solid #2a2724;padding-top:22px;margin-top:64px}.cp a{color:#8d877e}
+.fw{font-size:clamp(30px,8.4vw,190px);line-height:.8;letter-spacing:.02em;text-transform:uppercase;color:#1f1c19;white-space:nowrap;text-align:center;margin:40px -2vw -.06em;user-select:none}
+.adv{margin-bottom:0}
+@media(max-width:1024px){header{height:56px}.logo{font-size:17px;letter-spacing:.14em}body.home main{margin-top:-56px}.bar{top:56px}.info{top:56px}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){
+.ann{height:30px;font-size:9.5px;letter-spacing:.18em}.ann span{padding:0 26px;gap:26px}
+.ch{padding:18px 16px 24px}.bar{padding:10px 16px}
+.grid{gap:34px 10px;padding:24px 10px 48px}.card h3{font-size:11px;letter-spacing:.1em}
+.pp{grid-template-columns:1fr}.gal.g2{display:flex}.info{padding:26px 16px 8px}.rel .grid{grid-template-columns:repeat(2,1fr)}
+.txt{padding:48px 16px}.txt h1{font-size:38px}
+footer{padding:56px 16px 0}.fw{font-size:8.6vw;margin-top:28px}.cp{margin-top:40px}
+.it{grid-template-columns:76px 1fr}}
+@media(max-width:1024px){.mob{top:0;padding-top:96px;z-index:45}}
+@media(prefers-reduced-motion:reduce){.annw{animation:none}.intro{display:none}}
 </style></head><body>
+<div class="intro" id="intro" aria-hidden="true"><div class="iw serif"><span>Gluhova</span><span>Natalya</span></div><i class="il"></i></div>
+<div class="ann" aria-label="Объявления"><div class="annw"><span>Доставка СДЭК по всей России</span><span>Ручная отделка · сделано в Екатеринбурге</span><span>Премиальная пряжа: шерсть, вискоза, хлопок</span><span>Доставка СДЭК по всей России</span><span>Ручная отделка · сделано в Екатеринбурге</span><span>Премиальная пряжа: шерсть, вискоза, хлопок</span></div></div>
 <header id="hd">
 <nav><button class="burger" id="bg" aria-label="Меню" aria-expanded="false"><i></i><i></i></button><button class="lk" id="catBtn">Каталог</button><a class="lk hide-m" href="#/about">О бренде</a></nav>
 <a class="logo serif" href="#/">Gluhova Natalya</a>
@@ -294,11 +395,11 @@ header.tr .logo{opacity:0;transform:translateY(-6px)}header .logo{transition:opa
 <div class="mob" id="mob"></div>
 <main id="app"></main>
 <footer><div class="fg">
-<div><div class="logo serif" style="text-align:left;font-size:22px">Gluhova Natalya</div><p style="margin-top:12px;max-width:280px;color:#444;font-weight:400">Производство женской трикотажной одежды в Екатеринбурге.</p></div>
+<div><div class="logo serif" style="text-align:left;font-size:22px">Gluhova Natalya</div><p class="fd">Производство женской трикотажной одежды в Екатеринбурге. Лаконичный крой, премиальная пряжа, ручная отделка.</p></div>
 <div><h4>Каталог</h4><div id="fc"></div></div>
 <div><h4>Информация</h4><a href="#/delivery">Доставка и оплата</a><a href="#/care">Уход за изделиями</a><a href="#/refund">Возврат и обмен</a><a href="#/offer">Публичная оферта</a><a href="#/privacy">Политика конфиденциальности</a><a href="#/about">О бренде</a><a href="#/contacts">Контакты</a></div>
-<div><h4>Контакты</h4><a href="tel:+79603047977">+7 (960) 304-79-77</a><a href="mailto:Kerzhaeva@gmail.com">Kerzhaeva@gmail.com</a><a href="https://wa.me/79603047977">WhatsApp</a><a href="https://t.me/+79603047977">Telegram</a><a href="https://www.instagram.com/natalkagluhova">Instagram</a><span style="color:#444;font-weight:400">Ежедневно 8:00–21:00</span></div>
-</div><div class="cp">© 2025–2026 ИП Шнайдер Наталья Анатольевна · ИНН 211301663799 · <a style="display:inline" href="#/privacy">Обработка персональных данных</a></div></footer>
+<div><h4>Контакты</h4><a href="tel:+79603047977">+7 (960) 304-79-77</a><a href="mailto:Kerzhaeva@gmail.com">Kerzhaeva@gmail.com</a><a href="https://wa.me/79603047977">WhatsApp</a><a href="https://t.me/+79603047977">Telegram</a><a href="https://www.instagram.com/natalkagluhova">Instagram</a><span class="fs">Ежедневно 8:00–21:00</span></div>
+</div><div class="cp">© 2025–2026 ИП Шнайдер Наталья Анатольевна · ИНН 211301663799 · <a style="display:inline" href="#/privacy">Обработка персональных данных</a></div><div class="fw serif" aria-hidden="true">Gluhova Natalya</div></footer>
 <div class="ov" id="ov"></div>
 <aside class="side" id="cart"></aside>
 <div class="srch" id="srch"><div style="display:flex;gap:16px"><input id="si" placeholder="Поиск по названию, категории, цвету" autocomplete="off"><button class="lk" id="sx">Закрыть</button></div><div class="sres" id="sr"></div></div>
@@ -369,6 +470,7 @@ $("#mob").innerHTML='<a href="#/c/all">Вся коллекция</a>'+l+'<a clas
 function catTiles(){const used=new Set();const tile=([id,t])=>{const l=P.filter(p=>p.cats.includes(id));const p=l.find(x=>x.imgs[0]&&!used.has(x.imgs[0]))||l.find(x=>x.imgs[0]);if(!l.length)return"";if(p)used.add(p.imgs[0]);
 return `<a class="cat serif" href="#/c/${id}">${p?`<img src="${pic(p.imgs[0],1)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:""}<span>${t}<small>${l.length} ${plural(l.length)}</small></span></a>`};
 return CATS.filter(c=>c[0]!=="novinki").map(tile).join("")+`<a class="cat serif all" href="#/c/all"><span>Вся коллекция<small>${P.length} ${plural(P.length)} →</small></span></a>`}
+const izd=n=>{const a=n%10,b=n%100;return a===1&&b!==11?"изделие":a>=2&&a<=4&&(b<10||b>=20)?"изделия":"изделий"};
 const plural=n=>{const a=n%10,b=n%100;return a===1&&b!==11?"модель":a>=2&&a<=4&&(b<10||b>=20)?"модели":"моделей"};
 // Главный экран: на компьютере три колонки фото, каждая листает свои кадры с небольшим сдвигом во времени; на телефоне — одна колонка со всеми кадрами.
 const HERO=[["hero","kardigan-1-3","plate-iz-hlopka-s-vyshivkoj-ruchnaya-rabota-2"],["kostyum-iz-shersti-s-yubkoj-midi-1","kostyum-v-bordovom-cvete-s-yubkoj-midi-1","plate-kardigan-iz-hlopka-dlya-vesennih-vyhodov-3"],["kostyum-azhur-belyj-1","kardigan-1","kostyum-1"]];
@@ -407,7 +509,7 @@ let l=P.filter(p=>id==="all"||p.cats.includes(id));
 const sizes=[...new Set(P.flatMap(p=>p.sizes))];
 if(F.size)l=l.filter(p=>p.sizes.includes(F.size));
 if(F.sort==="asc")l=[...l].sort((a,b)=>a.price-b.price);if(F.sort==="desc")l=[...l].sort((a,b)=>b.price-a.price);
-return `<div class="crumb">Главная / ${t}</div><div style="padding:8px 32px 24px"><h1 class="serif" style="font-size:48px">${t}</h1></div>
+return `<div class="ch"><div class="crumb"><a href="#/">Главная</a> / ${t}</div><h1 class="serif">${t}</h1><p>${l.length} ${izd(l.length)}</p></div>
 <div class="bar"><div class="tabs">${[["all","Все"],...CATS].map(c=>`<a class="lk ${c[0]===id?"on":""}" href="#/c/${c[0]}">${c[1]}</a>`).join("")}</div>
 <div class="chips">${sizes.map(s=>`<button class="chip ${F.size===s?"on":""}" data-s="${s}">${s}</button>`).join("")}</div>
 <select id="so"><option value="def">Сортировка</option><option value="asc" ${F.sort==="asc"?"selected":""}>Цена ↑</option><option value="desc" ${F.sort==="desc"?"selected":""}>Цена ↓</option></select></div>
@@ -415,17 +517,19 @@ return `<div class="crumb">Главная / ${t}</div><div style="padding:8px 32
 let sel="";
 function product(id){const p=P.find(x=>x.id===id);if(!p)return'<div class="txt"><h1 class="serif">Товар не найден</h1></div>';
 sel="";const g=shots(p).map((u,i)=>`<div class="im">${frame(p,u,0,i)}</div>`).join("");
-return `<div class="crumb"><a href="#/c/all">Каталог</a> / ${p.name}</div><div class="pp"><div class="gal">${g}</div><div class="info"><h1 class="serif">${p.name}</h1><div class="pr">${money(p.price)}</div>
-<p>${p.desc}</p><p style="margin-top:20px;font-size:11px;letter-spacing:.14em;text-transform:uppercase">Размер</p><div class="sizes">${p.sizes.map(s=>`<button class="sz" data-z="${s}"${sizeOut(p,s)?' disabled title="Нет в наличии"':""}>${s}</button>`).join("")}</div>
+const cat=p.cats.find(c=>c!=="novinki");
+return `<div class="crumb"><a href="#/c/all">Каталог</a>${cat?` / <a href="#/c/${cat}">${CN[cat]}</a>`:""} / ${p.name}</div><div class="pp"><div class="gal${shots(p).length>1?" g2":""}">${g}</div><div class="info">${p.isNew?'<div class="ey">Новинка</div>':""}<h1 class="serif">${p.name}</h1><div class="pr">${money(p.price)}</div>
+<p class="pd">${p.desc}</p><p class="szl">Размер</p><div class="sizes">${p.sizes.map(s=>`<button class="sz" data-z="${s}"${sizeOut(p,s)?' disabled title="Нет в наличии"':""}>${s}</button>`).join("")}</div>
 ${soldOut(p)||p.sizes.every(s=>sizeOut(p,s))?'<button class="btn fill w" disabled>Нет в наличии</button>':`<button class="btn fill w" id="add" data-id="${p.id}">Добавить в корзину</button>`}
-<div class="acc" style="margin-top:32px"><details open><summary>Описание</summary><p>Производство Gluhova Natalya, Екатеринбург. Премиальные материалы, ручная отделка, комфортный крой.</p></details>
+<ul class="perks"><li>Ручная отделка</li><li>Сделано в Екатеринбурге</li><li>Доставка СДЭК по России</li></ul>
+<div class="acc" style="margin-top:28px"><details open><summary>Описание</summary><p>Производство Gluhova Natalya, Екатеринбург. Премиальные материалы, ручная отделка, комфортный крой.</p></details>
 <details><summary>Доставка</summary><p>Отправляем по России. Подробные условия — на странице «Доставка и оплата».</p></details>
 <details><summary>Уход</summary><p>Деликатная стирка, сушка в горизонтальном положении. Подробнее — в разделе «Уход за изделиями».</p></details></div></div></div>
-<section><div class="tl"><h2 class="serif">Вам может понравиться</h2></div><div class="grid" style="padding:0">${P.filter(x=>x.id!==p.id).slice(0,4).map(card).join("")}</div></section>`}
+<section class="rel"><div class="sh"><small>Gluhova Natalya</small><h2 class="serif">Вам может понравиться</h2></div><div class="grid" style="padding:0">${P.filter(x=>x.id!==p.id).sort((a,b)=>(b.cats.includes(cat)?1:0)-(a.cats.includes(cat)?1:0)).slice(0,4).map(card).join("")}</div></section>`}
 function addToCart(id,size,quiet){const p=P.find(x=>x.id===id);const e=cart.find(c=>c.id===id&&c.size===size);e?e.q++:cart.push({id,size,q:1});save();if(!quiet)toast("Добавлено в корзину")}
 function renderCart(){const cn=cart.reduce((s,c)=>s+c.q,0);$("#cn").textContent=cn;$("#cn").classList.toggle("z",!cn);
 const tot=cart.reduce((s,c)=>s+c.q*(P.find(p=>p.id===c.id)||{price:0}).price,0);
-$("#cart").innerHTML=`<div class="hd"><span>Корзина</span><button id="cx">Закрыть</button></div><div class="items">${cart.map((c,i)=>{const p=P.find(x=>x.id===c.id);if(!p)return"";return `<div class="it"><div class="im">${imgTag(p,0)}</div><div><a href="#/p/${p.id}">${p.name}</a><div style="color:var(--mute);font-weight:400">Размер: ${c.size} · ${money(p.price)}</div><div class="qty"><button data-m="${i}">−</button><span>${c.q}</span><button data-p="${i}">+</button></div> <button data-d="${i}" style="font-size:12px;text-decoration:underline;margin-left:10px">Удалить</button></div></div>`}).join("")||'<p style="color:var(--mute);font-weight:400">Корзина пуста</p>'}</div>
+$("#cart").innerHTML=`<div class="hd"><span class="serif" style="font-size:26px;letter-spacing:0;text-transform:none">Корзина${cn?` <small style="font:400 12px Inter,sans-serif;color:var(--mute)">(${cn})</small>`:""}</span><button id="cx">Закрыть</button></div><div class="items">${cart.map((c,i)=>{const p=P.find(x=>x.id===c.id);if(!p)return"";return `<div class="it"><div class="im">${imgTag(p,0)}</div><div><a href="#/p/${p.id}">${p.name}</a><div style="color:var(--mute);font-weight:400">Размер: ${c.size} · ${money(p.price)}</div><div class="qty"><button data-m="${i}">−</button><span>${c.q}</span><button data-p="${i}">+</button></div> <button data-d="${i}" style="font-size:12px;text-decoration:underline;margin-left:10px">Удалить</button></div></div>`}).join("")||'<p style="color:var(--mute);font-weight:400">Корзина пуста</p>'}</div>
 <div style="padding-top:16px"><div style="display:flex;justify-content:space-between;margin-bottom:14px"><span>Итого</span><b>${money(tot)}</b></div><button class="btn fill w" id="co">Оформить заказ</button></div>`}
 const pages={about:["О бренде","Gluhova Natalya создан, чтобы показать женщинам: не нужно открывать слишком многое или выбирать сложные конструкции, чтобы быть свободной и настоящей. Красота может выражаться в простоте.","Главный фокус бренда — сама женщина и её природная красота. Идеальная посадка, высококачественный крой, авторская ручная отделка."],
 delivery:["Доставка и оплата","Мы оперативно доставим ваш заказ в любую точку России и зарубежья.",
@@ -693,6 +797,16 @@ $("#hd").classList.toggle("tr",home&&!open&&scrollY<innerHeight-90);$("#hd").cla
 if(still||pxRaf)return;pxRaf=requestAnimationFrame(()=>{pxRaf=0;document.querySelectorAll("[data-px] img").forEach(im=>{const r=im.parentNode.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;const k=(r.top+r.height/2-innerHeight/2)/innerHeight;im.style.transform=`translateY(${(k*-7).toFixed(2)}%)`})})}
 addEventListener("scroll",onScroll,{passive:true});addEventListener("resize",railUpd);
 
+/* Заставка с логотипом: только при первом заходе за сессию */
+(()=>{const el=$("#intro");if(!el)return;let seen=false;try{seen=sessionStorage.getItem("gn_intro")==="1";sessionStorage.setItem("gn_intro","1")}catch(e){}
+if(seen||still){el.remove();return}document.body.classList.add("intro-on");setTimeout(()=>{document.body.classList.remove("intro-on");el.remove()},2300)})();
+/* Курсор-кольцо на компьютере: над фото товара показывает «Смотреть» */
+(()=>{if(still||!matchMedia("(hover:hover) and (pointer:fine)").matches)return;const c=document.createElement("div");c.className="cur";c.innerHTML="<span>Смотреть</span>";document.body.append(c);
+let x=-100,y=-100,cx=-100,cy=-100;addEventListener("mousemove",e=>{x=e.clientX;y=e.clientY;const t=e.target.closest&&e.target.closest(".card .im,.c2,.lb2>img,.ed .bi,.gal .im");c.classList.toggle("big",!!t);c.classList.toggle("lnk",!t&&!!(e.target.closest&&e.target.closest("a,button,label,select")))},{passive:true});
+document.addEventListener("mouseleave",()=>{x=y=-100});(function f(){cx+=(x-cx)*.2;cy+=(y-cy)*.2;c.style.transform=`translate(${cx}px,${cy}px)`;requestAnimationFrame(f)})()})();
+/* Карточка: при наведении показываем второе фото */
+document.addEventListener("mouseover",e=>{if(!matchMedia("(hover:hover)").matches)return;const im=e.target.closest&&e.target.closest(".card .im");if(!im||im.contains(e.relatedTarget))return;const v=im.querySelector(".vs");if(v&&v.children.length>1){wake(v);v.scrollTo({top:v.clientHeight,behavior:"smooth"})}});
+document.addEventListener("mouseout",e=>{const im=e.target.closest&&e.target.closest(".card .im");if(!im||im.contains(e.relatedTarget))return;const v=im.querySelector(".vs");if(v)v.scrollTo({top:0,behavior:"smooth"})});
 addEventListener("hashchange",route);nav();renderCart();$("#fn").textContent=favs.length;route();
 if(location.protocol.startsWith("http")){api("auth?action=providers").then(d=>{PROV=d||{};if(!ME)refreshAuthUI()}).catch(()=>{PROV={}});loadMe()}
 if(location.protocol.startsWith("http"))fetch("/api/shop").then(r=>r.ok?r.json():null).then(d=>{if(!d)return;applyShop(d);renderCart();if(/checkout|account/.test(location.hash))return;const hr=document.body.classList.contains("home")&&app.querySelector(".h2");if(!hr)return route();
