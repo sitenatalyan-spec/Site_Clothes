@@ -58,7 +58,7 @@ export function parseCaption(caption) {
   const out = /нет\s+в\s+наличии|распродан|продано|sold\s*out|#нетвналичии/i.test(text);
   const sm = text.match(/(?:законч[а-яё]*|нет)\s+размер[а-яё]*\s*[:\-–—]\s*(.+)/i);
   const sizesOut = sm ? splitSizes(sm[1]) : [];
-  const service = /^(цена|стоимость|размер|законч|нет\s+размер|код|артикул|раздел|#)/i;
+  const service = /^(название|цена|стоимость|размер|законч|нет\s+размер|код|артикул|раздел|#)/i;
   let sizes = [];
   const sz = lines.find((l) => /^размер(?:ы|ный ряд)?\s*[:\-–—]/i.test(l));
   if (sz) {
@@ -66,7 +66,10 @@ export function parseCaption(caption) {
     sizes = /единый|один|free|one\s*size/i.test(v) ? ["единый размер"] : splitSizes(v);
   }
   if (!sizes.length) sizes = ["единый размер"];
-  const name = clean((lines.find((l) => !service.test(l) && !/^нет\s+в\s+наличии/i.test(l)) || "").replace(/#\S+/g, "")).slice(0, 90);
+  // Товаром на сайте становится только пост с хештегом #сайт и строкой «Название: …» — остальные посты сайт не трогает.
+  const tagged = /#сайт(?![\p{L}\d_])/iu.test(text);
+  const nl = lines.find((l) => /^название\s*[:\-–—]/i.test(l));
+  const name = clean((nl ? nl.replace(/^[^:\-–—]+[:\-–—]\s*/, "") : lines.find((l) => !service.test(l) && !/^нет\s+в\s+наличии/i.test(l)) || "").replace(/#\S+/g, "")).slice(0, 90);
   const section = (lines.find((l) => /^раздел\s*[:\-–—]/i.test(l)) || "") + " " + name;
   const cats = CATS.filter(([, re]) => re.test(section)).map(([c]) => c).slice(0, 2);
   const desc = lines
@@ -75,7 +78,7 @@ export function parseCaption(caption) {
     .filter(Boolean)
     .join(" ")
     .slice(0, 300);
-  return { isProduct: !!(price && name), name, price, sizes, sizesOut, out, code, cats, desc, isNew: /новинк/i.test(text) };
+  return { isProduct: !!(tagged && nl && price && name), name, price, sizes, sizesOut, out, code, cats, desc, isNew: /новинк/i.test(text) };
 }
 
 async function igToken(state) {
