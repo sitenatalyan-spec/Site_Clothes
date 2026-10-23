@@ -2,5 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /.netlify/
 Disallow: /api/
+Disallow: /admin
+Disallow: /manager
 
 Sitemap: https://gluhovanatalya.ru/sitemap.xml

@@ -744,6 +744,7 @@ function ordersHtml(){if(!ORD)return'<p class="mute">Загружаем…</p>';
 const dt=d=>new Date(d).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"});
 return ORD.map(o=>`<div class="ord"><div class="oh"><b>Заказ ${esc(o.id)}</b><span class="mute">${o.created?dt(o.created):""}</span></div><ul>${(o.items||[]).map(i=>`<li><span>${esc(i.name)}${i.q>1?" × "+i.q:""}</span><span>${money(i.price*i.q)}</span></li>`).join("")}</ul>
 <div class="oh" style="margin:0"><span class="mute">${o.delivery==="cdek_door"?"Курьер СДЭК":"Пункт выдачи СДЭК"}${o.city?", "+esc(o.city):""}${o.address?" — "+esc(o.address):""}</span><b>${money(o.total||0)}</b></div>
+${o.status==="paid"?`<p style="margin-top:10px;font-size:13px">${{new:"Оплачен, собираем заказ",packed:"Собран, скоро отправим",shipped:"Отправлен",delivered:"Получен",cancelled:"Отменён"}[o.ship]||"Оплачен"}${o.track?` · трек СДЭК <a href="https://www.cdek.ru/ru/tracking?order_id=${encodeURIComponent(o.track)}" target="_blank" rel="noopener" style="text-decoration:underline">${esc(o.track)}</a>`:""}</p>`:""}
 <p style="margin-top:10px;font-size:13px"><a href="https://wa.me/79603047977?text=${encodeURIComponent("Здравствуйте! Вопрос по заказу "+o.id)}" style="text-decoration:underline">Вопрос по заказу</a></p></div>`).join("")}
 function account(){AU.next=/next=checkout/.test(location.search)?"checkout":"account";
 if(!ME&&TOK)return'<div class="txt"><h1 class="serif">Личный кабинет</h1><p class="mute">Загружаем…</p></div>';

@@ -90,6 +90,6 @@ export async function ordersOf(u) {
   orders.sort((a, z) => String(z.created).localeCompare(String(a.created)));
   return orders.slice(0, 50).map((o) => ({
     id: o.order_id, created: o.created, total: o.total, items: o.items, status: o.status || "created",
-    delivery: o.delivery, city: o.city, address: o.address,
+    delivery: o.delivery, city: o.city, address: o.address, ship: o.ship?.status || "new", track: o.ship?.track || "",
   }));
 }

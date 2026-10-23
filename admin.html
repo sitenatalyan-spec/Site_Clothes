@@ -46,7 +46,7 @@ table{border-collapse:collapse;width:100%;font-size:13px}td,th{border-bottom:1px
 <label>Фото (до 8)<input id="f-photos" type="file" accept="image/*" multiple></label>
 <div class="thumbs" id="f-thumbs"></div>
 <div><button class="fill" id="f-save">Сохранить товар</button></div></div></section>
-<section id="t-orders" hidden><h2>Заказы</h2><div class="scroll"><table><thead><tr><th>Дата</th><th>Заказ</th><th>Покупатель</th><th>Доставка</th><th>Товары</th><th>Сумма</th><th>Оплата</th></tr></thead><tbody id="orders"></tbody></table></div></section>
+<section id="t-orders" hidden><h2>Заказы</h2><p class="muted">Сборка и отправка — на странице <a href="/manager" target="_blank">gluhovanatalya.ru/manager</a> (тот же пароль администратора или пароль управляющей).</p><div class="scroll"><table><thead><tr><th>Дата</th><th>Заказ</th><th>Покупатель</th><th>Доставка</th><th>Товары</th><th>Сумма</th><th>Оплата</th><th>Отправка</th></tr></thead><tbody id="orders"></tbody></table></div></section>
 <section id="t-log" hidden><h2>Журнал</h2><div id="log"></div></section>
 </div>
 <div class="toast" id="toast"></div>
@@ -87,7 +87,7 @@ toast("Товар добавлен на сайт");photos=[];["#f-name","#f-pric
 async function loadOrders(){try{const d=await call("orders");$("#orders").replaceChildren(...d.orders.map(o=>el("tr",{},
 el("td",{},new Date(o.created).toLocaleString("ru-RU")),el("td",{},o.order_id+" · "+o.provider),
 el("td",{},o.name,el("br"),o.phone,el("br"),o.email),el("td",{},(o.delivery==="cdek_door"?"Курьер: ":o.delivery==="cdek_postamat"?"Постамат: ":"ПВЗ: ")+(o.tariff_name?"СДЭК "+o.tariff_name+" · ":"")+o.city+" "+(o.address||"")+(o.delivery!=="cdek_door"&&o.pvz?" (код "+o.pvz+")":"")),
-el("td",{},...o.items.map(i=>el("div",{},i.name+" × "+i.q))),el("td",{},Number(o.total).toLocaleString("ru-RU")+" ₽"),el("td",{},el("b",{style:"color:"+({paid:"#1a7f37",expired:"#999",refunded:"#b35900"}[o.status]||"#555")},{paid:"Оплачен",expired:"Не оплачен (ссылка истекла)",refunded:"Возврат"}[o.status]||"Ждёт оплаты"),o.paidAt?el("div",{},new Date(o.paidAt).toLocaleString("ru-RU")):"",o.payMethod==="split"?el("div",{},"Яндекс Сплит"):""))))}catch(e){toast(e.message)}}
+el("td",{},...o.items.map(i=>el("div",{},i.name+" × "+i.q))),el("td",{},Number(o.total).toLocaleString("ru-RU")+" ₽"),el("td",{},el("b",{style:"color:"+({paid:"#1a7f37",expired:"#999",refunded:"#b35900"}[o.status]||"#555")},{paid:"Оплачен",expired:"Не оплачен (ссылка истекла)",refunded:"Возврат"}[o.status]||"Ждёт оплаты"),o.paidAt?el("div",{},new Date(o.paidAt).toLocaleString("ru-RU")):"",o.payMethod==="split"?el("div",{},"Яндекс Сплит"):""),el("td",{},o.status==="paid"||o.ship?{new:"Собрать",packed:"Собран",shipped:"Отправлен",delivered:"Получен",cancelled:"Отменён"}[o.ship?.status||"new"]:"—",o.ship?.track?el("div",{},"Трек "+o.ship.track):""))))}catch(e){toast(e.message)}}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b));
 for(const t of["items","add","orders","log"])$("#t-"+t).hidden=t!==b.dataset.tab;if(b.dataset.tab==="orders")loadOrders()});
 $("#enter").onclick=()=>{KEY=$("#pw").value;try{sessionStorage.setItem("gn_admin",KEY)}catch(e){}load().catch(e=>toast(e.message))};

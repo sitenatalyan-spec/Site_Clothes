@@ -13,9 +13,9 @@ globalThis.Netlify = { env: { get: (k) => process.env[k] }, context: { deploy: {
 const require = createRequire(import.meta.url);
 
 const TYPES = { ".html": "text/html; charset=utf-8", ".json": "application/json; charset=utf-8", ".jpg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".woff2": "font/woff2", ".svg": "image/svg+xml", ".txt": "text/plain; charset=utf-8", ".xml": "application/xml", ".js": "text/javascript; charset=utf-8", ".ico": "image/x-icon", ".webmanifest": "application/manifest+json" };
-const PUBLIC_FILES = new Set(["index.html", "admin.html", "cities.json", "robots.txt", "sitemap.xml", "favicon.ico", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "og.jpg", "site.webmanifest"]);
+const PUBLIC_FILES = new Set(["index.html", "admin.html", "manager.html", "cities.json", "robots.txt", "sitemap.xml", "favicon.ico", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "og.jpg", "site.webmanifest"]);
 const PUBLIC_DIRS = ["photos/", "fonts/", "js/"];
-const FUNCTIONS = new Set(["admin", "auth", "cdek", "create-order", "ig-img", "order-status", "shop"]);
+const FUNCTIONS = new Set(["admin", "auth", "cdek", "create-order", "ig-img", "order-status", "shop", "manager"]);
 
 const mods = new Map();
 async function loadFn(name) {
@@ -79,7 +79,7 @@ function serveStatic(rel, req, res, head) {
     "Content-Type": TYPES[ext] || "application/octet-stream", "Content-Length": body ? body.length : st.size, ...(gz ? { "Content-Encoding": "gzip", Vary: "Accept-Encoding" } : {}), ETag: etag,
     "Last-Modified": st.mtime.toUTCString(), "Cache-Control": cache,
     "X-Content-Type-Options": "nosniff", ...(html ? { "Referrer-Policy": "strict-origin-when-cross-origin", "X-Frame-Options": "SAMEORIGIN" } : {}),
-    ...(rel === "admin.html" ? { "X-Robots-Tag": "noindex" } : {}),
+    ...(rel === "admin.html" || rel === "manager.html" ? { "X-Robots-Tag": "noindex" } : {}),
   });
   if (head) res.end(); else if (body) res.end(body); else fs.createReadStream(file).pipe(res);
   return true;
@@ -144,6 +144,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method !== "GET" && req.method !== "HEAD") { res.writeHead(405).end(); return; }
     let rel = decodeURIComponent(url.pathname).replace(/^\/+/, "") || "index.html";
+    if (rel === "manager" || rel === "admin") rel += ".html";
     if ((PUBLIC_FILES.has(rel) || PUBLIC_DIRS.some((d) => rel.startsWith(d))) && !rel.includes("..") && serveStatic(rel, req, res, req.method === "HEAD")) return;
     const page = appPage(rel.replace(/\/+$/, ""));
     if (page) { servePage(page, req, res); return; }
