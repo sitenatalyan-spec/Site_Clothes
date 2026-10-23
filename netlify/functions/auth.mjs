@@ -37,7 +37,7 @@ async function sendSms(phone, text) {
 
 function back(next, params) {
   const n = NEXT.has(next) ? next : "account";
-  return new Response(null, { status: 302, headers: { Location: `${site()}/#/${n}?${new URLSearchParams(params)}`, "Cache-Control": "no-store" } });
+  return new Response(null, { status: 302, headers: { Location: `${site()}/${n}?${new URLSearchParams(params)}`, "Cache-Control": "no-store" } });
 }
 
 async function googleStart(url) {

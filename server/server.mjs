@@ -15,7 +15,7 @@ const require = createRequire(import.meta.url);
 const TYPES = { ".html": "text/html; charset=utf-8", ".json": "application/json; charset=utf-8", ".jpg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".woff2": "font/woff2", ".svg": "image/svg+xml", ".txt": "text/plain; charset=utf-8", ".xml": "application/xml", ".js": "text/javascript; charset=utf-8", ".ico": "image/x-icon", ".webmanifest": "application/manifest+json" };
 const PUBLIC_FILES = new Set(["index.html", "admin.html", "cities.json", "robots.txt", "sitemap.xml", "favicon.ico", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "og.jpg", "site.webmanifest"]);
 const PUBLIC_DIRS = ["photos/", "fonts/", "js/"];
-const FUNCTIONS = new Set(["admin", "auth", "cdek", "create-order", "ig-img", "shop"]);
+const FUNCTIONS = new Set(["admin", "auth", "cdek", "create-order", "ig-img", "order-status", "shop"]);
 
 const mods = new Map();
 async function loadFn(name) {
@@ -85,6 +85,54 @@ function serveStatic(rel, req, res, head) {
   return true;
 }
 
+// Страницы магазина с настоящими адресами (/p/kardigan, /c/platya, /delivery…): отдаём index.html,
+// подставив свой заголовок, описание и картинку — чтобы поисковики и мессенджеры видели каждую страницу отдельно.
+const SITE = () => process.env.SITE_URL || "https://gluhovanatalya.ru";
+const INFO = { about: "О бренде", delivery: "Доставка и оплата", care: "Уход за изделиями", refund: "Возврат и обмен", offer: "Публичная оферта", privacy: "Политика конфиденциальности", contacts: "Контакты", fav: "Избранное", account: "Личный кабинет", checkout: "Оформление заказа", "order-ok": "Спасибо за заказ" };
+let catalogCache = null;
+function catalog() {
+  const file = path.join(ROOT, "index.html"), st = fs.statSync(file);
+  if (catalogCache && catalogCache.mtime === st.mtimeMs) return catalogCache;
+  const html = fs.readFileSync(file, "utf8"), products = {}, cats = {};
+  for (const line of html.split("\n")) {
+    if (/^\["[\w-]+",".*\]\],?$/.test(line)) { try { const a = JSON.parse(line.replace(/,$/, "")); products[a[0]] = { name: a[1], price: a[2], desc: a[6], img: a[7]?.[0] }; } catch {} }
+  }
+  const cm = html.match(/const CATS=(\[.*?\]\]);/);
+  if (cm) for (const [id, name] of JSON.parse(cm[1])) cats[id] = name;
+  catalogCache = { mtime: st.mtimeMs, html, products, cats };
+  return catalogCache;
+}
+const escA = (x) => String(x).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+function appPage(rel) {
+  const c = catalog(), m = rel.match(/^(c|p)\/([\w-]+)$/);
+  const brand = "Gluhova Natalya";
+  if (m && m[1] === "p") {
+    const p = c.products[m[2]];
+    if (!p) return m[2].startsWith("ig-") ? { title: brand, path: "/" + rel } : null;
+    const img = p.img ? SITE() + "/" + p.img.replace(/^photos\/(.+)\.jpg$/, "photos/w/$1.webp") : null;
+    return { title: `${p.name} — ${p.price.toLocaleString("ru-RU")} ₽ · ${brand}`, desc: `${p.desc} Цена ${p.price.toLocaleString("ru-RU")} ₽. Женский трикотаж ручной работы из Екатеринбурга, доставка СДЭК по России.`, img, path: "/" + rel };
+  }
+  if (m && m[1] === "c") {
+    const name = m[2] === "all" ? "Вся коллекция" : c.cats[m[2]];
+    if (!name) return null;
+    return { title: `${name} — женский трикотаж · ${brand}`, desc: `${name}: женский трикотаж ручной работы Gluhova Natalya из Екатеринбурга. Шерсть, вискоза, хлопок. Доставка СДЭК по всей России.`, path: "/" + rel };
+  }
+  if (INFO[rel]) return { title: `${INFO[rel]} · ${brand}`, path: "/" + rel, noindex: ["fav", "account", "checkout", "order-ok"].includes(rel) };
+  return null;
+}
+function servePage(meta, req, res, status = 200) {
+  let html = catalog().html;
+  const set = (re, val) => { html = html.replace(re, val); };
+  if (meta.title) { set(/<title>.*?<\/title>/, `<title>${escA(meta.title)}</title>`); set(/(<meta property="og:title" content=")[^"]*/, `$1${escA(meta.title)}`); }
+  if (meta.desc) { set(/(<meta name="description" content=")[^"]*/, `$1${escA(meta.desc)}`); set(/(<meta property="og:description" content=")[^"]*/, `$1${escA(meta.desc)}`); }
+  set(/(<link rel="canonical" href=")[^"]*/, `$1${SITE()}${meta.path}`); set(/(<meta property="og:url" content=")[^"]*/, `$1${SITE()}${meta.path}`);
+  if (meta.img) set(/(<meta property="og:image" content=")[^"]*/, `$1${escA(meta.img)}`);
+  if (meta.noindex) set("<head>", '<head><meta name="robots" content="noindex">');
+  const gz = /\bgzip\b/.test(req.headers["accept-encoding"] || ""), body = gz ? zlib.gzipSync(html) : Buffer.from(html);
+  res.writeHead(status, { "Content-Type": TYPES[".html"], "Content-Length": body.length, ...(gz ? { "Content-Encoding": "gzip", Vary: "Accept-Encoding" } : {}), "Cache-Control": "no-cache", "X-Content-Type-Options": "nosniff", "Referrer-Policy": "strict-origin-when-cross-origin", "X-Frame-Options": "SAMEORIGIN" });
+  res.end(req.method === "HEAD" ? undefined : body);
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `https://${req.headers.host || "localhost"}`);
   try {
@@ -97,6 +145,10 @@ const server = http.createServer(async (req, res) => {
     if (req.method !== "GET" && req.method !== "HEAD") { res.writeHead(405).end(); return; }
     let rel = decodeURIComponent(url.pathname).replace(/^\/+/, "") || "index.html";
     if ((PUBLIC_FILES.has(rel) || PUBLIC_DIRS.some((d) => rel.startsWith(d))) && !rel.includes("..") && serveStatic(rel, req, res, req.method === "HEAD")) return;
+    const page = appPage(rel.replace(/\/+$/, ""));
+    if (page) { servePage(page, req, res); return; }
+    // Несуществующий товар или раздел: страница «не найдено» с кодом 404, чтобы поисковики её не индексировали
+    if (/^(c|p)\/[\w-]+$/.test(rel)) { servePage({ title: "Страница не найдена · Gluhova Natalya", path: "/" + rel, noindex: true }, req, res, 404); return; }
     res.writeHead(302, { Location: "/" }).end();
   } catch (err) {
     console.error(req.method, url.pathname, err);
@@ -114,3 +166,11 @@ async function igSync() {
 }
 setTimeout(igSync, 30e3);
 setInterval(igSync, 15 * 60e3);
+
+// Проверка оплаты заказов в Точке каждые 2 минуты
+async function payCheck() {
+  try { await (await import(pathToFileURL(path.join(ROOT, "netlify/lib/payments.mjs")).href)).checkPayments(); }
+  catch (err) { console.error("payments", err.message); }
+}
+setTimeout(payCheck, 20e3);
+setInterval(payCheck, 2 * 60e3);

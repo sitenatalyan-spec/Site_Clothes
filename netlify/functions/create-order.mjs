@@ -71,7 +71,7 @@ export default async (req) => {
   const total = sum + t.cost, orderId = "GN-" + Date.now().toString(36).toUpperCase();
   const user = await userFromRequest(req).catch(() => null);
   const meta = { order_id: orderId, ...(user ? { user: user.id } : {}), name, phone, email, delivery: door ? "cdek_door" : tf.mode === 7 ? "cdek_postamat" : "cdek_pvz", tariff: t.code, tariff_name: t.name, city: String(d.city || "").slice(0, 100), pvz: String(d.pvz || "").slice(0, 50), address: String(d.address || "").slice(0, 200), subscribe: b.subscribe ? "yes" : "no" };
-  const ok = env("SITE_URL") + "/#/order-ok", back = env("SITE_URL") + "/#/checkout";
+  const ok = env("SITE_URL") + "/order-ok?o=" + orderId, back = env("SITE_URL") + "/checkout";
   const saveOrder = async (extra) => {
     try {
       await store("orders").setJSON(orderId, { ...meta, items: lines, total, created: new Date().toISOString(), ...extra });
