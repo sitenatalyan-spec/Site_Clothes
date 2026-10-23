@@ -12,8 +12,8 @@ process.env.STORE_DIR ||= path.join(ROOT, "data");
 globalThis.Netlify = { env: { get: (k) => process.env[k] }, context: { deploy: { context: "production" } } };
 const require = createRequire(import.meta.url);
 
-const TYPES = { ".html": "text/html; charset=utf-8", ".json": "application/json; charset=utf-8", ".jpg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".woff2": "font/woff2", ".svg": "image/svg+xml", ".txt": "text/plain; charset=utf-8", ".xml": "application/xml", ".js": "text/javascript; charset=utf-8" };
-const PUBLIC_FILES = new Set(["index.html", "admin.html", "cities.json", "robots.txt", "sitemap.xml", "favicon.ico"]);
+const TYPES = { ".html": "text/html; charset=utf-8", ".json": "application/json; charset=utf-8", ".jpg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".woff2": "font/woff2", ".svg": "image/svg+xml", ".txt": "text/plain; charset=utf-8", ".xml": "application/xml", ".js": "text/javascript; charset=utf-8", ".ico": "image/x-icon", ".webmanifest": "application/manifest+json" };
+const PUBLIC_FILES = new Set(["index.html", "admin.html", "cities.json", "robots.txt", "sitemap.xml", "favicon.ico", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "og.jpg", "site.webmanifest"]);
 const PUBLIC_DIRS = ["photos/", "fonts/", "js/"];
 const FUNCTIONS = new Set(["admin", "auth", "cdek", "create-order", "ig-img", "shop"]);
 

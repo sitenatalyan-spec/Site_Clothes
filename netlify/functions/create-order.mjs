@@ -1,4 +1,3 @@
-import crypto from "node:crypto";
 import fs from "node:fs";
 import https from "node:https";
 import tls from "node:tls";
@@ -10,13 +9,9 @@ import { userFromRequest, addOrderToUser, saveUser } from "../lib/auth.mjs";
 const j = (status, body) => Response.json(body, { status });
 const env = (k) => Netlify.env.get(k);
 
-// Способы оплаты. Кнопка появляется на сайте, только когда на сервере вписаны ключи этого способа.
-// tochka — Точка Банк: СБП и банковские карты.
-// yandex — Яндекс Пэй (YANDEX_PAY_API_KEY); если его нет, но есть ключи ЮKassa — эта кнопка ведёт в ЮKassa.
+// Оплата — только через Точку Банк: СБП и банковские карты. Кнопка появляется, когда на сервере вписаны ключи Точки.
 const hasTochka = () => !!(env("TOCHKA_JWT") && env("TOCHKA_CUSTOMER_CODE"));
-const hasYaPay = () => !!env("YANDEX_PAY_API_KEY");
-const hasYooKassa = () => !!(env("YOOKASSA_SHOP_ID") && env("YOOKASSA_SECRET_KEY"));
-const methods = () => ({ tochka: hasTochka(), yandex: hasYaPay() ? "yandexpay" : hasYooKassa() ? "yookassa" : null });
+const methods = () => ({ tochka: hasTochka() });
 
 // Точка работает на сертификате Минцифры (Russian Trusted Root CA), которого нет в стандартном списке доверенных.
 // Доверяем ему только в запросах к Точке: файл сертификата — TOCHKA_CA_FILE (по умолчанию /etc/ssl/certs/russian_trusted_root_ca.pem).
@@ -44,7 +39,7 @@ export default async (req) => {
   const name = String(c.name || "").trim().slice(0, 100), phone = String(c.phone || "").replace(/[^\d+]/g, ""), email = String(c.email || "").trim().slice(0, 120);
   if (!name || phone.replace(/\D/g, "").length < 10 || !/^\S+@\S+\.\S+$/.test(email)) return j(400, { error: "Проверьте контактные данные" });
 
-  const m = methods(), pay = b.pay === "tochka" ? (m.tochka ? "tochka" : null) : b.pay === "yandex" ? m.yandex : null;
+  const pay = b.pay === "tochka" && hasTochka() ? "tochka" : null;
   if (!pay) return j(400, { error: "Этот способ оплаты пока не подключён — выберите другой" });
 
   const tf = cdek.TARIFFS[Number(d.tariff)];
@@ -109,41 +104,5 @@ export default async (req) => {
     return j(200, { order_id: orderId, total, confirmation_url: link });
   }
 
-  // Яндекс Пэй: платёжная ссылка, покупатель платит картой, через Яндекс Пэй или частями (Сплит).
-  if (pay === "yandexpay") {
-    const methodsYa = String(env("YANDEX_PAY_METHODS") || "CARD,SPLIT").split(",").map((x) => x.trim()).filter(Boolean);
-    const r = await fetch((env("YANDEX_PAY_API_URL") || "https://pay.yandex.ru") + "/api/merchant/v1/orders", {
-      method: "POST",
-      headers: { Authorization: "Api-Key " + env("YANDEX_PAY_API_KEY"), "Content-Type": "application/json", "X-Request-Id": crypto.randomUUID(), "X-Request-Timeout": "10000" },
-      body: JSON.stringify({
-        orderId, currencyCode: "RUB", availablePaymentMethods: methodsYa, ttl: 1800,
-        redirectUrls: { onSuccess: ok, onError: back, onAbort: back },
-        cart: {
-          items: lines.map((l, k) => ({ productId: `${l.id}-${k}`.slice(0, 64), title: l.name, quantity: { count: String(l.q) }, unitPrice: money(l.price), total: money(l.price * l.q) })),
-          total: { amount: money(total) },
-        },
-      }),
-    }).catch((e) => ({ status: 0, json: async () => ({ message: e.message }) }));
-    const p = await r.json().catch(() => ({}));
-    const link = p.data?.paymentUrl;
-    if (!link) return fail("yandexpay", r.status, p.reason || p.reasonCode || p.message || p);
-    await saveOrder({ provider: "yandexpay" });
-    return j(200, { order_id: orderId, total, confirmation_url: link });
-  }
-
-  // ЮKassa: карты, SberPay, T-Pay, ЮMoney и СБП — покупатель выбирает на странице ЮKassa.
-  const auth = Buffer.from(env("YOOKASSA_SHOP_ID") + ":" + env("YOOKASSA_SECRET_KEY")).toString("base64");
-  const r = await fetch("https://api.yookassa.ru/v3/payments", {
-    method: "POST",
-    headers: { Authorization: "Basic " + auth, "Idempotence-Key": crypto.randomUUID(), "Content-Type": "application/json" },
-    body: JSON.stringify({
-      amount: { value: money(total), currency: "RUB" }, capture: true, confirmation: { type: "redirect", return_url: ok }, description: "Заказ " + orderId,
-      receipt: { customer: { full_name: name, phone, email }, items: lines.map((l) => ({ description: l.name, quantity: String(l.q), amount: { value: money(l.price), currency: "RUB" }, vat_code: 1, payment_mode: "full_payment", payment_subject: l.kind })) },
-      metadata: meta,
-    }),
-  }).catch((e) => ({ status: 0, json: async () => ({ description: e.message }) }));
-  const p = await r.json().catch(() => ({}));
-  if (!p.confirmation?.confirmation_url) return fail("yookassa", r.status, p.description || p);
-  await saveOrder({ provider: "yookassa", paymentId: p.id });
-  return j(200, { order_id: orderId, total, confirmation_url: p.confirmation.confirmation_url });
+  return j(400, { error: "Этот способ оплаты не подключён" });
 };
