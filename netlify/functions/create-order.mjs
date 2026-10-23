@@ -9,9 +9,10 @@ import { userFromRequest, addOrderToUser, saveUser } from "../lib/auth.mjs";
 const j = (status, body) => Response.json(body, { status });
 const env = (k) => Netlify.env.get(k);
 
-// Оплата — только через Точку Банк: СБП и банковские карты. Кнопка появляется, когда на сервере вписаны ключи Точки.
+// Оплата: Точка Банк (СБП и карты) и Яндекс Сплит (частями). Каждая кнопка появляется, когда на сервере вписан её ключ.
 const hasTochka = () => !!(env("TOCHKA_JWT") && env("TOCHKA_CUSTOMER_CODE"));
-const methods = () => ({ tochka: hasTochka() });
+const hasSplit = () => !!env("YANDEX_PAY_API_KEY");
+const methods = () => ({ tochka: hasTochka(), split: hasSplit() });
 
 // Точка работает на сертификате Минцифры (Russian Trusted Root CA), которого нет в стандартном списке доверенных.
 // Доверяем ему только в запросах к Точке: файл сертификата — TOCHKA_CA_FILE (по умолчанию /etc/ssl/certs/russian_trusted_root_ca.pem).
@@ -39,7 +40,7 @@ export default async (req) => {
   const name = String(c.name || "").trim().slice(0, 100), phone = String(c.phone || "").replace(/[^\d+]/g, ""), email = String(c.email || "").trim().slice(0, 120);
   if (!name || phone.replace(/\D/g, "").length < 10 || !/^\S+@\S+\.\S+$/.test(email)) return j(400, { error: "Проверьте контактные данные" });
 
-  const pay = b.pay === "tochka" && hasTochka() ? "tochka" : null;
+  const pay = b.pay === "tochka" && hasTochka() ? "tochka" : b.pay === "split" && hasSplit() ? "split" : null;
   if (!pay) return j(400, { error: "Этот способ оплаты пока не подключён — выберите другой" });
 
   const tf = cdek.TARIFFS[Number(d.tariff)];
@@ -101,6 +102,29 @@ export default async (req) => {
     const link = p.Data?.paymentLink;
     if (!link) return fail("tochka", r.status, p.Errors || p.message);
     await saveOrder({ provider: "tochka", operationId: p.Data.operationId });
+    return j(200, { order_id: orderId, total, confirmation_url: link });
+  }
+
+  // Яндекс Сплит: платёжная ссылка Яндекс Пэй, где доступна только оплата частями.
+  // Чек отправит Яндекс Пэй, если в его кабинете включены чеки; tax 6 — без НДС (УСН).
+  if (pay === "split") {
+    const r = await fetch((env("YANDEX_PAY_API_URL") || "https://pay.yandex.ru") + "/api/merchant/v1/orders", {
+      method: "POST",
+      headers: { Authorization: "Api-Key " + env("YANDEX_PAY_API_KEY"), "Content-Type": "application/json", "X-Request-Id": crypto.randomUUID(), "X-Request-Timeout": "10000" },
+      body: JSON.stringify({
+        orderId, currencyCode: "RUB", availablePaymentMethods: ["SPLIT"], preferredPaymentMethod: "SPLIT", ttl: 3600, fiscalContact: email, purpose: `Заказ ${orderId}`,
+        redirectUrls: { onSuccess: ok, onError: back, onAbort: back },
+        cart: {
+          items: lines.map((l, k) => ({ productId: `${l.id}-${k}`.slice(0, 64), title: l.name, quantity: { count: String(l.q) }, unitPrice: money(l.price), total: money(l.price * l.q),
+            receipt: { tax: Number(env("YANDEX_PAY_TAX") || 6) } })),
+          total: { amount: money(total) },
+        },
+      }),
+    }).catch((e) => ({ status: 0, json: async () => ({ message: e.message }) }));
+    const p = await r.json().catch(() => ({}));
+    const link = p.data?.paymentUrl;
+    if (!link) return fail("split", r.status, p.reason || p.reasonCode || p.message || p);
+    await saveOrder({ provider: "yandexpay", payMethod: "split" });
     return j(200, { order_id: orderId, total, confirmation_url: link });
   }
 

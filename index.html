@@ -84,7 +84,7 @@ section{padding:72px 32px}
 .gal{display:grid;gap:4px}.gal .im{aspect-ratio:3/4;background:#fff;position:relative;overflow:hidden}
 .gal .sl{position:absolute;inset:0;height:auto}
 .info{padding:48px 56px;position:sticky;top:64px;align-self:start}
-.info h1{font-size:34px;line-height:1.15}.info .pr{font-size:18px;margin:12px 0 28px}
+.info h1{font-size:34px;line-height:1.15}.info .pr{font-size:18px;margin:12px 0 28px}.info .pr:has(+.spl:not([hidden])){margin-bottom:6px}.spl{font-size:14px;color:var(--mute);margin-bottom:28px}
 .sizes{display:flex;gap:8px;margin:10px 0 24px;flex-wrap:wrap}
 .sz{min-width:52px;padding:10px 14px;border:1px solid var(--line);font-size:12px}.sz.on{border-color:var(--fg)}
 .sz:disabled{color:var(--mute);font-weight:400;text-decoration:line-through;cursor:not-allowed;background:var(--tone)}.btn:disabled{opacity:.45;cursor:not-allowed}
@@ -541,10 +541,10 @@ return `<div class="ch"><div class="crumb"><a href="/">Главная</a> / ${t}
 <select id="so"><option value="def">Сортировка</option><option value="asc" ${F.sort==="asc"?"selected":""}>Цена ↑</option><option value="desc" ${F.sort==="desc"?"selected":""}>Цена ↓</option></select></div>
 <div class="grid">${l.map(card).join("")||'<p style="grid-column:1/-1">Ничего не найдено.</p>'}</div>`}
 let sel="";
-function product(id){const p=P.find(x=>x.id===id);if(!p)return'<div class="txt"><h1 class="serif">Товар не найден</h1></div>';
+function product(id){const p=P.find(x=>x.id===id);if(!p)return'<div class="txt"><h1 class="serif">Товар не найден</h1></div>';payMethods().then(m=>{const e=$("#spl");if(e&&m.split)e.hidden=false});
 sel="";const g=shots(p).map((u,i)=>`<div class="im">${frame(p,u,0,i)}</div>`).join("");
 const cat=p.cats.find(c=>c!=="novinki");
-return `<div class="crumb"><a href="/c/all">Каталог</a>${cat?` / <a href="/c/${cat}">${CN[cat]}</a>`:""} / ${p.name}</div><div class="pp"><div class="gal${shots(p).length>1?" g2":""}">${g}</div><div class="info">${p.isNew?'<div class="ey">Новинка</div>':""}<h1 class="serif">${p.name}</h1><div class="pr">${money(p.price)}</div>
+return `<div class="crumb"><a href="/c/all">Каталог</a>${cat?` / <a href="/c/${cat}">${CN[cat]}</a>`:""} / ${p.name}</div><div class="pp"><div class="gal${shots(p).length>1?" g2":""}">${g}</div><div class="info">${p.isNew?'<div class="ey">Новинка</div>':""}<h1 class="serif">${p.name}</h1><div class="pr">${money(p.price)}</div><div class="spl" id="spl" hidden>или 4 платежа по ${money(Math.ceil(p.price/4))} в Сплит</div>
 <p class="pd">${p.desc}</p><p class="szl">Размер</p><div class="sizes">${p.sizes.map(s=>`<button class="sz" data-z="${s}"${sizeOut(p,s)?' disabled title="Нет в наличии"':""}>${s}</button>`).join("")}</div>
 ${soldOut(p)||p.sizes.every(s=>sizeOut(p,s))?'<button class="btn fill w" disabled>Нет в наличии</button>':`<button class="btn fill w" id="add" data-id="${p.id}">Добавить в корзину</button>`}
 <ul class="perks"><li>Ручная отделка</li><li>Сделано в Екатеринбурге</li><li>Доставка СДЭК по России</li></ul>
@@ -689,17 +689,17 @@ if(id==="a-c"&&e.target.value.replace(/\D/g,"").length===4)authAct("a-ver")});
 document.addEventListener("focusin",e=>{const id=e.target.id;if(id==="cy")loadCities().then(suggest);if(id==="pv")pvSuggest()});
 document.addEventListener("focusout",e=>{const id=e.target.id;if(!DD[id])return;setTimeout(()=>{if(document.activeElement&&document.activeElement.id===id)return;ddHide(id);
 if(id==="cy"&&!CK.city&&$("#cy")){const q=nrm($("#cy").value);const ex=(CITIES||[]).find(c=>c.k===q);if(ex)pickCity(ex)}},180)});
-/* Оплата: сначала проверяем заказ, затем покупатель выбирает способ — Яндекс Пэй (или ЮKassa) либо СБП/карта через Точку */
+/* Оплата: сначала проверяем заказ, затем покупатель выбирает способ — СБП/карта через Точку или частями в Яндекс Сплит */
 let PM=null;const payMethods=()=>PM?Promise.resolve(PM):api("create-order").then(d=>PM=d||{}).catch(()=>({}));
-const PAYS={tochka:["tochka","СБП или картой","Система быстрых платежей — через приложение вашего банка, или банковской картой"]};
+const PAYS={tochka:["tochka","СБП или картой","Система быстрых платежей — через приложение вашего банка, или банковской картой"],split:["split","Частями в Яндекс Сплит","4 платежа раз в 2 недели, первый — сейчас. Без переплаты"]};
 function coData(){const g=i=>$("#"+i).value.trim(),door=isDoor();
 if(!cart.length)return toast("Корзина пуста");if(!CK.city){$("#cy").focus();return toast("Выберите город из списка подсказок")}
 if(!CK.tariff){$("#tl").scrollIntoView({block:"center",behavior:"smooth"});return toast("Выберите способ доставки")}
 if(!door&&!CK.pvz){$("#pv").focus();return toast(CK.tariff.mode===MODE_POST?"Выберите постамат из списка":"Выберите пункт выдачи из списка")}if(door&&g("ad").length<5){$("#ad").focus();return toast("Укажите адрес для курьера")}
 if(!g("n")||!g("ph")||!g("em"))return toast("Заполните контакты получателя");if(!$("#ag").checked)return toast("Подтвердите согласие с офертой");
 return{items:cart.map(c=>({id:c.id,size:c.size,q:c.q})),contact:{name:g("n"),phone:g("ph"),email:g("em")},delivery:{tariff:CK.tariff.code,city_code:CK.city.code,city:CK.city.name,pvz:door?"":CK.pvz.code,address:door?[g("ad"),g("ad2")].filter(Boolean).join(", "):CK.pvz.address},subscribe:$("#sub").checked}}
-async function pay(){const d=coData();if(!d)return;const m=await payMethods();const l=[m.tochka&&PAYS.tochka].filter(Boolean);
-// Один способ оплаты — сразу ведём на страницу Точки, где покупатель выбирает карту или СБП
+async function pay(){const d=coData();if(!d)return;const m=await payMethods();const l=[m.tochka&&PAYS.tochka,m.split&&PAYS.split].filter(Boolean);
+// Один способ оплаты — сразу ведём на страницу оплаты
 if(l.length===1){const b=$("#pay");b.disabled=true;b.textContent="Переходим к оплате…";await payGo(l[0][0],b);b.disabled=false;b.textContent="Оплатить";return}
 if(!l.length)return toast("Онлайн-оплата скоро заработает. Сейчас заказ можно оформить по телефону +7 (960) 304-79-77");
 $("#pss").textContent=`К оплате ${money(sub()+(CK.cost||0))}`;$("#pml").innerHTML=l.map(([k,t,s])=>`<button type="button" class="pm" data-pm="${k}"><b>${t}</b><span>${s}</span><i>→</i></button>`).join("");

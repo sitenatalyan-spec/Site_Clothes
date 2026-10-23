@@ -167,7 +167,7 @@ async function igSync() {
 setTimeout(igSync, 30e3);
 setInterval(igSync, 15 * 60e3);
 
-// Проверка оплаты заказов в Точке каждые 2 минуты
+// Проверка оплаты заказов (Точка, Яндекс Сплит) каждые 2 минуты
 async function payCheck() {
   try { await (await import(pathToFileURL(path.join(ROOT, "netlify/lib/payments.mjs")).href)).checkPayments(); }
   catch (err) { console.error("payments", err.message); }
