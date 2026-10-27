@@ -5,11 +5,13 @@ import { loadState, saveState, syncInstagram, addLog, store } from "../lib/shop.
 const CATS = ["platya", "yubki", "kostyumy", "kardigany", "svitery"];
 const str = (v, n) => String(v ?? "").trim().slice(0, n);
 
+// Вход: пароль администратора или пароль управляющей (вкладка «Товары и наличие» на /manager)
+function same(got, want, min) {
+  return want.length >= min && got.length === want.length && crypto.timingSafeEqual(Buffer.from(got), Buffer.from(want));
+}
 function authorized(req) {
-  const want = Netlify.env.get("ADMIN_PASSWORD") || "";
   const got = req.headers.get("x-admin-key") || "";
-  if (want.length < 10 || got.length !== want.length) return false;
-  return crypto.timingSafeEqual(Buffer.from(got), Buffer.from(want));
+  return same(got, Netlify.env.get("ADMIN_PASSWORD") || "", 10) || same(got, Netlify.env.get("MANAGER_PASSWORD") || "", 8);
 }
 
 export default async (req) => {
