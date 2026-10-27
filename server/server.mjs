@@ -103,12 +103,27 @@ function catalog() {
   return catalogCache;
 }
 const escA = (x) => String(x).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+let shopCache = null;
+function shopProduct(id) {
+  try {
+    const f = path.join(process.env.STORE_DIR, "shop", "state"), m = fs.statSync(f).mtimeMs;
+    if (!shopCache || shopCache.m !== m) shopCache = { m, s: JSON.parse(fs.readFileSync(f, "utf8")) };
+    const p = shopCache.s.products?.[id];
+    return p && !p.hidden && p.imgs?.length ? p : null;
+  } catch { return null; }
+}
 function appPage(rel) {
   const c = catalog(), m = rel.match(/^(c|p)\/([\w-]+)$/);
   const brand = "Gluhova Natalya";
   if (m && m[1] === "p") {
     const p = c.products[m[2]];
-    if (!p) return m[2].startsWith("ig-") ? { title: brand, path: "/" + rel } : null;
+    if (!p) {
+      // Товар, добавленный на странице управления или из Instagram
+      const d = shopProduct(m[2]);
+      if (!d) return null;
+      const price = Number(d.price || 0).toLocaleString("ru-RU");
+      return { title: `${d.name} — ${price} ₽ · ${brand}`, desc: `${String(d.desc || d.name).slice(0, 200)} Цена ${price} ₽. Женский трикотаж ручной работы из Екатеринбурга, доставка СДЭК по России.`, img: d.imgs?.[0] ? SITE() + d.imgs[0] : null, path: "/" + rel };
+    }
     const img = p.img ? SITE() + "/" + p.img.replace(/^photos\/(.+)\.jpg$/, "photos/w/$1.webp") : null;
     return { title: `${p.name} — ${p.price.toLocaleString("ru-RU")} ₽ · ${brand}`, desc: `${p.desc} Цена ${p.price.toLocaleString("ru-RU")} ₽. Женский трикотаж ручной работы из Екатеринбурга, доставка СДЭК по России.`, img, path: "/" + rel };
   }
