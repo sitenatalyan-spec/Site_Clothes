@@ -5,7 +5,7 @@
 set -euo pipefail
 
 DOMAIN="${DOMAIN:-gluhovanatalya.ru}"
-REPO="${REPO:-git@github.com:xxeleor-cell/Site_Clothes.git}"
+REPO="${REPO:-git@github.com:sitenatalyan-spec/Site_Clothes.git}"
 BRANCH="${BRANCH:-main}"
 APP=/var/www/gluhova
 DATA=/var/lib/gluhova
