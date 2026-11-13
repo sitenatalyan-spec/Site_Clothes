@@ -101,6 +101,15 @@ if(o.ship.status==="shipped")B("Получен","delivered",1);if(["packed","shi
 if(o.ship.status!=="cancelled"&&o.ship.status!=="delivered")B("Отменить","cancelled");
 const sv=el("button",{},"Сохранить трек и заметку");sv.onclick=()=>set(o.ship.status,sv);acts.append(sv);
 const pr=el("button",{},"Печать");pr.onclick=()=>{document.querySelectorAll(".o").forEach(x=>x.classList.remove("pr"));box.classList.add("pr");print()};acts.append(pr);
+// Отправление СДЭК: создаётся само после оплаты; здесь — номер, накладная и ручные действия
+const cd=o.cdek,cact=(a,btn)=>{btn.disabled=true;call(a,{id:o.id}).then(d=>{Object.assign(o,d.order);render()}).catch(e=>toast(e.message)).finally(()=>btn.disabled=false)};
+const CB=(t,a,f)=>{const b=el("button",{cls:f?"fill":""},t);b.onclick=()=>a==="cdek_label"?label(o,b):cact(a,b);return b};
+const cdk=o.paid!=="paid"?null:el("div",{cls:"blk no-print"},el("span",{cls:"k"},"Отправление СДЭК"),
+cd&&cd.number&&!cd.cancelled?el("span",{cls:"big"},"№ "+cd.number):cd&&cd.cancelled?el("span",{},"Отменено в СДЭК"):cd&&cd.sent?el("span",{},"Оформляется, номер появится через минуту"):!cd?el("span",{},"Создастся в СДЭК автоматически в течение 2 минут"):null,
+cd&&cd.error?el("span",{style:"color:var(--bad)"},cd.error):null,
+el("div",{cls:"row"},cd&&cd.number&&!cd.cancelled?CB("Накладная СДЭК","cdek_label",1):null,cd&&cd.sent&&!cd.number&&!cd.cancelled?CB("Обновить","cdek_refresh"):null,
+(!cd||cd.cancelled||(!cd.sent&&cd.error))?CB(cd?"Оформить в СДЭК заново":"Оформить в СДЭК сейчас","cdek_create",!!cd):null,
+cd&&cd.sent&&!cd.cancelled&&["new","packed"].includes(o.ship.status)?CB("Отменить в СДЭК","cdek_cancel"):null));
 const box=el("div",{cls:"o"},
 el("div",{cls:"oh"},el("b",{},"Заказ "+o.id),el("span",{cls:"st "+st},ST[st])),
 el("div",{cls:"muted"},"Оформлен "+dt(o.created)+(o.paidAt?" · оплачен "+dt(o.paidAt):"")+(o.payMethod==="split"?" · Яндекс Сплит":o.paid==="paid"?" · Точка":"")),
@@ -108,10 +117,14 @@ el("div",{cls:"blk its"},el("span",{cls:"k"},"Что положить"),...goods
 el("div",{cls:"blk"},el("span",{cls:"k"},"Кому"),el("span",{cls:"big"},o.name),el("span",{},el("a",{href:"tel:"+o.phone},o.phone)," · ",el("a",{href:"mailto:"+o.email},o.email))),
 el("div",{cls:"blk"},el("span",{cls:"k"},"Куда · "+(o.tariff||"СДЭК")),el("span",{cls:"big"},dl),el("span",{},ad)),
 el("div",{cls:"muted"},"Товары "+rub(o.total-(dlv?dlv.price:0))+" + доставка "+rub(dlv?dlv.price:0)+" = "+rub(o.total)),
+cdk,
 o.paid==="paid"?el("div",{cls:"no-print",style:"display:grid;gap:8px"},tr,nt):null,
 o.ship.track?el("div",{},"Трек: ",el("a",{href:"https://www.cdek.ru/ru/tracking?order_id="+encodeURIComponent(o.ship.track),target:"_blank",rel:"noopener"},o.ship.track)):null,
 o.ship.by?el("div",{cls:"muted"},"Последнее изменение: "+o.ship.by+", "+dt(o.ship.at)):null,acts);
 return box}
+// Накладная СДЭК: PDF открываем в новой вкладке (на телефоне — встроенный просмотр)
+async function label(o,btn){btn.disabled=true;try{const r=await fetch("/api/manager",{method:"POST",headers:{"Content-Type":"application/json","x-manager-key":KEY},body:JSON.stringify({action:"cdek_label",id:o.id})});
+if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.error||"Ошибка")}const u=URL.createObjectURL(await r.blob());const a=el("a",{href:u,target:"_blank",rel:"noopener"});document.body.append(a);a.click();a.remove()}catch(e){toast(e.message)}btn.disabled=false}
 function render(){$("#tabs").replaceChildren(...TABS.map(([k,t,f])=>{const n=L.filter(f).length,b=el("button",{cls:k===TAB?"on":""},t,n?el("b",{},n):"");b.onclick=()=>{TAB=k;render()};return b}));
 const f=TABS.find(t=>t[0]===TAB)[2],l=L.filter(f);if(TAB==="todo")l.reverse();
 $("#list").replaceChildren(...(l.length?l.map(card):[el("p",{cls:"muted",style:"margin-top:20px"},TAB==="todo"?"Всё отправлено. Новые оплаченные заказы появятся здесь.":"Пусто")]))}

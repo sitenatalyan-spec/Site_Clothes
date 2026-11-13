@@ -63,7 +63,8 @@ const TARIFFS = {
   805: { mode: 3, name: "Супер-экспресс до 18:00 до двери" },
 };
 exports.TARIFFS = TARIFFS;
-const pkg = (cnt) => [{ weight: 700 * cnt, length: 35, width: 30, height: 8 }];
+// Упаковка одной вещи, как сдаёт Наталья: 30×20×8 см, 1 кг (CDEK_ITEM_WEIGHT — вес в граммах).
+const pkg = (cnt) => [{ weight: (Number(process.env.CDEK_ITEM_WEIGHT) || 1000) * cnt, length: 30, width: 20, height: Math.min(8 * cnt, 40) }];
 exports.tariffs = (to, n, value) => {
   const cnt = Math.max(1, Math.min(10, Number(n) || 1)), v = Math.max(0, Math.round(Number(value) || 0));
   return cached(`tl:${Number(to)}:${cnt}:${v}`, H, async () => {
@@ -99,6 +100,73 @@ exports.tariff = (to, door, n) => {
     if (d.total_sum == null) throw Object.assign(new Error("no tariff"), { soft: { cost: null } });
     return { cost: Math.ceil(d.total_sum), min: d.period_min, max: d.period_max };
   }).catch((e) => { if (e.soft) return e.soft; throw e; });
+};
+
+// ===== Отправления (заказы в СДЭК) =====
+const errText = (r) =>
+  (r.requests || []).flatMap((q) => q.errors || []).map((e) => e.message || e.code).join("; ") ||
+  (r.errors || []).map((e) => e.message || e.code).join("; ") || "СДЭК не принял заказ";
+
+// Интернет-магазин (type 1), посылку сдаём в пункт CDEK_SHIPMENT_POINT (по умолчанию YEKB121, Екатеринбург, Белинского 54).
+// Оплата получена онлайн, поэтому с получателя ничего не берём (payment 0), объявленная стоимость — цена вещи.
+exports.createOrder = async (o) => {
+  const tf = TARIFFS[Number(o.tariff)];
+  if (!tf) throw new Error("Неизвестный тариф СДЭК: " + o.tariff);
+  const goods = (o.items || []).filter((i) => i.id !== "delivery");
+  const cnt = goods.reduce((s, i) => s + (Number(i.q) || 1), 0) || 1;
+  const p = pkg(cnt)[0];
+  const body = {
+    type: 1, number: o.order_id, tariff_code: Number(o.tariff),
+    shipment_point: process.env.CDEK_SHIPMENT_POINT || "YEKB121",
+    ...(tf.mode === 3
+      ? { to_location: { ...(o.city_code ? { code: Number(o.city_code) } : {}), city: o.city, address: o.address } }
+      : { delivery_point: o.pvz }),
+    recipient: { name: o.name, ...(o.email ? { email: o.email } : {}), phones: [{ number: o.phone }] },
+    sender: { name: process.env.CDEK_SENDER_NAME || "Шнайдер Наталья Анатольевна", phones: [{ number: process.env.CDEK_SENDER_PHONE || "+79603047977" }] },
+    packages: [{
+      number: "1", ...p,
+      items: goods.map((i) => ({
+        name: String(i.name).slice(0, 255), ware_key: String(i.id).slice(0, 50), payment: { value: 0 },
+        cost: Number(i.price), weight: Math.max(1, Math.round(p.weight / cnt)), amount: Number(i.q) || 1,
+      })),
+    }],
+  };
+  const r = await call("/orders", { method: "POST", body: JSON.stringify(body) });
+  if (!r.entity || !r.entity.uuid || (r.requests || []).some((q) => q.state === "INVALID")) throw new Error(errText(r));
+  return r.entity.uuid;
+};
+
+// Номер СДЭК появляется через несколько секунд; если СДЭК при проверке отклонил заказ — вернём текст ошибки.
+exports.orderInfo = async (uuid) => {
+  const r = await call("/orders/" + encodeURIComponent(uuid));
+  const bad = (r.requests || []).find((q) => q.state === "INVALID");
+  return { number: (r.entity && r.entity.cdek_number) || null, error: bad ? errText({ requests: [bad] }) : null };
+};
+
+// Отменить можно, пока посылку не приняли в пункте.
+exports.deleteOrder = async (uuid) => {
+  const r = await call("/orders/" + encodeURIComponent(uuid), { method: "DELETE" });
+  if ((r.requests || []).some((q) => q.state === "INVALID")) throw new Error(errText(r));
+  return true;
+};
+
+// Накладная (PDF, 2 экземпляра): СДЭК готовит файл несколько секунд.
+exports.waybill = async (uuid) => {
+  const r = await call("/print/orders", { method: "POST", body: JSON.stringify({ orders: [{ order_uuid: uuid }], copy_count: 2 }) });
+  const id = r.entity && r.entity.uuid;
+  if (!id) throw new Error(errText(r));
+  for (let i = 0; i < 12; i++) {
+    await new Promise((ok) => setTimeout(ok, 1500));
+    const s = await call("/print/orders/" + id);
+    const codes = ((s.entity && s.entity.statuses) || []).map((x) => x.code);
+    if (codes.includes("READY") && s.entity.url) {
+      const pdf = await fetch(s.entity.url, { headers: { Authorization: "Bearer " + (await token()) } });
+      if (!pdf.ok) throw new Error("СДЭК не отдал накладную");
+      return Buffer.from(await pdf.arrayBuffer());
+    }
+    if (codes.includes("INVALID")) throw new Error("СДЭК не сформировал накладную");
+  }
+  throw new Error("Накладная ещё готовится — нажмите ещё раз через минуту");
 };
 
 // Подсказки адреса (улица, дом) в пределах города. Ключ: DADATA_API_KEY (бесплатно до 10 000 запросов в сутки).

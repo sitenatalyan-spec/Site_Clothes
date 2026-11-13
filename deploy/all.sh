@@ -4,7 +4,7 @@
 # Повторный запуск безопасен: уже сделанные шаги пропускаются.
 set -euo pipefail
 
-DOMAIN="${DOMAIN:-gluhovanatalya.ru}"
+DOMAIN="${DOMAIN:-gluhovanatalia.ru}"
 REPO="${REPO:-git@github.com:sitenatalyan-spec/Site_Clothes.git}"
 BRANCH="${BRANCH:-main}"
 APP=/var/www/gluhova
@@ -253,5 +253,5 @@ echo
 echo "== Проверка"
 systemctl is-active gluhova nginx
 curl -s -o /dev/null -w "Сайт на сервере отвечает: %{http_code}\n" http://127.0.0.1:8080/
-curl -s -o /dev/null -w "Через nginx: %{http_code}\n" -H "Host: gluhovanatalya.ru" http://127.0.0.1/
+curl -s -o /dev/null -w "Через nginx: %{http_code}\n" -H "Host: gluhovanatalia.ru" http://127.0.0.1/
 echo "Готово. Теперь выполните: gluhova-keys"

@@ -5,7 +5,7 @@ import {
 
 const env = (k) => process.env[k] || "";
 const j = (status, body) => Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
-const site = () => (env("SITE_URL") || "https://gluhovanatalya.ru").replace(/\/+$/, "");
+const site = () => (env("SITE_URL") || "https://gluhovanatalia.ru").replace(/\/+$/, "");
 const googleOn = () => !!(env("GOOGLE_CLIENT_ID") && env("GOOGLE_CLIENT_SECRET"));
 const smsOn = () => !!env("SMSRU_API_ID") || env("AUTH_DEV_SMS") === "1";
 const NEXT = new Set(["account", "checkout"]);

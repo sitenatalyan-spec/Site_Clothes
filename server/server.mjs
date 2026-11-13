@@ -87,7 +87,7 @@ function serveStatic(rel, req, res, head) {
 
 // Страницы магазина с настоящими адресами (/p/kardigan, /c/platya, /delivery…): отдаём index.html,
 // подставив свой заголовок, описание и картинку — чтобы поисковики и мессенджеры видели каждую страницу отдельно.
-const SITE = () => process.env.SITE_URL || "https://gluhovanatalya.ru";
+const SITE = () => process.env.SITE_URL || "https://gluhovanatalia.ru";
 const INFO = { about: "О бренде", delivery: "Доставка и оплата", care: "Уход за изделиями", refund: "Возврат и обмен", offer: "Публичная оферта", privacy: "Политика конфиденциальности", contacts: "Контакты", fav: "Избранное", account: "Личный кабинет", checkout: "Оформление заказа", "order-ok": "Спасибо за заказ" };
 let catalogCache = null;
 function catalog() {
@@ -187,6 +187,9 @@ setInterval(igSync, 15 * 60e3);
 async function payCheck() {
   try { await (await import(pathToFileURL(path.join(ROOT, "netlify/lib/payments.mjs")).href)).checkPayments(); }
   catch (err) { console.error("payments", err.message); }
+  // оплаченные заказы сами уходят в СДЭК
+  try { await (await import(pathToFileURL(path.join(ROOT, "netlify/lib/shipping.mjs")).href)).checkShipments(); }
+  catch (err) { console.error("cdek", err.message); }
 }
 setTimeout(payCheck, 20e3);
 setInterval(payCheck, 2 * 60e3);

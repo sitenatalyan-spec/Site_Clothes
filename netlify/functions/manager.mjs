@@ -2,6 +2,8 @@
 // Вход — пароль MANAGER_PASSWORD (или пароль администратора). Товары и наличие — вкладка на той же странице, через /api/admin.
 import crypto from "node:crypto";
 import { store } from "../lib/shop.mjs";
+import cdek from "../lib/cdek.js";
+import { registerCdek, refreshCdek, cdekOn } from "../lib/shipping.mjs";
 
 const STEPS = ["new", "packed", "shipped", "delivered", "cancelled"];
 
@@ -20,6 +22,7 @@ const view = (o) => ({
   id: o.order_id, created: o.created, paid: o.status || "pending", paidAt: o.paidAt, payMethod: o.payMethod || o.provider,
   name: o.name, phone: o.phone, email: o.email, delivery: o.delivery, tariff: o.tariff_name, city: o.city, pvz: o.pvz, address: o.address,
   items: o.items, total: o.total, ship: o.ship || { status: "new" },
+  cdek: o.cdek ? { number: o.cdek.number || null, error: o.cdek.error || null, sent: !!o.cdek.uuid, cancelled: !!o.cdek.cancelled } : null,
 });
 
 export default async (req) => {
@@ -44,7 +47,44 @@ export default async (req) => {
     const note = String(b.note ?? o.ship?.note ?? "").trim().slice(0, 300);
     const at = new Date().toISOString();
     o.ship = { status, track, note, at, by, history: [...(o.ship?.history || []), { status, track, at, by }].slice(-20) };
+    // отмена заказа отменяет и отправление в СДЭК, если посылку ещё не сдали
+    if (status === "cancelled" && o.cdek?.uuid && !o.cdek.cancelled) {
+      try { await cdek.deleteOrder(o.cdek.uuid); o.cdek.cancelled = true; } catch (e) { o.cdek.error = "Не удалось отменить в СДЭК: " + e.message; }
+    }
     await s.setJSON(id, o);
+    return Response.json({ order: view(o) });
+  }
+
+  // Отправления СДЭК: создать вручную (если авто не сработало), обновить номер, накладная, отмена
+  if (["cdek_create", "cdek_refresh", "cdek_label", "cdek_cancel"].includes(b.action)) {
+    const id = String(b.id || "");
+    const o = /^GN-[A-Z0-9]{4,20}$/.test(id) ? await s.get(id, { type: "json" }).catch(() => null) : null;
+    if (!o) return Response.json({ error: "Нет такого заказа" }, { status: 404 });
+    if (!cdekOn()) return Response.json({ error: "Не вписаны ключи СДЭК (gluhova-keys)" }, { status: 400 });
+    try {
+      if (b.action === "cdek_create") {
+        if (o.status !== "paid") return Response.json({ error: "Заказ не оплачен" }, { status: 400 });
+        if (o.cdek?.uuid && !o.cdek.cancelled) return Response.json({ error: "Отправление уже создано" }, { status: 400 });
+        delete o.cdek;
+        await registerCdek(o, s);
+        await new Promise((ok) => setTimeout(ok, 2500));
+        if (o.cdek?.uuid) await refreshCdek(o, s).catch(() => {});
+      } else if (b.action === "cdek_refresh") {
+        await refreshCdek(o, s);
+      } else if (b.action === "cdek_cancel") {
+        if (!o.cdek?.uuid || o.cdek.cancelled) return Response.json({ error: "Нет отправления" }, { status: 400 });
+        await cdek.deleteOrder(o.cdek.uuid);
+        o.cdek.cancelled = true;
+        if (o.ship?.track === o.cdek.number) o.ship.track = "";
+        await s.setJSON(id, o);
+      } else {
+        if (!o.cdek?.uuid || o.cdek.cancelled) return Response.json({ error: "Нет отправления СДЭК" }, { status: 400 });
+        const pdf = await cdek.waybill(o.cdek.uuid);
+        return new Response(pdf, { headers: { "Content-Type": "application/pdf", "Content-Disposition": `inline; filename="cdek-${o.cdek.number || id}.pdf"` } });
+      }
+    } catch (e) {
+      return Response.json({ error: "СДЭК: " + e.message }, { status: 502 });
+    }
     return Response.json({ order: view(o) });
   }
 

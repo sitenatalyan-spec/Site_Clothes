@@ -2,9 +2,9 @@
 # Установка сайта Gluhova Natalya на чистый сервер Ubuntu 22.04/24.04. Запускать от root:
 #   bash setup.sh
 # Повторный запуск безопасен: уже сделанные шаги пропускаются.
-set -euo pipefail
+set -eu  # без pipefail: `tr … | head -c` иначе падает с кодом 141
 
-DOMAIN="${DOMAIN:-gluhovanatalya.ru}"
+DOMAIN="${DOMAIN:-gluhovanatalia.ru}"
 REPO="${REPO:-git@github.com:sitenatalyan-spec/Site_Clothes.git}"
 BRANCH="${BRANCH:-main}"
 APP=/var/www/gluhova
