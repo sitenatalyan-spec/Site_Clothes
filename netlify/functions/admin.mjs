@@ -1,4 +1,6 @@
 import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 import catalog from "./catalog.js";
 import { loadState, saveState, syncInstagram, addLog, store } from "../lib/shop.mjs";
 
@@ -14,6 +16,13 @@ function authorized(req) {
   return same(got, Netlify.env.get("ADMIN_PASSWORD") || "", 10) || same(got, Netlify.env.get("MANAGER_PASSWORD") || "", 8);
 }
 
+// Ключи, которые можно вписать на странице /admin → «Ключи». Хранятся в STORE_DIR/secrets.json (доступ только у сайта).
+const KEYS = ["CDEK_CLIENT_ID", "CDEK_CLIENT_SECRET", "TOCHKA_JWT", "TOCHKA_CUSTOMER_CODE", "TOCHKA_MERCHANT_ID",
+  "YANDEX_PAY_API_KEY", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "DADATA_API_KEY", "MANAGER_PASSWORD", "ADMIN_PASSWORD"];
+const PASSWORDS = new Set(["MANAGER_PASSWORD", "ADMIN_PASSWORD"]);
+const secretsFile = () => path.join(process.env.STORE_DIR || "data", "secrets.json");
+const keyStatus = () => Object.fromEntries(KEYS.map((k) => [k, !!process.env[k]]));
+
 export default async (req) => {
   if (req.method !== "POST") return Response.json({ error: "Method" }, { status: 405 });
   if (!authorized(req)) {
@@ -22,6 +31,33 @@ export default async (req) => {
   }
   let b;
   try { b = await req.json(); } catch { return Response.json({ error: "Bad JSON" }, { status: 400 }); }
+  if (b.action === "keys_status" || b.action === "keys") {
+    // только администратор, не управляющая
+    if (!same(req.headers.get("x-admin-key") || "", Netlify.env.get("ADMIN_PASSWORD") || "", 10))
+      return Response.json({ error: "Ключи может менять только администратор" }, { status: 403 });
+    if (b.action === "keys_status") return Response.json({ keys: keyStatus() });
+    let cur = {};
+    try { cur = JSON.parse(fs.readFileSync(secretsFile(), "utf8")); } catch {}
+    const changed = [];
+    for (const k of KEYS) {
+      let v = b.keys?.[k];
+      if (typeof v !== "string") continue;
+      // в ключах пробелов и переносов не бывает — убираем всё лишнее, что могло прилипнуть при копировании
+      v = PASSWORDS.has(k) ? v.trim() : v.replace(/\s+/g, "");
+      if (!v) continue;
+      if (v.length > 5000) return Response.json({ error: k + ": слишком длинное значение" }, { status: 400 });
+      if (k === "ADMIN_PASSWORD" && v.length < 10) return Response.json({ error: "Пароль администратора — от 10 символов" }, { status: 400 });
+      if (k === "MANAGER_PASSWORD" && v.length < 8) return Response.json({ error: "Пароль управляющей — от 8 символов" }, { status: 400 });
+      cur[k] = v; changed.push(k);
+    }
+    if (!changed.length) return Response.json({ error: "Нечего сохранять" }, { status: 400 });
+    fs.writeFileSync(secretsFile(), JSON.stringify(cur), { mode: 0o600 });
+    console.log("keys changed:", changed.join(", "));
+    // перезапуск, чтобы все части сайта взяли новые ключи (systemd поднимет сайт через 3 секунды)
+    setTimeout(() => process.exit(0), 500);
+    return Response.json({ ok: true, changed, restarting: true });
+  }
+
   if (b.action === "orders") {
     const s = store("orders");
     const { blobs } = await s.list();

@@ -9,6 +9,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FN = path.join(ROOT, "netlify/functions");
 const PORT = Number(process.env.PORT || 8080);
 process.env.STORE_DIR ||= path.join(ROOT, "data");
+// Ключи, вписанные на странице /admin → «Ключи», важнее файла /etc/gluhova.env
+try { Object.assign(process.env, JSON.parse(fs.readFileSync(path.join(process.env.STORE_DIR, "secrets.json"), "utf8"))); } catch {}
 globalThis.Netlify = { env: { get: (k) => process.env[k] }, context: { deploy: { context: "production" } } };
 const require = createRequire(import.meta.url);
 
@@ -150,6 +152,11 @@ function servePage(meta, req, res, status = 200) {
 
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `https://${req.headers.host || "localhost"}`);
+  // www.домен → основной адрес сайта (один адрес для поисковиков и входа через Google)
+  if (/^www\./i.test(req.headers.host || "") && process.env.SITE_URL) {
+    res.writeHead(301, { Location: process.env.SITE_URL.replace(/\/+$/, "") + url.pathname + url.search }).end();
+    return;
+  }
   try {
     const m = url.pathname.match(/^\/(?:api|\.netlify\/functions)\/([\w-]+)$/);
     if (m) {
