@@ -63,7 +63,6 @@ export default async (req) => {
     if (!cdekOn()) return Response.json({ error: "Не вписаны ключи СДЭК (gluhova-keys)" }, { status: 400 });
     try {
       if (b.action === "cdek_create") {
-        if (o.status !== "paid") return Response.json({ error: "Заказ не оплачен" }, { status: 400 });
         if (o.cdek?.uuid && !o.cdek.cancelled) return Response.json({ error: "Отправление уже создано" }, { status: 400 });
         delete o.cdek;
         await registerCdek(o, s);
@@ -85,6 +84,34 @@ export default async (req) => {
     } catch (e) {
       return Response.json({ error: "СДЭК: " + e.message }, { status: 502 });
     }
+    return Response.json({ order: view(o) });
+  }
+
+  // Отправление вручную, без заказа на сайте: подарок, бесплатная отправка, заказ по телефону
+  if (b.action === "manual_order") {
+    if (!cdekOn()) return Response.json({ error: "Не вписаны ключи СДЭК" }, { status: 400 });
+    const m = b.order || {};
+    const str = (v, n) => String(v ?? "").trim().slice(0, n);
+    const name = str(m.name, 100), phone = str(m.phone, 20).replace(/[^\d+]/g, ""), email = str(m.email, 120);
+    const tf = cdek.TARIFFS[Number(m.tariff)], door = tf && tf.mode === 3;
+    const qty = Math.floor(Number(m.qty) || 1), cost = Math.max(0, Math.round(Number(m.cost) || 0));
+    if (!name || phone.replace(/\D/g, "").length < 10) return Response.json({ error: "Укажите имя и телефон получателя" }, { status: 400 });
+    if (!Number(m.city_code) || !tf) return Response.json({ error: "Выберите город и тариф" }, { status: 400 });
+    if (door ? str(m.address, 200).length < 5 : !str(m.pvz, 50)) return Response.json({ error: door ? "Укажите адрес для курьера" : "Выберите пункт выдачи" }, { status: 400 });
+    if (!str(m.title, 120) || !(qty >= 1 && qty <= 20) || cost > 1e6) return Response.json({ error: "Укажите, что отправляем, и количество" }, { status: 400 });
+    const now = new Date().toISOString(), id = "GN-" + Date.now().toString(36).toUpperCase();
+    const o = {
+      order_id: id, name, phone, email, manual: true,
+      delivery: door ? "cdek_door" : tf.mode === 7 ? "cdek_postamat" : "cdek_pvz", tariff: Number(m.tariff), tariff_name: tf.name,
+      city: str(m.city, 100), city_code: Number(m.city_code), pvz: door ? "" : str(m.pvz, 50), address: str(m.address, 200),
+      items: [{ id: "manual", name: str(m.title, 120), price: cost, q: qty, kind: "commodity" }], total: cost * qty,
+      created: now, status: "paid", paidAt: now, provider: "manual", payMethod: "manual",
+      ship: { status: "new", track: "", note: str(m.note, 300), at: now, by, history: [] },
+    };
+    await s.setJSON(id, o);
+    await registerCdek(o, s);
+    await new Promise((ok) => setTimeout(ok, 2500));
+    if (o.cdek?.uuid) await refreshCdek(o, s).catch(() => {});
     return Response.json({ order: view(o) });
   }
 
