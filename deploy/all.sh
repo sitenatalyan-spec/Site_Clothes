@@ -239,8 +239,6 @@ ask GOOGLE_CLIENT_ID "Google Client ID" 0
 ask GOOGLE_CLIENT_SECRET "Google Client Secret" 1
 echo "— Подсказки адресов (DaData) —"
 ask DADATA_API_KEY "DaData API-ключ" 1
-echo "— Instagram —"
-ask IG_ACCESS_TOKEN "Instagram: токен (начинается с IG)" 1
 echo "— Пароли страниц управления —"
 ask ADMIN_PASSWORD "Пароль администратора /admin (от 10 символов; Enter — оставить)" 1
 ask MANAGER_PASSWORD "Пароль управляющей /manager (от 8 символов; Enter — оставить)" 1
