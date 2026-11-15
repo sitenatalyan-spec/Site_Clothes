@@ -80,6 +80,6 @@ export default async (req) => {
     static: Object.entries(catalog).map(([id, v]) => ({ id, name: v.n, price: v.p, sizes: v.s })),
     products: Object.values(state.products), manual: state.manual, ig: state.ig,
     lastSync: state.lastSync, log: state.log.slice().reverse(),
-    igConfigured: !!(state.token?.value || Netlify.env.get("IG_ACCESS_TOKEN")),
+    igConfigured: !!Netlify.env.get("IG_ACCESS_TOKEN"),
   });
 };

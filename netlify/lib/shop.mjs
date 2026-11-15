@@ -85,9 +85,10 @@ async function igToken(state) {
   // Продлённый токен хранится в state; если в настройках сервера вписали новый токен — берём его, а старый забываем.
   const envT = Netlify.env.get("IG_ACCESS_TOKEN") || "";
   const envId = envT ? crypto.createHash("sha256").update(envT).digest("hex").slice(0, 16) : "";
-  if (envT && state.token?.from !== envId) state.token = { value: envT, refreshedAt: null, from: envId };
+  // ключ Instagram убрали из настроек — забываем и сохранённый, синхронизация выключена
+  if (!envT) { state.token = null; throw new Error("Instagram не подключён (нет IG_ACCESS_TOKEN)"); }
+  if (state.token?.from !== envId) state.token = { value: envT, refreshedAt: null, from: envId };
   let t = state.token?.value || envT;
-  if (!t) throw new Error("Не задан IG_ACCESS_TOKEN");
   const age = Date.now() - new Date(state.token?.refreshedAt || 0).getTime();
   if (age > 7 * 864e5) {
     const r = await fetch(`${IG}/refresh_access_token?grant_type=ig_refresh_token&access_token=${encodeURIComponent(t)}`);
